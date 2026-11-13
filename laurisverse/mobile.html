@@ -147,6 +147,7 @@
       if (nv.length > 5) ph.push(`Les ${nv.length - 5} autres sont dans la liste du guide.`);
     } else ph.push("Côté projet, rien de nouveau depuis ta dernière écoute.");
     const s = AV.strategies;
+    if (s.candidates) ph.unshift("Rappel important, et je le répéterai tant que tu ne m'as pas répondu : une stratégie est candidate. Pour qu'elle puisse être misée, crée une clé sur ta plateforme, autorisée à trader mais jamais à retirer, et dis-moi ton budget maximum.");
     ph.push(`Stratégies : ${s.testees} idées testées, ${s.archivees} archivées, ` + (s.candidates ? `${s.candidates} candidate${s.candidates > 1 ? "s" : ""}.` : "aucune candidate pour l'instant."));
     if (AV.prochaine) ph.push("Prochaine tâche de la boucle : " + AV.prochaine.replace(/\.$/, "") + ".");
     return ph;
