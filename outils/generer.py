@@ -200,7 +200,7 @@ def main():
             f'<a href="{o}">ouvrir dans Obsidian</a></li>' for n, w, o in liens) + "</ul>" + \
             f'<p><a href="{base}quiz.html">Passer le quiz</a></p>'
         date = datetime.fromisoformat(ep["date"]).replace(hour=6 + int(ep["numero"]), tzinfo=timezone.utc)
-        items.append(f"""<item><title>{html.escape(ep['numero'] + '. ' + ep['titre'])}</title>
+        items.append(f"""<item><title>{html.escape(ep['numero'] + '. ' + ep['titre'], quote=False)}</title>
 <description><![CDATA[{desc_html}]]></description>
 <enclosure url="{base}audio/{ep['id']}.mp3" length="{mp3.stat().st_size}" type="audio/mpeg"/>
 <guid isPermaLink="false">{ep['id']}-{ep['empreinte']}</guid>
@@ -217,10 +217,13 @@ def main():
     couverture(out / "couverture.png")
     construire_laurisverse(coffre, out, pages, episodes)
     rss = f"""<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"><channel>
+<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
+<atom:link href="{base}feed.xml" rel="self" type="application/rss+xml"/>
 <title>{TITRE}</title><link>{base}</link><language>fr</language>
-<description>{html.escape(RESUME)}</description><itunes:author>{AUTEUR}</itunes:author>
-<itunes:image href="{base}couverture.png"/><itunes:explicit>false</itunes:explicit><itunes:block>Yes</itunes:block>
+<description>{html.escape(RESUME, quote=False)}</description><itunes:author>{AUTEUR}</itunes:author>
+<itunes:image href="{base}couverture.png"/><itunes:explicit>false</itunes:explicit>
+<itunes:owner><itunes:name>{AUTEUR}</itunes:name></itunes:owner>
+<image><url>{base}couverture.png</url><title>{TITRE}</title><link>{base}</link></image>
 <itunes:category text="Education"/><itunes:type>serial</itunes:type>
 {''.join(reversed(items))}
 </channel></rss>"""
@@ -234,6 +237,7 @@ def main():
     shutil.copy(RACINE / "quiz" / "questions.json", out / "questions.json")
     for ep in catalogue:
         print(f"::notice title=Episode {ep['id']}::{ep['duree']} s, {(out / ep['audio']).stat().st_size} octets")
+    print(f"::notice title=Flux::{base}feed.xml")
     print(f"{len(episodes)} épisodes, {len(lecons_html)} leçons -> {out}")
 
 
