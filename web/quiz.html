@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Quiz trading">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="couverture.png">
+<title>Quiz trading</title>
+<style>
+:root{--bg:#fbfaf7;--carte:#fff;--texte:#1c1b19;--doux:#6b6860;--bord:#e5e2da;--ok:#1f7a4d;--ko:#b3402a;--accent:#2558b5}
+@media(prefers-color-scheme:dark){:root{--bg:#161615;--carte:#22211f;--texte:#ecebe7;--doux:#a3a09a;--bord:#3a3936;--ok:#4cc58a;--ko:#ef7d65;--accent:#8ab4ff}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--texte);font:17px/1.5 -apple-system,system-ui,sans-serif;padding:16px;padding-bottom:40px;max-width:640px;margin:0 auto}
+h1{font-size:22px;margin:4px 0 2px}
+.doux{color:var(--doux);font-size:14px}
+.carte{background:var(--carte);border:1px solid var(--bord);border-radius:14px;padding:18px;margin:14px 0}
+.q{font-size:19px;font-weight:600}
+.r{margin-top:14px;padding-top:14px;border-top:1px dashed var(--bord)}
+button{font:inherit;border:0;border-radius:12px;padding:14px;width:100%;margin-top:10px;cursor:pointer}
+.prim{background:var(--accent);color:#fff}
+.ok{background:var(--ok);color:#fff}.ko{background:var(--ko);color:#fff}
+.sec{background:transparent;border:1px solid var(--bord);color:var(--texte)}
+.ligne{display:flex;gap:10px}.ligne button{flex:1}
+ul{padding-left:20px}li{margin:6px 0}
+a{color:var(--accent)}
+textarea{width:100%;min-height:90px;font:13px monospace;background:var(--carte);color:var(--texte);border:1px solid var(--bord);border-radius:8px}
+label{display:flex;gap:8px;align-items:center;margin:6px 0}
+</style>
+</head>
+<body>
+<h1>Quiz trading</h1>
+<div class="doux" id="resume">Chargement…</div>
+
+<div class="carte" id="zone"></div>
+
+<div class="carte">
+  <b>À réécouter en priorité</b>
+  <div class="doux">Les épisodes où tu as raté le plus de questions récemment.</div>
+  <ul id="reecouter"></ul>
+</div>
+
+<div class="carte">
+  <b>Épisodes écoutés</b>
+  <div id="ecoutes"></div>
+  <p class="doux"><a href="index.html">Écouter les épisodes ici</a> (ou dans Apple Podcasts).</p>
+</div>
+
+<div class="carte">
+  <b>Sauvegarde</b>
+  <div class="doux">Tes résultats sont gardés sur ce téléphone. Copie ce texte pour me l'envoyer ou pour le garder dans Obsidian.</div>
+  <button class="sec" id="exporter">Copier mes résultats</button>
+  <textarea id="donnees" placeholder="Colle ici des résultats pour les restaurer"></textarea>
+  <button class="sec" id="importer">Restaurer depuis le texte</button>
+</div>
+
+<script>
+const INTERVALLES = [0, 1, 3, 7, 16, 35]; // jours, selon la boîte (Leitner)
+const CLE = "quiz-trading-v1";
+let Q = [], EP = [], etat = {cartes:{}, ecoutes:{}, historique:[]}, courante = null;
+
+function charger(){ try{ const s = localStorage.getItem(CLE); if(s) etat = Object.assign(etat, JSON.parse(s)); }catch(e){} }
+function sauver(){ try{ localStorage.setItem(CLE, JSON.stringify(etat)); }catch(e){} }
+const auj = () => new Date().toISOString().slice(0,10);
+function plusJours(n){ const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); }
+function carte(id){ return etat.cartes[id] || {boite:0, prochaine:auj(), vues:0, ratees:0}; }
+
+function dues(){
+  return Q.filter(q => carte(q.id).prochaine <= auj())
+          .sort((a,b) => carte(a.id).boite - carte(b.id).boite || a.id.localeCompare(b.id));
+}
+
+function afficher(){
+  const d = dues(), z = document.getElementById("zone");
+  const maitrisees = Q.filter(q => carte(q.id).boite >= 3).length;
+  document.getElementById("resume").textContent =
+    `${d.length} question(s) à revoir aujourd'hui · ${maitrisees}/${Q.length} bien acquises`;
+  if(!d.length){
+    const proch = Q.map(q=>carte(q.id).prochaine).sort()[0];
+    z.innerHTML = `<div class="q">Rien à revoir aujourd'hui 🎉</div><p class="doux">Prochaine révision : ${proch||"–"}. Écoute un épisode ou reviens demain.</p>`;
+  } else {
+    courante = d[0];
+    const ep = EP.find(e=>e.id===courante.episode);
+    z.innerHTML = `<div class="doux">Leçon ${courante.lecon}${ep?` · épisode ${ep.numero}`:""}</div>
+      <div class="q">${courante.q}</div>
+      <div class="doux" style="margin-top:8px">Réponds dans ta tête (ou à voix haute), puis regarde.</div>
+      <button class="prim" id="voir">Voir la réponse</button><div id="rep"></div>`;
+    document.getElementById("voir").onclick = () => {
+      document.getElementById("voir").remove();
+      document.getElementById("rep").innerHTML = `<div class="r">${courante.r}</div>
+        <div class="ligne"><button class="ko" id="non">Raté</button><button class="ok" id="oui">Je savais</button></div>`;
+      document.getElementById("oui").onclick = () => noter(true);
+      document.getElementById("non").onclick = () => noter(false);
+    };
+  }
+  listeReecoute(); listeEcoutes();
+}
+
+function noter(ok){
+  const c = carte(courante.id);
+  c.vues++; if(!ok) c.ratees++;
+  c.boite = ok ? Math.min(c.boite+1, INTERVALLES.length-1) : 1;
+  c.prochaine = plusJours(ok ? INTERVALLES[c.boite] : 1);
+  etat.cartes[courante.id] = c;
+  etat.historique.push({id:courante.id, ok, date:new Date().toISOString()});
+  sauver(); afficher();
+}
+
+function listeReecoute(){
+  const depuis = new Date(Date.now()-14*864e5).toISOString();
+  const score = {};
+  etat.historique.filter(h=>h.date>=depuis && !h.ok).forEach(h=>{
+    const q = Q.find(x=>x.id===h.id); if(q) score[q.episode]=(score[q.episode]||0)+1; });
+  const ul = document.getElementById("reecouter");
+  const tri = Object.entries(score).sort((a,b)=>b[1]-a[1]);
+  ul.innerHTML = tri.length ? tri.map(([id,n])=>{ const e=EP.find(x=>x.id===id);
+    return `<li><a href="index.html#${id}">Épisode ${e?e.numero+" : "+e.titre:id}</a> <span class="doux">(${n} erreur${n>1?"s":""})</span></li>`; }).join("")
+    : `<li class="doux">Aucune erreur sur les 14 derniers jours.</li>`;
+}
+
+function listeEcoutes(){
+  const div = document.getElementById("ecoutes");
+  div.innerHTML = EP.map(e=>`<label><input type="checkbox" data-id="${e.id}" ${etat.ecoutes[e.id]?"checked":""}> ${e.numero}. ${e.titre}</label>`).join("");
+  div.querySelectorAll("input").forEach(i=>i.onchange=()=>{
+    if(i.checked) etat.ecoutes[i.dataset.id]=auj(); else delete etat.ecoutes[i.dataset.id]; sauver(); });
+}
+
+document.getElementById("exporter").onclick = async () => {
+  const t = JSON.stringify(etat); document.getElementById("donnees").value = t;
+  try{ await navigator.clipboard.writeText(t); document.getElementById("exporter").textContent="Copié ✓"; }catch(e){}
+};
+document.getElementById("importer").onclick = () => {
+  try{ const v = JSON.parse(document.getElementById("donnees").value);
+    if(v && v.cartes){ etat = Object.assign({cartes:{},ecoutes:{},historique:[]}, v); sauver(); afficher(); } }catch(e){ alert("Texte illisible"); }
+};
+
+charger();
+Promise.all([fetch("questions.json").then(r=>r.json()), fetch("episodes.json").then(r=>r.json()).catch(()=>[])])
+  .then(([q,e])=>{ Q=q; EP=e; afficher(); })
+  .catch(()=>{ document.getElementById("resume").textContent="Impossible de charger les questions."; });
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
