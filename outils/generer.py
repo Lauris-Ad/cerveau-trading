@@ -235,6 +235,8 @@ def main():
     for f in ["quiz.html", "sw.js", "manifest.webmanifest"]:
         shutil.copy(RACINE / "web" / f, out / f)
     shutil.copy(RACINE / "quiz" / "questions.json", out / "questions.json")
+    if (RACINE / "avancee" / "avancee.json").exists():      # avancée du projet, lue par le Laurisverse du téléphone
+        shutil.copy(RACINE / "avancee" / "avancee.json", out / "avancee.json")
     for ep in catalogue:
         print(f"::notice title=Episode {ep['id']}::{ep['duree']} s, {(out / ep['audio']).stat().st_size} octets")
     print(f"::notice title=Flux::{base}feed.xml")

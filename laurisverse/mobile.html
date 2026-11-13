@@ -134,10 +134,32 @@
     const cartes = etatQuiz().cartes || {}, auj = new Date().toISOString().slice(0, 10);
     return QUESTIONS.filter(x => !cartes[x.id] || cartes[x.id].prochaine <= auj).length;
   }
-  let QUESTIONS = [];
+  let QUESTIONS = [], AV = null;
+  // ---------- Avancée du projet (écrite par le chef d'orchestre après chaque cycle) ----------
+  const dejaEntendu = () => Number(lire("lv-dernier-cycle") || 0);
+  function nouveauxCycles() { return AV ? AV.cycles.filter(c => c.n > dejaEntendu()) : []; }
+  function phrasesProjet() {
+    if (!AV || !AV.cycles.length) return [];
+    const nv = nouveauxCycles(), ph = [];
+    if (nv.length) {
+      ph.push(`Côté projet, ${nv.length} ${nv.length > 1 ? "nouveaux cycles" : "nouveau cycle"} depuis ta dernière écoute.`);
+      nv.slice(-5).forEach(c => ph.push(c.dire));
+      if (nv.length > 5) ph.push(`Les ${nv.length - 5} autres sont dans la liste du guide.`);
+    } else ph.push("Côté projet, rien de nouveau depuis ta dernière écoute.");
+    const s = AV.strategies;
+    ph.push(`Stratégies : ${s.testees} idées testées, ${s.archivees} archivées, ` + (s.candidates ? `${s.candidates} candidate${s.candidates > 1 ? "s" : ""}.` : "aucune candidate pour l'instant."));
+    if (AV.prochaine) ph.push("Prochaine tâche de la boucle : " + AV.prochaine.replace(/\.$/, "") + ".");
+    return ph;
+  }
   construireGuide = function () {
     const segs = [], h = new Date().getHours();
     segs.push({ texte: (h >= 18 || h < 5 ? "Bonsoir " : "Bonjour ") + (D.prenom || "") + ". Voici ton point du jour." });
+    const pp = phrasesProjet();
+    if (pp.length) {
+      pp.forEach(t => segs.push({ texte: t }));
+      if (AV && AV.cycles.length) ecrire("lv-dernier-cycle", String(AV.cycles[AV.cycles.length - 1].n));
+      segs.push({ texte: "Maintenant, ton apprentissage." });
+    }
     const dues = quizDues();
     segs.push({ texte: dues ? `Tu as ${dues} question${dues > 1 ? "s" : ""} de quiz à revoir aujourd'hui.` : "Aucune question de quiz à revoir aujourd'hui. Bien joué." });
     const rr = aReecouter();
@@ -153,6 +175,11 @@
     const ol = document.getElementById("gListe"); ol.innerHTML = "";
     document.getElementById("gSous").textContent = "Aujourd'hui sur ton téléphone";
     const ajout = (txt, action) => { const li = document.createElement("li"); li.textContent = txt; li.onclick = action; ol.appendChild(li); };
+    if (AV && AV.cycles.length) {
+      const nv = nouveauxCycles();
+      (nv.length ? nv : AV.cycles).slice(-4).reverse().forEach(c =>
+        ajout(`${nv.length ? "🆕 " : ""}Projet, cycle ${c.n} : ${c.titre}`, () => parler([{ texte: c.dire }])));
+    }
     const dues = quizDues();
     ajout(dues ? `Revoir ${dues} question${dues > 1 ? "s" : ""} de quiz` : "Quiz à jour ✓", () => location.href = "quiz.html");
     aReecouter().slice(0, 2).forEach(e => ajout(`Réécouter l'épisode ${e.numero} (erreurs au quiz)`, () => { ouvrir("podcasts"); jouer(e.id); }));
@@ -203,6 +230,7 @@
     const k = EP.findIndex(e => e.id === courant); liste(); if (EP[k + 1]) document.getElementById("pInfo").textContent = "Épisode terminé. Suivant : " + EP[k + 1].titre; });
   afficherGuide();
   fetch("questions.json").then(r => r.json()).then(q => { QUESTIONS = q; afficherGuide(); }).catch(() => {});
+  fetch("avancee.json", { cache: "no-store" }).then(r => r.json()).then(a => { AV = a; afficherGuide(); }).catch(() => {});
   fetch("episodes.json").then(r => r.json()).then(e => { EP = e; liste(); afficherGuide(); })
     .catch(() => { document.getElementById("pInfo").textContent = "Liste des épisodes indisponible hors-ligne. Utilise Apple Podcasts."; });
 

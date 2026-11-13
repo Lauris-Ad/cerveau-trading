@@ -1,0 +1,120 @@
+{
+ "maj": "2026-11-13 16:29",
+ "cycles": [
+  {
+   "n": 1,
+   "axe": "C",
+   "titre": "Critères de passage",
+   "dire": "J'ai écrit les règles de réussite de chaque stratégie, et elles ne changeront plus."
+  },
+  {
+   "n": 2,
+   "axe": "A",
+   "titre": "Réparer le collecteur gamma",
+   "dire": "Le collecteur gamma ne s'était jamais lancé tout seul. C'est réparé, il prend ses photos."
+  },
+  {
+   "n": 3,
+   "axe": "B",
+   "titre": "Fiche « Backtest honnête »",
+   "dire": "Nouvelle fiche dans ton coffre : comment faire un backtest honnête."
+  },
+  {
+   "n": 4,
+   "axe": "C",
+   "titre": "Historique BTC",
+   "dire": "J'ai téléchargé quatre ans d'historique du bitcoin, heure par heure."
+  },
+  {
+   "n": 5,
+   "axe": "C",
+   "titre": "Moteur de backtest",
+   "dire": "Le moteur de backtest est prêt et vérifié par huit tests."
+  },
+  {
+   "n": 6,
+   "axe": "A",
+   "titre": "Tuile « Santé des collecteurs »",
+   "dire": "Le dashboard montre maintenant si tes collecteurs tournent bien."
+  },
+  {
+   "n": 7,
+   "axe": "B",
+   "titre": "Leçon 08 funding rate et open interest",
+   "dire": "Nouvelle leçon 8 : le funding rate et l'open interest."
+  },
+  {
+   "n": 8,
+   "axe": "C",
+   "titre": "Suite d'un pic de volatilité",
+   "dire": "L'idée du pic de volatilité a échoué : elle perdait environ 0,3 pour cent par trade. Elle est archivée."
+  },
+  {
+   "n": 9,
+   "axe": "A",
+   "titre": "Funding et open interest dans le dashboard",
+   "dire": "Le dashboard affiche maintenant le funding et l'open interest du bitcoin."
+  },
+  {
+   "n": 10,
+   "axe": "C",
+   "titre": "Fair value gap",
+   "dire": "Le fair value gap a échoué : le trou n'était comblé que 41 pour cent du temps, pas 71. Archivé."
+  },
+  {
+   "n": 11,
+   "axe": "A",
+   "titre": "Tout se met à jour tout seul (demande de Lauris, 13/11 16 h 58)",
+   "dire": "Tout se met maintenant à jour tout seul : le gardien relance le collecteur, et les données se complètent chaque matin."
+  },
+  {
+   "n": 12,
+   "axe": "A",
+   "titre": "Gamma : contrôle des calculs + historique des niveaux",
+   "dire": "J'ai vérifié les calculs du gamma : ils collent à ceux de Cboe à 0,5 pour cent près."
+  },
+  {
+   "n": 13,
+   "axe": "C",
+   "titre": "Funding extrême",
+   "dire": "L'idée du funding extrême a échoué : trop peu de trades et un résultat négatif. Archivée."
+  },
+  {
+   "n": 14,
+   "axe": "B",
+   "titre": "Leçon 09 « Les coûts, le vrai adversaire »",
+   "dire": "Nouvelle leçon 9 : les coûts, le vrai adversaire."
+  },
+  {
+   "n": 15,
+   "axe": "C",
+   "titre": "Taille de mouvement face aux coûts (mesure)",
+   "dire": "Sur une heure, le bitcoin bouge moins que ce que coûte un trade. Sur une semaine, les coûts ne pèsent plus que 9 pour cent."
+  },
+  {
+   "n": 16,
+   "axe": "C",
+   "titre": "Cassure de canal 4 h (tendance lente)",
+   "dire": "La cassure de canal sur 4 heures gagnait un peu, mais pas assez pour exclure la chance. Archivée."
+  },
+  {
+   "n": 17,
+   "axe": "B",
+   "titre": "Quiz du téléphone publié",
+   "dire": "Tes nouvelles leçons et 22 questions sont en ligne dans le quiz du téléphone."
+  },
+  {
+   "n": 18,
+   "axe": "A",
+   "titre": "Rendu du dashboard",
+   "dire": "Le dashboard a un nouvel onglet Stratégies, et il s'affiche bien sur téléphone."
+  }
+ ],
+ "strategies": {
+  "testees": 4,
+  "archivees": 4,
+  "candidates": 0,
+  "variantes": 5
+ },
+ "prochaine": "Idée cassure hebdomadaire (horizon 1 à 4 semaines, où les coûts pèsent < 10 %), règles pré-enregistrées"
+}
