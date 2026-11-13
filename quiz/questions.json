@@ -1,38 +1,408 @@
 [
- {"id":"l01-q1","lecon":"01","episode":"e01","q":"Que représentent les quatre prix d'une bougie (OHLC) ?","r":"Ouverture, plus haut, plus bas et clôture de la période."},
- {"id":"l01-q2","lecon":"01","episode":"e01","q":"Quels sont les 3 états possibles du marché ?","r":"Tendance haussière, tendance baissière, range (le prix oscille entre un support et une résistance)."},
- {"id":"l01-q3","lecon":"01","episode":"e01","q":"Face à des acteurs plus rapides et mieux informés, comment est-ce que je gagne ?","r":"En étant plus discipliné, pas plus malin."},
- {"id":"l01-q4","lecon":"01","episode":"e01","q":"Que dois-je vérifier avant de décider sur un graphique ?","r":"Le bon symbole, la bonne unité de temps, la bonne date. Si deux chiffres ne collent pas, je m'arrête et je vérifie."},
- {"id":"l02-q1","lecon":"02","episode":"e01","q":"Je perds 50 %. Combien dois-je gagner pour revenir à zéro ?","r":"+100 %. (−10 % → +11 %, −25 % → +33 %, −75 % → +300 %, −90 % → +900 %.)"},
- {"id":"l02-q2","lecon":"02","episode":"e01","q":"Différence entre stop-market et stop-limit ?","r":"Stop-market : sortie garantie, prix non garanti (slippage). Stop-limit : deux prix ; si le prix chute trop vite, l'ordre peut ne jamais s'exécuter."},
- {"id":"l02-q3","lecon":"02","episode":"e01","q":"Qu'est-ce qu'un trailing stop ?","r":"Un stop qui suit le prix à la hausse, jamais à la baisse. Protège les gains, mais peut faire sortir trop tôt."},
- {"id":"l02-q4","lecon":"02","episode":"e01","q":"Ai-je le droit de descendre mon stop ?","r":"Jamais. Je peux seulement le monter."},
- {"id":"l02-q5","lecon":"02","episode":"e01","q":"Dans quels cas un stop ne protège pas ?","r":"Sur un token sans liquidité ou en cas de rug pull."},
- {"id":"l03-q1","lecon":"03","episode":"e02","q":"Comment calcule-t-on l'amplitude d'une bougie en % ?","r":"(Plus haut − Plus bas) ÷ Plus bas × 100."},
- {"id":"l03-q2","lecon":"03","episode":"e02","q":"Où placer la distance du stop ?","r":"Environ 2 × l'amplitude journalière moyenne des 5 à 10 dernières bougies clôturées (version officielle : l'ATR)."},
- {"id":"l03-q3","lecon":"03","episode":"e02","q":"Risque accepté 10 €, stop à 5 %. Taille de la position ?","r":"10 ÷ 5 % = 200 €."},
- {"id":"l03-q4","lecon":"03","episode":"e02","q":"Le marché devient plus agité. Que fait ma position ?","r":"Stop plus large → position plus petite → même risque en euros."},
- {"id":"l04-q1","lecon":"04","episode":"e02","q":"Où sont l'ask et le bid dans le carnet d'ordres ?","r":"Les vendeurs (ask, rouge) au-dessus, les acheteurs (bid, vert) en dessous, le prix au milieu."},
- {"id":"l04-q2","lecon":"04","episode":"e02","q":"Qu'est-ce que le spread ?","r":"Meilleur ask − meilleur bid (ex. 85 460 − 85 450 = 10 $ ≈ 0,012 %)."},
- {"id":"l04-q3","lecon":"04","episode":"e02","q":"Maker ou taker : qui ajoute de la liquidité ?","r":"Le maker (ordre limite qui attend). Le taker (ordre au marché) en retire."},
- {"id":"l04-q4","lecon":"04","episode":"e02","q":"Pour juger la liquidité, je regarde quoi ?","r":"La valeur en $ disponible et l'écart entre les niveaux, pas le nombre d'unités."},
- {"id":"l04-q5","lecon":"04","episode":"e02","q":"Qu'est-ce que le spoofing ?","r":"De gros ordres placés pour influencer, puis retirés. Je ne décide jamais sur un seul gros ordre."},
- {"id":"l05-q1","lecon":"05","episode":"e03","q":"Où sont réellement stockées mes cryptos ?","r":"Sur la blockchain. Le wallet contient les clés qui prouvent qu'elles m'appartiennent."},
- {"id":"l05-q2","lecon":"05","episode":"e03","q":"Que puis-je partager sans risque : l'adresse ou la seed phrase ?","r":"L'adresse. La seed phrase est ultra secrète."},
- {"id":"l05-q3","lecon":"05","episode":"e03","q":"Pourquoi peut-on analyser n'importe quel wallet ?","r":"La blockchain est pseudonyme, pas anonyme : soldes et transactions sont publics (la boîte aux lettres vitrée)."},
- {"id":"l05-q4","lecon":"05","episode":"e03","q":"Différence entre un compte Binance et MetaMask ?","r":"Binance est custodial (la plateforme a les clés). MetaMask est non-custodial (moi seul)."},
- {"id":"l05-q5","lecon":"05","episode":"e03","q":"Le « support » me demande ma seed phrase. Que fais-je ?","r":"Je ne la donne jamais, à personne, même au « support »."},
- {"id":"l06-q1","lecon":"06","episode":"e03","q":"Pourquoi Vitalik reçoit-il des envois de 0,0001 ETH d'inconnus ?","r":"Ce sont des tentatives d'address poisoning : placer une fausse adresse dans son historique."},
- {"id":"l06-q2","lecon":"06","episode":"e03","q":"Comment l'address poisoning me fait-il envoyer mon argent à un arnaqueur ?","r":"Une fausse adresse qui commence et finit comme la vraie apparaît dans mon historique ; si je la copie de là, j'envoie à l'arnaqueur."},
- {"id":"l06-q3","lecon":"06","episode":"e03","q":"Où garder ma seed phrase ? Où jamais ?","r":"Sur papier. Jamais en photo, jamais dans le cloud, jamais dans Obsidian."},
- {"id":"l06-q4","lecon":"06","episode":"e03","q":"Un token « FREE-ETH-CLAIM.COM » apparaît dans mon wallet. Que fais-je ?","r":"Je n'y touche pas et ne visite pas le site. Ce qui arrive sans être demandé est un piège."},
- {"id":"l07-q1","lecon":"07","episode":"e04","q":"Différence entre SPX, SPY et ES ?","r":"SPX : l'indice (on ne l'achète pas). SPY : un ETF qui le copie (≈ SPX ÷ 10). ES : le future, 1 point = 50 $, avec levier."},
- {"id":"l07-q2","lecon":"07","episode":"e04","q":"L'ES bouge de 8 points sur 1 contrat : combien ? Et sur 1 MES ?","r":"8 × 50 = 400 $. MES : 8 × 5 = 40 $."},
- {"id":"l07-q3","lecon":"07","episode":"e04","q":"Différence entre un call et un put, avec une analogie ?","r":"Call : droit d'acheter (des arrhes pour réserver un appartement). Put : droit de vendre (une assurance auto)."},
- {"id":"l07-q4","lecon":"07","episode":"e04","q":"Pourquoi l'open interest du matin ne voit-il pas les 0DTE du jour ?","r":"Il est publié une fois par jour pour la veille ; un 0DTE ouvert et fermé dans la journée n'y apparaît jamais."},
- {"id":"l07-q5","lecon":"07","episode":"e05","q":"Si le delta est la vitesse, qu'est-ce que le gamma ? Où est-il le plus fort ?","r":"L'accélération (variation du delta). Le plus fort près du prix actuel et près de l'échéance (0DTE)."},
- {"id":"l07-q6","lecon":"07","episode":"e05","q":"Pourquoi un dealer long gamma vend-il quand le marché monte ?","r":"Le delta de ses options augmente ; pour rester neutre il vend plus d'indice. Il freine (thermostat)."},
- {"id":"l07-q7","lecon":"07","episode":"e06","q":"Que veut dire « régime négatif » et pourquoi plus nerveux ?","r":"GEX total négatif au prix actuel : dealers short gamma, ils achètent quand ça monte et vendent quand ça baisse, ils amplifient (boule de neige)."},
- {"id":"l07-q8","lecon":"07","episode":"e06","q":"Cite 3 limites de l'onglet gamma.","r":"Position des dealers supposée ; OI d'hier (0DTE invisibles) ; données différées ~15 min ; volatilité implicite figée ; SPX ≠ ES (base)."},
- {"id":"l07-q9","lecon":"07","episode":"e06","q":"Le SPX passe sous le zéro gamma. Signal de vente ?","r":"Non. Aucun niveau n'est une règle de trading tant que mon propre backtest ne l'a pas montré. On observe, on note."}
+{
+"id": "l01-q1",
+"lecon": "01",
+"episode": "e01",
+"q": "Que représentent les quatre prix d'une bougie (OHLC) ?",
+"r": "Ouverture, plus haut, plus bas et clôture de la période."
+},
+{
+"id": "l01-q2",
+"lecon": "01",
+"episode": "e01",
+"q": "Quels sont les 3 états possibles du marché ?",
+"r": "Tendance haussière, tendance baissière, range (le prix oscille entre un support et une résistance)."
+},
+{
+"id": "l01-q3",
+"lecon": "01",
+"episode": "e01",
+"q": "Face à des acteurs plus rapides et mieux informés, comment est-ce que je gagne ?",
+"r": "En étant plus discipliné, pas plus malin."
+},
+{
+"id": "l01-q4",
+"lecon": "01",
+"episode": "e01",
+"q": "Que dois-je vérifier avant de décider sur un graphique ?",
+"r": "Le bon symbole, la bonne unité de temps, la bonne date. Si deux chiffres ne collent pas, je m'arrête et je vérifie."
+},
+{
+"id": "l02-q1",
+"lecon": "02",
+"episode": "e01",
+"q": "Je perds 50 %. Combien dois-je gagner pour revenir à zéro ?",
+"r": "+100 %. (−10 % → +11 %, −25 % → +33 %, −75 % → +300 %, −90 % → +900 %.)"
+},
+{
+"id": "l02-q2",
+"lecon": "02",
+"episode": "e01",
+"q": "Différence entre stop-market et stop-limit ?",
+"r": "Stop-market : sortie garantie, prix non garanti (slippage). Stop-limit : deux prix ; si le prix chute trop vite, l'ordre peut ne jamais s'exécuter."
+},
+{
+"id": "l02-q3",
+"lecon": "02",
+"episode": "e01",
+"q": "Qu'est-ce qu'un trailing stop ?",
+"r": "Un stop qui suit le prix à la hausse, jamais à la baisse. Protège les gains, mais peut faire sortir trop tôt."
+},
+{
+"id": "l02-q4",
+"lecon": "02",
+"episode": "e01",
+"q": "Ai-je le droit de descendre mon stop ?",
+"r": "Jamais. Je peux seulement le monter."
+},
+{
+"id": "l02-q5",
+"lecon": "02",
+"episode": "e01",
+"q": "Dans quels cas un stop ne protège pas ?",
+"r": "Sur un token sans liquidité ou en cas de rug pull."
+},
+{
+"id": "l03-q1",
+"lecon": "03",
+"episode": "e02",
+"q": "Comment calcule-t-on l'amplitude d'une bougie en % ?",
+"r": "(Plus haut − Plus bas) ÷ Plus bas × 100."
+},
+{
+"id": "l03-q2",
+"lecon": "03",
+"episode": "e02",
+"q": "Où placer la distance du stop ?",
+"r": "Environ 2 × l'amplitude journalière moyenne des 5 à 10 dernières bougies clôturées (version officielle : l'ATR)."
+},
+{
+"id": "l03-q3",
+"lecon": "03",
+"episode": "e02",
+"q": "Risque accepté 10 €, stop à 5 %. Taille de la position ?",
+"r": "10 ÷ 5 % = 200 €."
+},
+{
+"id": "l03-q4",
+"lecon": "03",
+"episode": "e02",
+"q": "Le marché devient plus agité. Que fait ma position ?",
+"r": "Stop plus large → position plus petite → même risque en euros."
+},
+{
+"id": "l04-q1",
+"lecon": "04",
+"episode": "e02",
+"q": "Où sont l'ask et le bid dans le carnet d'ordres ?",
+"r": "Les vendeurs (ask, rouge) au-dessus, les acheteurs (bid, vert) en dessous, le prix au milieu."
+},
+{
+"id": "l04-q2",
+"lecon": "04",
+"episode": "e02",
+"q": "Qu'est-ce que le spread ?",
+"r": "Meilleur ask − meilleur bid (ex. 85 460 − 85 450 = 10 $ ≈ 0,012 %)."
+},
+{
+"id": "l04-q3",
+"lecon": "04",
+"episode": "e02",
+"q": "Maker ou taker : qui ajoute de la liquidité ?",
+"r": "Le maker (ordre limite qui attend). Le taker (ordre au marché) en retire."
+},
+{
+"id": "l04-q4",
+"lecon": "04",
+"episode": "e02",
+"q": "Pour juger la liquidité, je regarde quoi ?",
+"r": "La valeur en $ disponible et l'écart entre les niveaux, pas le nombre d'unités."
+},
+{
+"id": "l04-q5",
+"lecon": "04",
+"episode": "e02",
+"q": "Qu'est-ce que le spoofing ?",
+"r": "De gros ordres placés pour influencer, puis retirés. Je ne décide jamais sur un seul gros ordre."
+},
+{
+"id": "l05-q1",
+"lecon": "05",
+"episode": "e03",
+"q": "Où sont réellement stockées mes cryptos ?",
+"r": "Sur la blockchain. Le wallet contient les clés qui prouvent qu'elles m'appartiennent."
+},
+{
+"id": "l05-q2",
+"lecon": "05",
+"episode": "e03",
+"q": "Que puis-je partager sans risque : l'adresse ou la seed phrase ?",
+"r": "L'adresse. La seed phrase est ultra secrète."
+},
+{
+"id": "l05-q3",
+"lecon": "05",
+"episode": "e03",
+"q": "Pourquoi peut-on analyser n'importe quel wallet ?",
+"r": "La blockchain est pseudonyme, pas anonyme : soldes et transactions sont publics (la boîte aux lettres vitrée)."
+},
+{
+"id": "l05-q4",
+"lecon": "05",
+"episode": "e03",
+"q": "Différence entre un compte Binance et MetaMask ?",
+"r": "Binance est custodial (la plateforme a les clés). MetaMask est non-custodial (moi seul)."
+},
+{
+"id": "l05-q5",
+"lecon": "05",
+"episode": "e03",
+"q": "Le « support » me demande ma seed phrase. Que fais-je ?",
+"r": "Je ne la donne jamais, à personne, même au « support »."
+},
+{
+"id": "l06-q1",
+"lecon": "06",
+"episode": "e03",
+"q": "Pourquoi Vitalik reçoit-il des envois de 0,0001 ETH d'inconnus ?",
+"r": "Ce sont des tentatives d'address poisoning : placer une fausse adresse dans son historique."
+},
+{
+"id": "l06-q2",
+"lecon": "06",
+"episode": "e03",
+"q": "Comment l'address poisoning me fait-il envoyer mon argent à un arnaqueur ?",
+"r": "Une fausse adresse qui commence et finit comme la vraie apparaît dans mon historique ; si je la copie de là, j'envoie à l'arnaqueur."
+},
+{
+"id": "l06-q3",
+"lecon": "06",
+"episode": "e03",
+"q": "Où garder ma seed phrase ? Où jamais ?",
+"r": "Sur papier. Jamais en photo, jamais dans le cloud, jamais dans Obsidian."
+},
+{
+"id": "l06-q4",
+"lecon": "06",
+"episode": "e03",
+"q": "Un token « FREE-ETH-CLAIM.COM » apparaît dans mon wallet. Que fais-je ?",
+"r": "Je n'y touche pas et ne visite pas le site. Ce qui arrive sans être demandé est un piège."
+},
+{
+"id": "l07-q1",
+"lecon": "07",
+"episode": "e04",
+"q": "Différence entre SPX, SPY et ES ?",
+"r": "SPX : l'indice (on ne l'achète pas). SPY : un ETF qui le copie (≈ SPX ÷ 10). ES : le future, 1 point = 50 $, avec levier."
+},
+{
+"id": "l07-q2",
+"lecon": "07",
+"episode": "e04",
+"q": "L'ES bouge de 8 points sur 1 contrat : combien ? Et sur 1 MES ?",
+"r": "8 × 50 = 400 $. MES : 8 × 5 = 40 $."
+},
+{
+"id": "l07-q3",
+"lecon": "07",
+"episode": "e04",
+"q": "Différence entre un call et un put, avec une analogie ?",
+"r": "Call : droit d'acheter (des arrhes pour réserver un appartement). Put : droit de vendre (une assurance auto)."
+},
+{
+"id": "l07-q4",
+"lecon": "07",
+"episode": "e04",
+"q": "Pourquoi l'open interest du matin ne voit-il pas les 0DTE du jour ?",
+"r": "Il est publié une fois par jour pour la veille ; un 0DTE ouvert et fermé dans la journée n'y apparaît jamais."
+},
+{
+"id": "l07-q5",
+"lecon": "07",
+"episode": "e05",
+"q": "Si le delta est la vitesse, qu'est-ce que le gamma ? Où est-il le plus fort ?",
+"r": "L'accélération (variation du delta). Le plus fort près du prix actuel et près de l'échéance (0DTE)."
+},
+{
+"id": "l07-q6",
+"lecon": "07",
+"episode": "e05",
+"q": "Pourquoi un dealer long gamma vend-il quand le marché monte ?",
+"r": "Le delta de ses options augmente ; pour rester neutre il vend plus d'indice. Il freine (thermostat)."
+},
+{
+"id": "l07-q7",
+"lecon": "07",
+"episode": "e06",
+"q": "Que veut dire « régime négatif » et pourquoi plus nerveux ?",
+"r": "GEX total négatif au prix actuel : dealers short gamma, ils achètent quand ça monte et vendent quand ça baisse, ils amplifient (boule de neige)."
+},
+{
+"id": "l07-q8",
+"lecon": "07",
+"episode": "e06",
+"q": "Cite 3 limites de l'onglet gamma.",
+"r": "Position des dealers supposée ; OI d'hier (0DTE invisibles) ; données différées ~15 min ; volatilité implicite figée ; SPX ≠ ES (base)."
+},
+{
+"id": "l07-q9",
+"lecon": "07",
+"episode": "e06",
+"q": "Le SPX passe sous le zéro gamma. Signal de vente ?",
+"r": "Non. Aucun niveau n'est une règle de trading tant que mon propre backtest ne l'a pas montré. On observe, on note."
+},
+{
+"id": "fbt-q1",
+"lecon": "Fiche backtest",
+"episode": null,
+"q": "Pourquoi entre-t-on à l'ouverture de la bougie suivante dans un backtest ?",
+"r": "Parce que le signal n'est connu qu'à la clôture : utiliser ce prix-là, c'est regarder le futur."
+},
+{
+"id": "fbt-q2",
+"lecon": "Fiche backtest",
+"episode": null,
+"q": "Un test donne +0,20 % brut par trade. Que vaut-il net avec nos coûts ?",
+"r": "-0,10 % : on retire 0,30 % par aller-retour (2 × 0,10 % de frais + 2 × 0,05 % de slippage)."
+},
+{
+"id": "fbt-q3",
+"lecon": "Fiche backtest",
+"episode": null,
+"q": "Stop et objectif touchés dans la même bougie : que compte-t-on ?",
+"r": "Le stop, par prudence : on ne sait pas lequel est venu en premier."
+},
+{
+"id": "fbt-q4",
+"lecon": "Fiche backtest",
+"episode": null,
+"q": "À quoi servent les 30 % hors échantillon ?",
+"r": "À juger une seule fois la variante choisie sur des données jamais vues. Un seul essai."
+},
+{
+"id": "fbt-q5",
+"lecon": "Fiche backtest",
+"episode": null,
+"q": "J'ai testé 12 variantes d'une idée. Quel t minimal exige notre règle ?",
+"r": "3,0 (de 11 à 30 variantes)."
+},
+{
+"id": "fbt-q6",
+"lecon": "Fiche backtest",
+"episode": null,
+"q": "Un taux de réussite de 80 % garantit-il une stratégie rentable ?",
+"r": "Non : 80 % de petits gains peuvent être effacés par 20 % de grosses pertes et les frais."
+},
+{
+"id": "fbt-q7",
+"lecon": "Fiche backtest",
+"episode": null,
+"q": "Que recommandent Harvey, Liu et Zhu (2016) ?",
+"r": "Exiger une statistique t supérieure à 3, et non 2, quand on a beaucoup cherché."
+},
+{
+"id": "fbt-q8",
+"lecon": "Fiche backtest",
+"episode": null,
+"q": "Une idée échoue au hors échantillon. Que fait-on ?",
+"r": "On l'archive avec la raison. On ne retouche pas les règles pour la faire passer."
+},
+{
+"id": "l08-q1",
+"lecon": "08",
+"episode": null,
+"q": "Pourquoi un contrat perpétuel a-t-il un funding rate ?",
+"r": "Il n'a pas de date de fin : le paiement entre longs et shorts le garde collé au vrai prix."
+},
+{
+"id": "l08-q2",
+"lecon": "08",
+"episode": null,
+"q": "Funding positif : qui paie qui ?",
+"r": "Les longs paient les shorts."
+},
+{
+"id": "l08-q3",
+"lecon": "08",
+"episode": null,
+"q": "Quelle est la valeur « calme » du funding sur Binance ?",
+"r": "0,01 % par période de 8 h, le taux d'intérêt de base de la formule."
+},
+{
+"id": "l08-q4",
+"lecon": "08",
+"episode": null,
+"q": "À quelles heures de Paris tombe le funding en hiver ?",
+"r": "1 h, 9 h et 17 h (00 h, 08 h, 16 h UTC)."
+},
+{
+"id": "l08-q5",
+"lecon": "08",
+"episode": null,
+"q": "Différence entre volume et open interest ?",
+"r": "Le volume compte tout ce qui s'échange et repart de zéro ; l'OI compte les contrats encore ouverts."
+},
+{
+"id": "l08-q6",
+"lecon": "08",
+"episode": null,
+"q": "Le prix monte et l'OI baisse : lecture habituelle ?",
+"r": "Des vendeurs à découvert ferment leurs positions (rachat de shorts)."
+},
+{
+"id": "l08-q7",
+"lecon": "08",
+"episode": null,
+"q": "Pourquoi notre historique d'OI ne fait-il qu'un mois ?",
+"r": "L'API Binance ne fournit que le dernier mois ; il faut relancer le téléchargement régulièrement."
+},
+{
+"id": "l08-q8",
+"lecon": "08",
+"episode": null,
+"q": "Funding très positif depuis 2 semaines : signal de vente ?",
+"r": "Non, c'est une mesure de foule. Il faudrait une fiche, des critères figés et un backtest."
+},
+{
+"id": "l09-q1",
+"lecon": "09",
+"episode": null,
+"q": "Différence entre maker et taker ?",
+"r": "Maker : ordre qui attend dans le carnet (ordre limite). Taker : ordre exécuté tout de suite (ordre au marché)."
+},
+{
+"id": "l09-q2",
+"lecon": "09",
+"episode": null,
+"q": "Combien coûte un aller-retour dans nos backtests ?",
+"r": "0,30 % : 2 × 0,10 % de frais + 2 × 0,05 % de slippage."
+},
+{
+"id": "l09-q3",
+"lecon": "09",
+"episode": null,
+"q": "Sur BTC 1 h, le mouvement médian est de 0,20 %. Pourquoi est-ce un problème ?",
+"r": "Il est plus petit que le coût d'un aller-retour (0,30 %) : le coût en représente 154 %."
+},
+{
+"id": "l09-q4",
+"lecon": "09",
+"episode": null,
+"q": "À partir de quel horizon le coût pèse-t-il moins de 15 % du mouvement médian de BTC ?",
+"r": "3 jours (14 %), puis 9 % sur 1 semaine."
+},
+{
+"id": "l09-q5",
+"lecon": "09",
+"episode": null,
+"q": "Pourquoi un ordre limite n'est-il pas une solution gratuite ?",
+"r": "Il coûte moins cher, mais il peut ne jamais être exécuté : on rate alors le trade."
+},
+{
+"id": "l09-q6",
+"lecon": "09",
+"episode": null,
+"q": "Une idée fait +0,25 % brut par trade. Est-elle rentable chez nous ?",
+"r": "Non : -0,05 % net après 0,30 % de coûts."
+}
 ]
