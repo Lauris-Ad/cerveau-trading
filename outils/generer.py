@@ -129,6 +129,30 @@ def couverture(destination):
     img.save(destination)
 
 
+def construire_laurisverse(coffre, out, pages, episodes):
+    """Version téléphone du Laurisverse : même moteur que sur PC, dossiers publics seulement."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("laurisverse", RACINE / "laurisverse" / "laurisverse.py")
+    lv = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lv)
+    notes, liens, _ = lv.lire_coffre(coffre)
+    par_lecon = {}
+    for ep in episodes:
+        for src in ep["sources"]:
+            par_lecon.setdefault(src, []).append({"id": ep["id"], "numero": int(ep["numero"]), "titre": ep["titre"]})
+    for n in notes:
+        n["page"] = pages.get(n["chemin"])
+        n["episodes"] = par_lecon.get(n["chemin"], [])
+    donnees = {"coffre": "Trading-Vault", "prenom": "Lauris", "aujourdhui": datetime.now().date().isoformat(),
+               "genere": datetime.now().strftime("%d/%m/%Y"), "notes": notes, "liens": liens, "mobile": True}
+    modele = (RACINE / "laurisverse" / "modele.html").read_text(encoding="utf-8")
+    ajout = (RACINE / "laurisverse" / "mobile.html").read_text(encoding="utf-8")
+    json_txt = json.dumps(donnees, ensure_ascii=False).replace("</", "<\\/")
+    page_lv = modele.replace("/*__DONNEES__*/null", json_txt).replace("</body>", ajout + "\n</body>")
+    page_lv = page_lv.replace("<head>", '<head>\n<link rel="apple-touch-icon" href="couverture.png">\n<meta name="apple-mobile-web-app-capable" content="yes">', 1)
+    (out / "laurisverse.html").write_text(page_lv, encoding="utf-8")
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--url", required=True)
@@ -142,16 +166,20 @@ def main():
     (out / "lecons").mkdir()
 
     import markdown
-    lecons_html = {}
-    for src in sorted((RACINE / "lecons").glob("*.md")):
+    coffre = RACINE / "coffre"
+    (out / "notes").mkdir()
+    pages = {}  # chemin relatif au coffre -> page web
+    for src in sorted(coffre.rglob("*.md")):
+        rel = src.relative_to(coffre).as_posix()
         texte = src.read_text(encoding="utf-8").replace("\r\n", "\n")
         texte = re.sub(r"^---\n.*?\n---\n", "", texte, flags=re.S)
         texte = re.sub(r"\[\[([^\]|]+)(?:\|([^\]]+))?\]\]", lambda m: m.group(2) or m.group(1), texte)
         texte = texte.replace("- [ ]", "- ☐").replace("- [x]", "- ☑")
-        corps = markdown.markdown(texte, extensions=["tables"])
-        nom = slug(src.stem) + ".html"
-        (out / "lecons" / nom).write_text(page(src.stem, corps + '<p><a href="../index.html">← Épisodes</a></p>'), encoding="utf-8")
-        lecons_html[src.stem] = "lecons/" + nom
+        corps = markdown.markdown(texte, extensions=["tables", "fenced_code"])
+        nom = slug(rel.removesuffix(".md")) + ".html"
+        (out / "notes" / nom).write_text(page(src.stem, corps + '<p><a href="../index.html">← Épisodes</a> · <a href="../laurisverse.html">Laurisverse</a></p>'), encoding="utf-8")
+        pages[rel] = "notes/" + nom
+    lecons_html = {Path(k).stem: v for k, v in pages.items() if k.startswith("02 - ")}
 
     episodes = [lire_episode(f) for f in sorted((RACINE / "episodes").glob("e*.md"))]
     items, blocs, catalogue = [], [], []
@@ -187,6 +215,7 @@ def main():
                           "audio": f"audio/{ep['id']}.mp3", "duree": sec})
 
     couverture(out / "couverture.png")
+    construire_laurisverse(coffre, out, pages, episodes)
     rss = f"""<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"><channel>
 <title>{TITRE}</title><link>{base}</link><language>fr</language>
@@ -198,11 +227,13 @@ def main():
     (out / "feed.xml").write_text(rss, encoding="utf-8")
     (out / "episodes.json").write_text(json.dumps(catalogue, ensure_ascii=False), encoding="utf-8")
     (out / "index.html").write_text(page(TITRE, f"<h1>{TITRE}</h1><p>{html.escape(RESUME)}</p>"
-        f'<p><a href="quiz.html"><b>Passer le quiz</b></a> · Flux podcast : <code>{base}feed.xml</code></p>'
+        f'<p><a href="laurisverse.html"><b>Laurisverse</b></a> · <a href="quiz.html"><b>Passer le quiz</b></a> · Flux podcast : <code>{base}feed.xml</code></p>'
         + "".join(blocs)), encoding="utf-8")
     for f in ["quiz.html", "sw.js", "manifest.webmanifest"]:
         shutil.copy(RACINE / "web" / f, out / f)
     shutil.copy(RACINE / "quiz" / "questions.json", out / "questions.json")
+    for ep in catalogue:
+        print(f"::notice title=Episode {ep['id']}::{ep['duree']} s, {(out / ep['audio']).stat().st_size} octets")
     print(f"{len(episodes)} épisodes, {len(lecons_html)} leçons -> {out}")
 
 

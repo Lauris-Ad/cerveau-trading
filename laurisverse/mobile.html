@@ -1,0 +1,211 @@
+<!-- Ajout téléphone : barre du bas, panneaux tactiles, podcasts avec reprise de lecture. Le moteur PC reste inchangé. -->
+<style>
+  canvas#toile { touch-action: none; }
+  .mbarre { display: none; }
+  .podcasts { display: none; }
+  .fiche .ep-btn { background: linear-gradient(90deg, #ffb547, #ff6f61); color: #1a1008; font-weight: 600; }
+  @media (max-width: 760px), (pointer: coarse) {
+    .entete { top: calc(10px + env(safe-area-inset-top)); left: 16px; }
+    .entete h1 { font-size: 20px; letter-spacing: .3em; }
+    .entete .sous { font-size: 9.5px; letter-spacing: .2em; }
+    .entete .stats { font-size: 11px; }
+    .sortieCinema, #cinema, label.case:has(#cRepli) { display: none !important; }
+    .mbarre { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; gap: 6px;
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); background: rgba(10,8,18,.92);
+      border-top: 1px solid var(--bord); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .mbarre button, .mbarre a { flex: 1; font: inherit; font-size: 13px; color: var(--texte); background: rgba(255,255,255,.06);
+      border: 1px solid var(--bord); border-radius: 12px; padding: 10px 4px; text-align: center; text-decoration: none; min-height: 46px; }
+    .mbarre .actif { background: rgba(255,181,71,.2); border-color: rgba(255,181,71,.6); }
+    /* Les panneaux deviennent des feuilles qui montent du bas */
+    .guide, .panneau, .podcasts, .fiche { position: fixed !important; left: 8px !important; right: 8px !important; top: auto !important;
+      bottom: calc(70px + env(safe-area-inset-bottom)) !important; width: auto !important; max-width: none !important;
+      max-height: 58vh !important; overflow-y: auto; border-radius: 16px !important; z-index: 35;
+      background: rgba(13, 11, 22, .97) !important; animation: none !important; opacity: 1 !important; filter: none !important; letter-spacing: normal; }
+    .fiche .ep-zone { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+    .fiche .ep-zone button { flex: 1 1 auto; border: 0; border-radius: 10px; min-height: 44px; font-size: 15px !important; }
+    .guide, .panneau, .podcasts { display: none !important; }
+    body.m-guide .guide, body.m-vue .panneau, body.m-podcasts .podcasts { display: block !important; }
+    body.m-guide .fiche, body.m-vue .fiche, body.m-podcasts .fiche { display: none !important; }
+    .panneau .replier { display: none; }
+    .panneau.ferme > * { display: revert !important; }
+    .guide li, .legende li, .fiche .voisins li { padding: 9px 4px !important; font-size: 15px; }
+    .guide button, .fiche a, .fiche button, .choix button { min-height: 42px; font-size: 14px !important; padding: 8px 12px !important; }
+    .fiche h3 { font-size: 18px; }
+    .fiche .extrait { font-size: 14px; max-height: 8em; }
+    .fiche .actions { flex-wrap: wrap; }
+    .fiche .voisins { max-height: 12em; }
+    input[type=search] { font-size: 16px !important; }
+    .bulle { display: none !important; }
+  }
+  .podcasts { background: var(--panneau); border: 1px solid var(--bord); padding: 14px 16px; }
+  .podcasts h2 { margin: 0 0 4px; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+  .podcasts .doux { color: var(--doux); font-size: 12.5px; }
+  .podcasts audio { width: 100%; margin: 10px 0 6px; }
+  .podcasts ul { list-style: none; margin: 8px 0 0; padding: 0; }
+  .podcasts li { display: flex; gap: 10px; align-items: center; padding: 10px 6px; border-radius: 10px; cursor: pointer; }
+  .podcasts li.encours { background: rgba(255,181,71,.16); }
+  .podcasts li .num { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; flex: none;
+    background: rgba(255,255,255,.08); font-size: 13px; }
+  .podcasts li .t { flex: 1; font-size: 14.5px; line-height: 1.3; }
+  .podcasts li .p { color: var(--doux); font-size: 12px; white-space: nowrap; }
+  .podcasts .liens { display: flex; gap: 8px; margin-top: 10px; }
+  .podcasts .liens a { flex: 1; text-align: center; padding: 10px; border-radius: 10px; border: 1px solid var(--bord); color: var(--texte); text-decoration: none; font-size: 13px; }
+</style>
+
+<div class="podcasts" id="podcasts">
+  <h2>🎧 Podcasts</h2>
+  <div class="doux" id="pInfo">Touche un épisode : la lecture reprend là où tu t'es arrêté.</div>
+  <audio id="pLecteur" controls preload="none"></audio>
+  <div class="doux" id="pTitre"></div>
+  <ul id="pListe"></ul>
+  <div class="liens"><a href="quiz.html">✓ Passer le quiz</a><a href="index.html">Tous les épisodes</a></div>
+</div>
+
+<nav class="mbarre" id="mbarre">
+  <button data-p="guide">🧭 Guide</button>
+  <button data-p="podcasts">🎧 Podcasts</button>
+  <button data-p="vue">⚙︎ Vue</button>
+  <a href="quiz.html">✓ Quiz</a>
+</nav>
+
+<script>
+(() => {
+  const tactile = matchMedia("(max-width: 760px), (pointer: coarse)").matches;
+
+  // ---------- Barre du bas : un seul panneau ouvert à la fois ----------
+  const corps = document.body;
+  function ouvrir(nom) {
+    const deja = corps.classList.contains("m-" + nom);
+    ["guide", "vue", "podcasts"].forEach(p => corps.classList.remove("m-" + p));
+    if (!deja && nom) { corps.classList.add("m-" + nom); choisir(-1); }
+    document.querySelectorAll("#mbarre button").forEach(b => b.classList.toggle("actif", corps.classList.contains("m-" + b.dataset.p)));
+  }
+  document.querySelectorAll("#mbarre button").forEach(b => b.onclick = () => ouvrir(b.dataset.p));
+  if (tactile) { document.getElementById("panneau").classList.remove("ferme"); rotationAuto = true; }
+
+  // ---------- Toucher : zone de sélection plus large qu'à la souris ----------
+  const plusProchePC = plusProche;
+  plusProche = function (x, y) {
+    if (!tactile) return plusProchePC(x, y);
+    let meilleur = -1, d0 = 30 * 30;
+    for (let i = 0; i < N; i++) {
+      if (ecran[i * 3 + 2] <= 0 || !visible(i)) continue;
+      const dx = ecran[i * 3] - x, dy = ecran[i * 3 + 1] - y, d = dx * dx + dy * dy;
+      if (d < d0) { d0 = d; meilleur = i; }
+    }
+    return meilleur;
+  };
+
+  // ---------- Fiche : lire la note sur le téléphone + écouter son épisode ----------
+  const choisirPC = choisir;
+  choisir = function (i) {
+    if (i >= 0) ["guide", "vue", "podcasts"].forEach(p => corps.classList.remove("m-" + p));
+    document.querySelectorAll("#mbarre button").forEach(b => b.classList.toggle("actif", corps.classList.contains("m-" + b.dataset.p)));
+    choisirPC(i);
+    if (i < 0) return;
+    const n = NOTES[i], lien = document.getElementById("fOuvrir");
+    if (n.page) { lien.href = n.page; lien.textContent = "Lire la note"; lien.removeAttribute("target"); }
+    else { lien.removeAttribute("href"); lien.textContent = "Note non publiée"; }
+    let zone = document.getElementById("fEpisodes");
+    if (!zone) { zone = document.createElement("div"); zone.id = "fEpisodes"; zone.className = "ep-zone";
+      document.getElementById("fMeta").after(zone); }
+    zone.innerHTML = "";
+    (n.episodes || []).forEach(ep => {
+      const b = document.createElement("button"); b.className = "ep-btn";
+      b.textContent = "▶ Écouter l'épisode " + ep.numero;
+      b.onclick = () => { ouvrir("podcasts"); jouer(ep.id); };
+      zone.appendChild(b);
+    });
+  };
+
+  // ---------- Guide téléphone : quiz du jour et prochain épisode ----------
+  // (Les fiches Semaine publiées sont une copie : leurs cases ne suivent pas ton PC, donc le guide n'en parle pas ici.)
+  function etatQuiz() {
+    try { return JSON.parse(localStorage.getItem("quiz-trading-v1") || "{}"); } catch (e) { return {}; }
+  }
+  function prochainEpisode() { return EP.find(e => !lire(cle(e.id) + "-fini")) || null; }
+  function aReecouter() {
+    const q = etatQuiz(), depuis = new Date(Date.now() - 14 * 864e5).toISOString(), score = {};
+    (q.historique || []).filter(h => !h.ok && h.date >= depuis).forEach(h => {
+      const ep = (QUESTIONS.find(x => x.id === h.id) || {}).episode; if (ep) score[ep] = (score[ep] || 0) + 1; });
+    return Object.entries(score).sort((a, b) => b[1] - a[1]).map(([id]) => EP.find(e => e.id === id)).filter(Boolean);
+  }
+  function quizDues() {
+    const cartes = etatQuiz().cartes || {}, auj = new Date().toISOString().slice(0, 10);
+    return QUESTIONS.filter(x => !cartes[x.id] || cartes[x.id].prochaine <= auj).length;
+  }
+  let QUESTIONS = [];
+  construireGuide = function () {
+    const segs = [], h = new Date().getHours();
+    segs.push({ texte: (h >= 18 || h < 5 ? "Bonsoir " : "Bonjour ") + (D.prenom || "") + ". Voici ton point du jour." });
+    const dues = quizDues();
+    segs.push({ texte: dues ? `Tu as ${dues} question${dues > 1 ? "s" : ""} de quiz à revoir aujourd'hui.` : "Aucune question de quiz à revoir aujourd'hui. Bien joué." });
+    const rr = aReecouter();
+    if (rr.length) segs.push({ texte: `D'après tes erreurs, réécoute en priorité l'épisode ${rr[0].numero} : ${rr[0].titre}.` });
+    const p = prochainEpisode();
+    if (p) { const pos = Number(lire(cle(p.id)) || 0);
+      segs.push({ texte: `Ton prochain épisode : le numéro ${p.numero}, ${p.titre}` + (pos > 5 ? `, à reprendre à ${Math.floor(pos / 60)} minutes.` : ".") }); }
+    else if (EP.length) segs.push({ texte: "Tu as écouté tous les épisodes." });
+    segs.push({ texte: "Une chose à la fois. Le soir, sur ton PC, applique ce que tu as appris dans le dashboard." });
+    return segs;
+  };
+  afficherGuide = function () {
+    const ol = document.getElementById("gListe"); ol.innerHTML = "";
+    document.getElementById("gSous").textContent = "Aujourd'hui sur ton téléphone";
+    const ajout = (txt, action) => { const li = document.createElement("li"); li.textContent = txt; li.onclick = action; ol.appendChild(li); };
+    const dues = quizDues();
+    ajout(dues ? `Revoir ${dues} question${dues > 1 ? "s" : ""} de quiz` : "Quiz à jour ✓", () => location.href = "quiz.html");
+    aReecouter().slice(0, 2).forEach(e => ajout(`Réécouter l'épisode ${e.numero} (erreurs au quiz)`, () => { ouvrir("podcasts"); jouer(e.id); }));
+    const p = prochainEpisode();
+    if (p) ajout(`Écouter l'épisode ${p.numero} : ${p.titre}`, () => { ouvrir("podcasts"); jouer(p.id); });
+  };
+  document.getElementById("gInfo").textContent = "Sur iPhone, la voix du guide est celle de l'appareil.";
+  document.getElementById("aide").textContent = "Glisser pour tourner, pincer pour zoomer, toucher un point pour voir la note. 🎧 Podcasts : épisodes avec reprise de lecture.";
+
+  // ---------- Podcasts avec reprise de lecture ----------
+  const lecteur = document.getElementById("pLecteur");
+  let EP = [], courant = null, dernierSauve = 0;
+  const cle = id => "lv-pos-" + id;
+  const lire = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+  const ecrire = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
+  const mmss = s => Math.floor(s / 60) + " min " + String(Math.floor(s % 60)).padStart(2, "0");
+  function etat(ep) {
+    if (lire(cle(ep.id) + "-fini")) return "écouté ✓";
+    const p = Number(lire(cle(ep.id)) || 0);
+    return p > 5 ? "reprise à " + mmss(p) : mmss(ep.duree || 0);
+  }
+  function liste() {
+    const ul = document.getElementById("pListe"); ul.innerHTML = "";
+    EP.forEach(ep => {
+      const li = document.createElement("li"); if (courant === ep.id) li.className = "encours";
+      li.innerHTML = `<span class="num">${ep.numero}</span><span class="t"></span><span class="p"></span>`;
+      li.querySelector(".t").textContent = ep.titre; li.querySelector(".p").textContent = etat(ep);
+      li.onclick = () => jouer(ep.id); ul.appendChild(li);
+    });
+  }
+  function jouer(id) {
+    const ep = EP.find(e => e.id === id); if (!ep) return;
+    if (courant !== id) {
+      courant = id; lecteur.src = ep.audio;
+      const reprise = lire(cle(id) + "-fini") ? 0 : Number(lire(cle(id)) || 0);
+      lecteur.addEventListener("loadedmetadata", () => { if (reprise > 5) lecteur.currentTime = reprise - 3; }, { once: true });
+      document.getElementById("pTitre").textContent = "Épisode " + ep.numero + " · " + ep.titre;
+      if ("mediaSession" in navigator) navigator.mediaSession.metadata = new MediaMetadata({ title: ep.titre, artist: "Cerveau trading", artwork: [{ src: "couverture.png", sizes: "1400x1400", type: "image/png" }] });
+    }
+    lecteur.play().catch(() => {}); liste();
+  }
+  lecteur.addEventListener("timeupdate", () => {
+    if (!courant || Math.abs(lecteur.currentTime - dernierSauve) < 5) return;
+    dernierSauve = lecteur.currentTime; ecrire(cle(courant), String(Math.floor(lecteur.currentTime)));
+  });
+  lecteur.addEventListener("pause", () => { if (courant) { ecrire(cle(courant), String(Math.floor(lecteur.currentTime))); liste(); } });
+  lecteur.addEventListener("ended", () => { if (!courant) return; ecrire(cle(courant) + "-fini", "1"); ecrire(cle(courant), "0");
+    const k = EP.findIndex(e => e.id === courant); liste(); if (EP[k + 1]) document.getElementById("pInfo").textContent = "Épisode terminé. Suivant : " + EP[k + 1].titre; });
+  afficherGuide();
+  fetch("questions.json").then(r => r.json()).then(q => { QUESTIONS = q; afficherGuide(); }).catch(() => {});
+  fetch("episodes.json").then(r => r.json()).then(e => { EP = e; liste(); afficherGuide(); })
+    .catch(() => { document.getElementById("pInfo").textContent = "Liste des épisodes indisponible hors-ligne. Utilise Apple Podcasts."; });
+
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+})();
+</script>

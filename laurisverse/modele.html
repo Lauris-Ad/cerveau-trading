@@ -1,0 +1,925 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laurisverse</title>
+<style>
+  :root {
+    --fond: #030306;
+    --panneau: rgba(12, 10, 20, 0.72);
+    --bord: rgba(255, 255, 255, 0.10);
+    --texte: #e8e6e1;
+    --doux: #8d8a85;
+    --accent: #ffb547;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--fond); color: var(--texte);
+    font: 13px/1.45 "Segoe UI", system-ui, -apple-system, sans-serif; overflow: hidden; }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; cursor: grab; display: block; }
+  canvas.glisse { cursor: grabbing; }
+  canvas.survol { cursor: pointer; }
+
+  .entete { position: fixed; top: 20px; left: 26px; pointer-events: none; animation: apparition 2.4s ease-out both; }
+  .entete h1 { margin: 0; font-size: 30px; font-weight: 200; letter-spacing: .42em; text-transform: uppercase;
+    background: linear-gradient(90deg, #ffe7b0 0%, #ffb547 30%, #ff6f61 60%, #c27bff 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 14px rgba(255, 150, 70, .55)) drop-shadow(0 0 40px rgba(194, 123, 255, .25)); }
+  .entete .sous { color: rgba(255,255,255,.55); font-size: 11px; letter-spacing: .32em; text-transform: uppercase; margin-top: 4px; }
+  .entete .stats { color: var(--doux); font-size: 12px; margin-top: 6px; letter-spacing: .02em; }
+  @keyframes apparition { 0% { opacity: 0; transform: translateY(-6px); letter-spacing: .9em; } 100% { opacity: 1; transform: none; } }
+  .vignette { position: fixed; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%); }
+  body.cinema .panneau, body.cinema .fiche, body.cinema .entete .stats, body.cinema .bulle { display: none !important; }
+  .sortieCinema { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.35);
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase; display: none; pointer-events: none; }
+  body.cinema .sortieCinema { display: block; }
+  .cinema-btn { width: 100%; margin-top: 12px; background: linear-gradient(90deg, rgba(255,181,71,.18), rgba(194,123,255,.18));
+    border: 1px solid rgba(255,181,71,.45); color: #fff; border-radius: 6px; padding: 7px; font: inherit; font-size: 12px;
+    letter-spacing: .12em; text-transform: uppercase; cursor: pointer; }
+  .cinema-btn:hover { border-color: var(--accent); }
+
+  .panneau { position: fixed; top: 14px; right: 14px; width: 248px; max-height: calc(100% - 28px);
+    overflow-y: auto; background: var(--panneau); border: 1px solid var(--bord); border-radius: 12px;
+    padding: 12px 14px; backdrop-filter: blur(10px); box-shadow: 0 0 40px rgba(255, 140, 60, .06), inset 0 1px 0 rgba(255,255,255,.06);
+    animation: apparition 2.4s .4s ease-out both; }
+  .panneau h2 { font-size: 10.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--doux); margin: 14px 0 6px; }
+  .panneau h2:first-child { margin-top: 0; }
+  .choix { display: flex; gap: 4px; flex-wrap: wrap; }
+  .choix button { flex: 1; background: transparent; color: var(--texte); border: 1px solid var(--bord);
+    border-radius: 6px; padding: 5px 6px; font: inherit; font-size: 12px; cursor: pointer; }
+  .choix button:hover { border-color: rgba(255,255,255,.3); }
+  .choix button.actif { background: rgba(255, 181, 71, .14); border-color: var(--accent); color: #fff; }
+  label.case { display: flex; align-items: center; gap: 8px; padding: 2px 0; cursor: pointer; }
+  label.case input { accent-color: var(--accent); margin: 0; }
+  input[type=search] { width: 100%; background: rgba(255,255,255,.05); border: 1px solid var(--bord);
+    border-radius: 6px; color: var(--texte); padding: 6px 8px; font: inherit; }
+  input[type=search]:focus { outline: none; border-color: var(--accent); }
+  .legende { list-style: none; margin: 0; padding: 0; }
+  .legende li { display: flex; align-items: center; gap: 8px; padding: 3px 4px; border-radius: 5px; cursor: pointer; }
+  .legende li:hover { background: rgba(255,255,255,.05); }
+  .legende li.eteint { opacity: .35; }
+  .legende .pastille { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .legende .nom { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .legende .nb { color: var(--doux); font-variant-numeric: tabular-nums; }
+  .aide { color: var(--doux); font-size: 11.5px; margin: 10px 0 0; }
+  .replier { position: absolute; top: 8px; right: 10px; background: none; border: 0; color: var(--doux);
+    cursor: pointer; font-size: 16px; line-height: 1; }
+  .panneau.ferme > :not(.replier):not(h2:first-of-type) { display: none; }
+  .panneau.ferme { width: auto; }
+
+  .fiche { position: fixed; left: 18px; bottom: 18px; width: 340px; max-width: calc(100% - 36px);
+    background: var(--panneau); border: 1px solid var(--bord); border-radius: 10px; padding: 14px 16px;
+    backdrop-filter: blur(6px); display: none; }
+  .fiche.visible { display: block; }
+  .fiche .groupe { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+  .fiche h3 { margin: 4px 0 6px; font-size: 15px; font-weight: 600; }
+  .fiche .meta { color: var(--doux); font-size: 12px; }
+  .fiche .extrait { margin: 8px 0; color: #bdbab4; font-size: 12px; max-height: 5.5em; overflow: hidden; }
+  .fiche .tags span { display: inline-block; font-size: 11px; padding: 1px 7px; margin: 0 4px 4px 0;
+    border: 1px solid var(--bord); border-radius: 10px; color: #cfccc6; }
+  .fiche .voisins { margin: 6px 0 0; padding: 0; list-style: none; max-height: 7.5em; overflow-y: auto; }
+  .fiche .voisins li { cursor: pointer; padding: 1px 0; color: #cfccc6; }
+  .fiche .voisins li:hover { color: #fff; text-decoration: underline; }
+  .fiche .actions { display: flex; gap: 8px; margin-top: 10px; }
+  .fiche a, .fiche button { font: inherit; font-size: 12px; color: #111; background: var(--accent);
+    border: 0; border-radius: 6px; padding: 6px 10px; text-decoration: none; cursor: pointer; }
+  .fiche button.discret { background: transparent; color: var(--doux); border: 1px solid var(--bord); }
+
+  .guide { position: fixed; top: 112px; left: 22px; width: 310px; max-height: calc(100% - 330px); overflow-y: auto;
+    background: var(--panneau); border: 1px solid var(--bord); border-radius: 12px; padding: 12px 14px;
+    backdrop-filter: blur(10px); animation: apparition 2.4s .6s ease-out both; }
+  .guide-tete { display: flex; align-items: center; gap: 10px; }
+  .guide-tete b { flex: 1; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; }
+  .orbe { width: 16px; height: 16px; border-radius: 50%; flex: none;
+    background: radial-gradient(circle at 35% 35%, #fff 0%, #ffb547 35%, #c27bff 80%); box-shadow: 0 0 10px rgba(255,181,71,.6); }
+  body.parle .orbe { animation: pulsation .9s ease-in-out infinite; }
+  @keyframes pulsation { 0%,100% { transform: scale(1); box-shadow: 0 0 10px rgba(255,181,71,.6); } 50% { transform: scale(1.35); box-shadow: 0 0 26px rgba(255,140,90,.95), 0 0 50px rgba(194,123,255,.5); } }
+  .guide button { font: inherit; font-size: 12px; border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+  .guide #gEcouter { background: linear-gradient(90deg, #ffb547, #ff6f61); color: #1a1008; border: 0; font-weight: 600; }
+  .guide #gStop { background: transparent; color: var(--doux); border: 1px solid var(--bord); }
+  .guide .sous-titre { color: var(--doux); font-size: 12px; margin: 8px 0 6px; }
+  .guide ol { margin: 0; padding-left: 20px; }
+  .guide li { padding: 3px 2px; cursor: pointer; color: #d9d6d0; border-radius: 4px; }
+  .guide li:hover { color: #fff; background: rgba(255,255,255,.05); }
+  .guide li.dit { color: #fff; background: rgba(255, 181, 71, .16); }
+  .guide .reglages { display: flex; gap: 8px; align-items: center; margin-top: 10px; color: var(--doux); font-size: 11.5px; }
+  .guide select { flex: 1; min-width: 0; background: rgba(255,255,255,.05); color: var(--texte); border: 1px solid var(--bord); border-radius: 6px; padding: 4px; font: inherit; font-size: 11.5px; }
+  .guide select option { background: #15121f; }
+  .guide input[type=range] { width: 70px; accent-color: var(--accent); }
+  .guide .info { color: var(--doux); font-size: 11.5px; margin-top: 8px; }
+  body.cinema .guide { display: none; }
+  .reveil { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 30; cursor: pointer;
+    background: radial-gradient(ellipse at center, rgba(20,12,30,.35), rgba(3,2,8,.75)); }
+  body.attend .reveil { display: flex; }
+  .reveil div { display: flex; align-items: center; gap: 14px; padding: 18px 26px; border-radius: 14px; font-size: 17px;
+    background: var(--panneau); border: 1px solid var(--bord); box-shadow: 0 0 40px rgba(255,181,71,.25); }
+  .reveil .orbe { width: 22px; height: 22px; animation: pulsation 1.4s ease-in-out infinite; }
+
+  .bulle { position: fixed; pointer-events: none; background: rgba(0,0,0,.8); border: 1px solid var(--bord);
+    border-radius: 5px; padding: 3px 8px; font-size: 12px; white-space: nowrap; display: none; }
+</style>
+</head>
+<body>
+<canvas id="toile"></canvas>
+<div class="vignette"></div>
+
+<div class="entete">
+  <h1>Laurisverse</h1>
+  <div class="sous" id="titre">l'univers de mes notes</div>
+  <div class="stats" id="stats"></div>
+</div>
+<div class="guide" id="guide">
+  <div class="guide-tete"><span class="orbe"></span><b>Mon guide</b>
+    <button id="gEcouter">▶ Écouter</button><button id="gStop" title="Arrêter">■</button></div>
+  <div class="sous-titre" id="gSous"></div>
+  <ol id="gListe"></ol>
+  <div class="reglages"><select id="gVoix" title="Voix"></select>
+    <span>vitesse</span><input type="range" id="gVitesse" min="0.7" max="1.4" step="0.05" value="1"></div>
+  <div class="info" id="gInfo"></div>
+</div>
+<div class="sortieCinema">Mode cinéma · Échap ou clic droit pour revenir</div>
+
+<aside class="panneau" id="panneau">
+  <button class="replier" id="replier" title="Replier le panneau">–</button>
+  <h2>Vue</h2>
+  <div class="choix" id="choixVue">
+    <button data-v="cerveau" class="actif">Cerveau</button>
+    <button data-v="reseau">Réseau</button>
+    <button data-v="colonne">Colonne</button>
+  </div>
+  <h2>Regrouper par</h2>
+  <div class="choix" id="choixGroupe">
+    <button data-g="dossier" class="actif">Dossier</button>
+    <button data-g="type">Type</button>
+    <button data-g="tag">Tag</button>
+  </div>
+  <h2>Affichage</h2>
+  <label class="case"><input type="checkbox" id="cLiens" checked> Liens entre notes</label>
+  <label class="case"><input type="checkbox" id="cPoussiere" checked> Nuage (taille = longueur)</label>
+  <label class="case"><input type="checkbox" id="cEtiquettes" checked> Noms des groupes</label>
+  <label class="case"><input type="checkbox" id="cRotation" checked> Rotation automatique</label>
+  <label class="case"><input type="checkbox" id="cRepli"> Dater les notes sans date (date du fichier)</label>
+  <h2>Chercher</h2>
+  <input type="search" id="recherche" placeholder="Titre, tag, mot…">
+  <button class="cinema-btn" id="cinema">✦ Mode cinéma</button>
+  <h2>Groupes</h2>
+  <ul class="legende" id="legende"></ul>
+  <p class="aide" id="aide"></p>
+</aside>
+
+<div class="reveil" id="reveil"><div><span class="orbe"></span>C'est l'heure de ton point du jour. Clique n'importe où pour écouter.</div></div>
+
+<div class="fiche" id="fiche">
+  <div class="groupe" id="fGroupe"></div>
+  <h3 id="fTitre"></h3>
+  <div class="meta" id="fMeta"></div>
+  <div class="tags" id="fTags"></div>
+  <div class="extrait" id="fExtrait"></div>
+  <div class="meta" id="fVoisinsTitre"></div>
+  <ul class="voisins" id="fVoisins"></ul>
+  <div class="actions">
+    <a id="fOuvrir" href="#">Ouvrir dans Obsidian</a>
+    <button class="discret" id="fFermer">Fermer</button>
+  </div>
+</div>
+<div class="bulle" id="bulle"></div>
+
+<script>
+const DONNEES = /*__DONNEES__*/null;
+
+// ---------- Données de démonstration si la page est ouverte sans le script Python ----------
+const D = DONNEES || (() => {
+  const dossiers = ["Leçons", "Journal", "Programme", "Idées", "Wallets"];
+  const notes = [];
+  for (let i = 0; i < 60; i++) {
+    const d = dossiers[i % 5];
+    notes.push({ id: i, nom: "Note " + i, titre: "Note de démo " + i, chemin: d + "/Note " + i + ".md",
+      dossier: d, type: null, tags: [], date: i % 7 ? "2026-" + String(9 + (i % 3)).padStart(2, "0") + "-" + String(1 + (i % 28)).padStart(2, "0") : null,
+      modif: "2026-11-13", mots: 50 + (i * 37) % 900, extrait: "Données de démonstration." });
+  }
+  const liens = notes.slice(1).map(n => [n.id, (n.id * 7) % n.id]);
+  return { coffre: "Démo", genere: "", notes, liens };
+})();
+
+const NOTES = D.notes, LIENS = D.liens;
+const N = NOTES.length;
+
+// ---------- Utilitaires ----------
+function hash(i, s) { // nombre pseudo-aléatoire stable entre 0 et 1
+  let x = (i + 1) * 374761393 + s * 668265263;
+  x = (x ^ (x >>> 13)) * 1274126177;
+  return ((x ^ (x >>> 16)) >>> 0) / 4294967296;
+}
+function gauss(i, s) {
+  const u = Math.max(1e-6, hash(i, s)), v = hash(i, s + 101);
+  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+}
+const PALETTE = ["#ff4d3d", "#ffb547", "#ffe066", "#7ee081", "#3ec7e8", "#6f8bff", "#c27bff", "#ff6fb5", "#f2f2f2", "#9be7c4", "#ff8a3d", "#a3b8ff"];
+const GRIS = "#8a8784";
+function rgb(hex) { const n = parseInt(hex.slice(1), 16); return [n >> 16, (n >> 8) & 255, n & 255]; }
+
+// Dates -> valeur entre 0 et 1 (option : les notes sans date prennent la date de modification du fichier)
+let jours, dates, jMin, jMax, tDate;
+function calculerDates() {
+  const repli = document.getElementById("cRepli").checked;
+  jours = NOTES.map(n => n.date ? Date.parse(n.date) / 864e5 : (repli && n.modif ? Date.parse(n.modif) / 864e5 : null));
+  dates = jours.filter(j => j !== null);
+  jMin = Math.min(...dates); jMax = Math.max(...dates);
+  tDate = jours.map(j => j === null ? null : (jMax > jMin ? (j - jMin) / (jMax - jMin) : 0.5));
+}
+
+// Voisins
+const voisins = NOTES.map(() => []);
+for (const [a, b] of LIENS) { voisins[a].push(b); voisins[b].push(a); }
+
+// ---------- Groupes ----------
+let modeGroupe = "dossier", groupes = [], groupeDe = new Int32Array(N), groupesEteints = new Set();
+function calculerGroupes() {
+  let cle;
+  if (modeGroupe === "dossier") cle = n => n.dossier;
+  else if (modeGroupe === "type") cle = n => n.type || "Sans type";
+  else {
+    const freq = {};
+    NOTES.forEach(n => n.tags.forEach(t => freq[t] = (freq[t] || 0) + 1));
+    cle = n => n.tags.length ? n.tags.slice().sort((a, b) => freq[b] - freq[a] || a.localeCompare(b))[0] : "Sans tag";
+  }
+  const compte = {};
+  NOTES.forEach(n => { const k = cle(n); compte[k] = (compte[k] || 0) + 1; });
+  let noms = Object.keys(compte).sort((a, b) => compte[b] - compte[a] || a.localeCompare(b, "fr"));
+  const MAX = PALETTE.length - 1;
+  const gardes = new Set(noms.slice(0, MAX));
+  const autres = noms.length > MAX;
+  groupes = noms.filter(k => gardes.has(k)).map((k, i) => ({ nom: k, nb: compte[k], couleur: PALETTE[i] }));
+  if (autres) groupes.push({ nom: "Autres", nb: noms.slice(MAX).reduce((s, k) => s + compte[k], 0), couleur: GRIS });
+  const index = Object.fromEntries(groupes.map((g, i) => [g.nom, i]));
+  NOTES.forEach((n, i) => { const k = cle(n); groupeDe[i] = gardes.has(k) ? index[k] : index["Autres"]; });
+  groupes.forEach(g => g.rgb = rgb(g.couleur));
+  groupesEteints.clear();
+}
+
+// ---------- Positions ----------
+const pos = new Float32Array(N * 3), cible = new Float32Array(N * 3);
+let etiquettes = []; // {texte, x, y, z}
+let guides = [];     // lignes de repère : liste de points [x, y, z]
+let modeVue = "cerveau";
+
+// ---------- Le cerveau ----------
+// Repère : x = gauche/droite, y = haut/bas, z = avant (+) / arrière (-).
+const DECALAGE_Y = 110;
+function plis(ux, uy, uz) { // relief des circonvolutions, entre -1 et 1 environ
+  return Math.sin(ux * 11 + 2.2 * Math.sin(uz * 7)) * Math.sin(uz * 9 + 2 * Math.sin(uy * 8)) * 0.7 + 0.3 * Math.sin(uy * 13 + ux * 5);
+}
+function surfaceCerveau(ux, uy, uz, gonfle) { // point du cortex dans la direction (ux, uy, uz)
+  let x = ux * 128, y = uy * 132, z = uz * 182;
+  if (uy < 0) y *= 0.62;                                           // dessous plus plat
+  if (uz > 0.55 && uy < 0.2) y -= 18 * (uz - 0.55);                  // lobe frontal qui descend un peu
+  if (uy < 0.1 && Math.abs(ux) > 0.45) y -= 28 * (Math.abs(ux) - 0.45) * (uz > -0.4 ? 1 : 0.3); // lobes temporaux
+  x += Math.sign(ux || 1) * 7;                                     // séparation des deux hémisphères
+  if (Math.abs(ux) < 0.14 && uy > 0) y -= 22 * (1 - Math.abs(ux) / 0.14) * uy;
+  const k = (1 + 0.035 * plis(ux, uy, uz)) * gonfle;
+  return [x * k, y * k + DECALAGE_Y, z * k];
+}
+function directionAleatoire(i, s) {
+  const uy = hash(i, s) * 2 - 1, th = hash(i, s + 1) * 2 * Math.PI, r = Math.sqrt(1 - uy * uy);
+  return [r * Math.cos(th), uy, r * Math.sin(th)];
+}
+let tranches = []; // pour chaque groupe : [début, fin] de l'avant (0) vers l'arrière (1)
+function calculerTranches() {
+  const total = groupes.reduce((a, g) => a + g.nb, 0) || 1;
+  let debut = 0;
+  tranches = groupes.map(g => { const part = Math.max(g.nb / total, 0.05); const t = [debut, debut + part]; debut += part; return t; });
+  tranches.forEach(t => { t[0] /= debut; t[1] /= debut; });
+}
+function trancheDe(uz) { const sv = (1 - uz) / 2; for (let k = 0; k < tranches.length; k++) if (sv <= tranches[k][1]) return k; return tranches.length - 1; }
+
+// Matière du cerveau (décor) : cortex coloré par région, cervelet et moelle épinière
+let matiere = { pos: new Float32Array(0), groupe: new Int16Array(0), phase: new Float32Array(0) };
+function construireMatiere() {
+  const P = [], G = [];
+  let k = 0;
+  for (let n = 0; P.length < 9000 * 3 && n < 60000; n++) {
+    const [ux, uy, uz] = directionAleatoire(n, 41);
+    if (hash(n, 43) > 0.25 + 0.75 * Math.max(0, plis(ux, uy, uz))) continue; // on garde surtout les crêtes
+    if (uy < -0.25 && hash(n, 45) < 0.65) continue;                   // dessous moins dense (pas d'anneau brillant)
+    const p = surfaceCerveau(ux, uy, uz, 0.97 + 0.05 * hash(n, 44));
+    P.push(...p); G.push(trancheDe(uz));
+  }
+  for (let n = 0; n < 1600; n++) { // cervelet
+    const [ux, uy, uz] = directionAleatoire(n, 51);
+    const strie = 1 + 0.06 * Math.sin(uy * 34);
+    P.push(ux * 78 * strie, -70 + uy * 36 * strie + DECALAGE_Y, -135 + uz * 48 * strie); G.push(-1);
+  }
+  for (let n = 0; n < 1400; n++) { // tronc et moelle épinière
+    const t = hash(n, 61), a = hash(n, 62) * 2 * Math.PI, r = (13 - 7 * t) * Math.sqrt(hash(n, 63));
+    P.push(Math.cos(a) * r, -40 - t * 320 + DECALAGE_Y, -62 - 34 * Math.sin(t * 2.6) + Math.sin(a) * r); G.push(-1);
+  }
+  for (let n = 0; n < 500; n++) { // fines ramifications nerveuses
+    const t = hash(n, 71), cote = hash(n, 72) < 0.5 ? -1 : 1, niveau = Math.floor(hash(n, 73) * 7);
+    const y0 = -90 - niveau * 38, d = t * (40 + 30 * hash(niveau, 74));
+    P.push(cote * (8 + d), y0 - d * 0.6 + gauss(n, 75) * 2 + DECALAGE_Y, -62 - 34 * Math.sin(((90 + niveau * 38 - 40) / 320) * 2.6) + gauss(n, 76) * 3); G.push(-1);
+  }
+  matiere = { pos: new Float32Array(P), groupe: Int16Array.from(G), phase: Float32Array.from(G.map((_, i) => hash(i, 77) * 6.283)) };
+}
+
+function dispositionCerveau() {
+  etiquettes = []; guides = [];
+  calculerTranches();
+  NOTES.forEach((n, i) => {
+    const [t0, t1] = tranches[groupeDe[i]];
+    let dir = null;
+    for (let essai = 0; essai < 80 && !dir; essai++) {
+      const d = directionAleatoire(i * 97 + essai, 81);
+      const sv = (1 - d[2]) / 2;
+      if (sv >= t0 && sv <= t1 && d[1] > -0.25) dir = d;
+    }
+    if (!dir) { const uz = 1 - (t0 + t1); dir = [0.5, Math.sqrt(Math.max(0, 1 - uz * uz - 0.25)), uz]; }
+    const p = surfaceCerveau(dir[0], dir[1], dir[2], 1.07);
+    cible[i * 3] = p[0]; cible[i * 3 + 1] = p[1]; cible[i * 3 + 2] = p[2];
+  });
+  groupes.forEach((g, k) => { // étiquettes posées sur les côtés, en alternant gauche / droite
+    const uz = 1 - (tranches[k][0] + tranches[k][1]), cote = k % 2 ? 1 : -1;
+    const reste = Math.max(0, 1 - uz * uz), uy = Math.sqrt(reste) * 0.45, ux = cote * Math.sqrt(Math.max(0, reste - uy * uy));
+    const p = surfaceCerveau(ux, uy, uz, 1.3);
+    etiquettes.push({ texte: g.nom, x: p[0] + cote * 30, y: p[1] + ((k >> 1) % 2 ? 22 : -10), z: p[2] });
+  });
+  construireMatiere();
+}
+
+function dispositionColonne() {
+  const H = 560;
+  etiquettes = []; guides = [[[0, -H / 2, 0], [0, H / 2, 0]]];
+  const G = groupes.length;
+  const sansDate = [];
+  NOTES.forEach((n, i) => {
+    if (tDate[i] === null) { sansDate.push(i); return; }
+    const t = tDate[i];
+    const a = (groupeDe[i] / G) * 2 * Math.PI + hash(i, 1) * 0.9;
+    const r = 18 + 70 * Math.pow(1 - Math.abs(t - 0.75), 2) * (0.4 + 0.6 * hash(i, 2));
+    cible[i * 3] = Math.cos(a) * r; cible[i * 3 + 1] = -H / 2 + H * t + gauss(i, 3) * 4; cible[i * 3 + 2] = Math.sin(a) * r;
+  });
+  sansDate.forEach((i, k) => {
+    const a = hash(i, 4) * 2 * Math.PI, r = 30 + 60 * Math.sqrt(hash(i, 5));
+    cible[i * 3] = Math.cos(a) * r; cible[i * 3 + 1] = -H / 2 - 70 + gauss(i, 6) * 8; cible[i * 3 + 2] = Math.sin(a) * r;
+  });
+  if (dates.length) {
+    const fmt = j => new Date(j * 864e5).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" });
+    etiquettes.push({ texte: fmt(jMax), x: 0, y: H / 2 + 30, z: 0 });
+    etiquettes.push({ texte: fmt(jMin), x: 0, y: -H / 2 + 10, z: 0, discret: true });
+  }
+  if (sansDate.length) etiquettes.push({ texte: "Sans date (" + sansDate.length + ")", x: 0, y: -H / 2 - 120, z: 0 });
+}
+
+function dispositionReseau() {
+  etiquettes = []; guides = [];
+  const G = groupes.length;
+  // centres des groupes répartis sur une sphère
+  const centres = groupes.map((g, k) => {
+    const y = 1 - (2 * (k + 0.5)) / G, r = Math.sqrt(1 - y * y), th = k * 2.39996;
+    return [Math.cos(th) * r * 220, y * 220, Math.sin(th) * r * 220];
+  });
+  const p = new Float32Array(N * 3), v = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    const c = centres[groupeDe[i]];
+    p[i * 3] = c[0] + gauss(i, 7) * 40; p[i * 3 + 1] = c[1] + gauss(i, 8) * 40; p[i * 3 + 2] = c[2] + gauss(i, 9) * 40;
+  }
+  const iterations = Math.max(40, Math.min(300, Math.floor(3e7 / (N * N + 1))));
+  for (let it = 0; it < iterations; it++) {
+    const chaleur = 1 - it / iterations;
+    v.fill(0);
+    for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) { // répulsion
+      const dx = p[i * 3] - p[j * 3], dy = p[i * 3 + 1] - p[j * 3 + 1], dz = p[i * 3 + 2] - p[j * 3 + 2];
+      const d2 = dx * dx + dy * dy + dz * dz + 25, f = 900 / d2;
+      v[i * 3] += dx * f; v[i * 3 + 1] += dy * f; v[i * 3 + 2] += dz * f;
+      v[j * 3] -= dx * f; v[j * 3 + 1] -= dy * f; v[j * 3 + 2] -= dz * f;
+    }
+    for (const [a, b] of LIENS) { // ressorts sur les liens
+      const dx = p[b * 3] - p[a * 3], dy = p[b * 3 + 1] - p[a * 3 + 1], dz = p[b * 3 + 2] - p[a * 3 + 2];
+      const d = Math.sqrt(dx * dx + dy * dy + dz * dz) + 0.01, f = (d - 60) * 0.02 / d;
+      v[a * 3] += dx * f; v[a * 3 + 1] += dy * f; v[a * 3 + 2] += dz * f;
+      v[b * 3] -= dx * f; v[b * 3 + 1] -= dy * f; v[b * 3 + 2] -= dz * f;
+    }
+    for (let i = 0; i < N; i++) { // attraction vers le centre du groupe
+      const c = centres[groupeDe[i]];
+      for (let k = 0; k < 3; k++) {
+        v[i * 3 + k] += (c[k] - p[i * 3 + k]) * 0.03;
+        const m = Math.max(-20, Math.min(20, v[i * 3 + k]));
+        p[i * 3 + k] += m * (0.3 + 0.7 * chaleur);
+      }
+    }
+  }
+  cible.set(p);
+  groupes.forEach((g, k) => {
+    let sx = 0, sy = 0, sz = 0, c = 0, haut = -1e9;
+    for (let i = 0; i < N; i++) if (groupeDe[i] === k) { sx += p[i * 3]; sy += p[i * 3 + 1]; sz += p[i * 3 + 2]; c++; haut = Math.max(haut, p[i * 3 + 1]); }
+    if (c) etiquettes.push({ texte: g.nom, x: sx / c, y: haut + 30, z: sz / c });
+  });
+}
+
+function disposer(instantane) {
+  if (modeVue === "cerveau") dispositionCerveau();
+  else if (modeVue === "colonne") dispositionColonne();
+  else dispositionReseau();
+  if (instantane) pos.set(cible);
+  // cadrage automatique : tout doit tenir à l'écran
+  let r = modeVue === "cerveau" ? 260 : 100;
+  for (let i = 0; i < N; i++) r = Math.max(r, Math.hypot(cible[i * 3], cible[i * 3 + 1], cible[i * 3 + 2]));
+  distanceCible = Math.max(500, r * (modeVue === "cerveau" ? 3.6 : 3.1));
+  if (instantane) distance = distanceCible;
+}
+
+// ---------- Poussière (nuage de particules autour de chaque note) ----------
+let poussiere = { note: new Int32Array(0), off: new Float32Array(0), phase: new Float32Array(0), vit: new Float32Array(0) };
+function creerPoussiere() {
+  const voulu = NOTES.map(n => Math.max(40, Math.min(900, Math.round(n.mots / 1.5))));
+  eclatPoussiere = 0.6 * Math.min(1, Math.sqrt(9000 / Math.max(1, voulu.reduce((a, b) => a + b, 0))) * 1.3);
+  let total = voulu.reduce((a, b) => a + b, 0);
+  const facteur = total > 30000 ? 30000 / total : 1;
+  const nb = voulu.map(v => Math.max(3, Math.round(v * facteur)));
+  total = nb.reduce((a, b) => a + b, 0);
+  const note = new Int32Array(total), off = new Float32Array(total * 3), phase = new Float32Array(total), vit = new Float32Array(total);
+  let k = 0;
+  NOTES.forEach((n, i) => {
+    const etendue = 6 + Math.min(30, Math.sqrt(n.mots) * 0.7);
+    for (let q = 0; q < nb[i]; q++, k++) {
+      note[k] = i;
+      off[k * 3] = gauss(k, 11) * etendue; off[k * 3 + 1] = gauss(k, 12) * etendue; off[k * 3 + 2] = gauss(k, 13) * etendue;
+      phase[k] = hash(k, 14) * 6.283;
+      vit[k] = (hash(k, 15) - 0.5) * 0.9 / (0.6 + Math.hypot(off[k * 3], off[k * 3 + 2]) / etendue); // orbite : plus rapide près du cœur
+    }
+  });
+  poussiere = { note, off, phase, vit };
+}
+
+// ---------- Rendu ----------
+const toile = document.getElementById("toile"), ctx = toile.getContext("2d");
+let L = 0, Hh = 0, dpr = 1;
+function redimensionner() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  L = window.innerWidth; Hh = window.innerHeight;
+  toile.width = L * dpr; toile.height = Hh * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (typeof preparerHalo === "function" && ctx) preparerHalo();
+}
+window.addEventListener("resize", redimensionner);
+
+const sprites = {};
+function sprite(couleur) {
+  if (sprites[couleur]) return sprites[couleur];
+  const c = document.createElement("canvas"), t = 64; c.width = c.height = t;
+  const g = c.getContext("2d"), [r, v, b] = rgb(couleur);
+  const grad = g.createRadialGradient(t / 2, t / 2, 0, t / 2, t / 2, t / 2);
+  grad.addColorStop(0, "rgba(255,255,255,1)");
+  grad.addColorStop(0.15, `rgba(${r},${v},${b},0.95)`);
+  grad.addColorStop(0.45, `rgba(${r},${v},${b},0.25)`);
+  grad.addColorStop(1, `rgba(${r},${v},${b},0)`);
+  g.fillStyle = grad; g.fillRect(0, 0, t, t);
+  return (sprites[couleur] = c);
+}
+
+// Décor : étoiles (x, y, z, taille, vitesse de scintillement)
+const ETOILES = new Float32Array(2600 * 5);
+for (let k = 0; k < 2600; k++) {
+  const u = hash(k, 31) * 2 - 1, th = hash(k, 32) * 2 * Math.PI, r = Math.sqrt(1 - u * u);
+  ETOILES.set([r * Math.cos(th), u, r * Math.sin(th), hash(k, 33) < 0.93 ? 1 : 2, 0.5 + 2.5 * hash(k, 34)], k * 5);
+}
+const nebuleuses = {};
+function spriteNebuleuse(couleur) {
+  if (nebuleuses[couleur]) return nebuleuses[couleur];
+  const c = document.createElement("canvas"), t = 128; c.width = c.height = t;
+  const g = c.getContext("2d"), [r, v, b] = rgb(couleur);
+  const grad = g.createRadialGradient(t / 2, t / 2, 0, t / 2, t / 2, t / 2);
+  grad.addColorStop(0, `rgba(${r},${v},${b},0.55)`);
+  grad.addColorStop(0.35, `rgba(${r},${v},${b},0.22)`);
+  grad.addColorStop(0.7, `rgba(${r},${v},${b},0.06)`);
+  grad.addColorStop(1, `rgba(${r},${v},${b},0)`);
+  g.fillStyle = grad; g.fillRect(0, 0, t, t);
+  return (nebuleuses[couleur] = c);
+}
+let bloomA = null, bloomB = null, bloomCtxA = null, bloomCtxB = null, fondDegrade = null;
+function preparerHalo() {
+  bloomA = document.createElement("canvas"); bloomA.width = Math.max(1, Math.round(L / 4)); bloomA.height = Math.max(1, Math.round(Hh / 4));
+  bloomB = document.createElement("canvas"); bloomB.width = Math.max(1, Math.round(L / 10)); bloomB.height = Math.max(1, Math.round(Hh / 10));
+  bloomCtxA = bloomA.getContext("2d"); bloomCtxB = bloomB.getContext("2d");
+  bloomCtxA.imageSmoothingQuality = bloomCtxB.imageSmoothingQuality = "high";
+  fondDegrade = ctx.createRadialGradient(L * 0.45, Hh * 0.5, 0, L * 0.45, Hh * 0.5, Math.max(L, Hh) * 0.8);
+  fondDegrade.addColorStop(0, "#0d0a1c"); fondDegrade.addColorStop(0.5, "#06050e"); fondDegrade.addColorStop(1, "#020204");
+}
+
+let lacet = -1.1, tangage = -0.12, distance = 900, distanceCible = 900, rotationAuto = true;
+let selection = -1, survol = -1, filtre = null;
+const ecran = new Float32Array(N * 3); // x, y, échelle
+
+function projeter(x, y, z, sortie, k) {
+  const cy = Math.cos(lacet), sy = Math.sin(lacet), cp = Math.cos(tangage), sp = Math.sin(tangage);
+  const x1 = x * cy + z * sy, z1 = -x * sy + z * cy;
+  const y2 = y * cp - z1 * sp, z2 = y * sp + z1 * cp;
+  const prof = distance + z2;
+  if (prof < 20) { sortie[k] = -1e5; sortie[k + 1] = -1e5; sortie[k + 2] = 0; return; }
+  const f = Math.min(L, Hh) * 1.15 / prof;
+  sortie[k] = L / 2 - decalage + x1 * f; sortie[k + 1] = Hh / 2 - y2 * f; sortie[k + 2] = f;
+}
+
+function visible(i) {
+  if (groupesEteints.has(groupeDe[i])) return false;
+  if (filtre && !filtre.has(i)) return false;
+  return true;
+}
+
+let temps = 0, decalage = 0, melangeCerveau = 0;
+// Plus il y a de notes, plus chaque point est discret (sinon tout devient blanc)
+const eclatLiens = Math.min(1, Math.sqrt(150 / Math.max(LIENS.length, 1)) * 1.5);
+const eclatNoyau = Math.min(1, Math.sqrt(50 / Math.max(N, 1)));
+let eclatPoussiere = 0.55;
+const panneauEl = document.getElementById("panneau");
+function dessiner() {
+  temps += 1 / 60;
+  const cine = document.body.classList.contains("cinema");
+  decalage = L > 900 && !cine ? (panneauEl.classList.contains("ferme") ? 0 : 125) - 165 : 0; // panneau à droite, guide à gauche
+  if (rotationAuto && !glisse) lacet += 0.0016;
+  for (let i = 0; i < N * 3; i++) pos[i] += (cible[i] - pos[i]) * 0.08;
+  distance += (distanceCible - distance) * 0.06;
+  for (let i = 0; i < N; i++) projeter(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2], ecran, i * 3);
+
+  ctx.globalCompositeOperation = "source-over";
+  ctx.fillStyle = fondDegrade || "#030306"; ctx.fillRect(0, 0, L, Hh);
+  ctx.globalCompositeOperation = "lighter";
+
+  // Étoiles lointaines (décor) : elles tournent avec la vue pour donner la profondeur
+  {
+    const cy = Math.cos(lacet * 0.35), sy = Math.sin(lacet * 0.35), cp = Math.cos(tangage * 0.35), sp = Math.sin(tangage * 0.35);
+    const chem = [new Path2D(), new Path2D(), new Path2D()], R = Math.max(L, Hh) * 0.75;
+    for (let k = 0; k < ETOILES.length; k += 5) {
+      const x = ETOILES[k], y = ETOILES[k + 1], z = ETOILES[k + 2];
+      const x1 = x * cy + z * sy, z1 = -x * sy + z * cy, y2 = y * cp - z1 * sp, z2 = y * sp + z1 * cp;
+      if (z2 < -0.2) continue;
+      const f = R / (1.2 - z2 * 0.2);
+      const niv = Math.min(2, Math.floor((0.5 + 0.5 * Math.sin(temps * ETOILES[k + 4] + k)) * 3));
+      const s = ETOILES[k + 3];
+      chem[niv].rect(L / 2 - decalage + x1 * f, Hh / 2 - y2 * f, s, s);
+    }
+    chem.forEach((c, n) => { ctx.fillStyle = `rgba(220,225,255,${0.12 + n * 0.16})`; ctx.fill(c); });
+  }
+
+  // Nébuleuses : un grand halo coloré derrière chaque groupe
+  {
+    const t = new Float32Array(3);
+    groupes.forEach((g, k) => {
+      if (groupesEteints.has(k)) return;
+      let sx = 0, sy = 0, sz = 0, c = 0;
+      for (let i = 0; i < N; i++) if (groupeDe[i] === k) { sx += pos[i * 3]; sy += pos[i * 3 + 1]; sz += pos[i * 3 + 2]; c++; }
+      if (!c) return;
+      sx /= c; sy /= c; sz /= c;
+      let r2 = 0;
+      for (let i = 0; i < N; i++) if (groupeDe[i] === k) r2 += (pos[i * 3] - sx) ** 2 + (pos[i * 3 + 1] - sy) ** 2 + (pos[i * 3 + 2] - sz) ** 2;
+      const rayon = 70 + Math.sqrt(r2 / c) * 1.6;
+      projeter(sx, sy, sz, t, 0); if (t[2] <= 0) return;
+      const taille = rayon * 2 * t[2] * (1 + 0.06 * Math.sin(temps * 0.7 + k));
+      ctx.globalAlpha = Math.min(0.22, 0.08 + 0.025 * Math.sqrt(c));
+      ctx.drawImage(spriteNebuleuse(g.couleur), t[0] - taille / 2, t[1] - taille / 2, taille, taille);
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  // Matière du cerveau (n'apparaît qu'en vue Cerveau, avec un fondu)
+  melangeCerveau += ((modeVue === "cerveau" ? 1 : 0) - melangeCerveau) * 0.05;
+  if (melangeCerveau > 0.01 && matiere.pos.length) {
+    const t = new Float32Array(3), M = matiere.pos.length / 3;
+    const chem = groupes.map(() => [new Path2D(), new Path2D()]), neutre = [new Path2D(), new Path2D()];
+    for (let k = 0; k < M; k++) {
+      projeter(matiere.pos[k * 3], matiere.pos[k * 3 + 1], matiere.pos[k * 3 + 2], t, 0);
+      if (t[2] <= 0) continue;
+      const niv = Math.sin(temps * 1.3 + matiere.phase[k]) > 0.3 ? 1 : 0, g = matiere.groupe[k];
+      if (g >= 0 && groupesEteints.has(g)) continue;
+      const sz = Math.max(0.8, t[2] * 1.5);
+      (g < 0 ? neutre : chem[g])[niv].rect(t[0] - sz / 2, t[1] - sz / 2, sz, sz);
+    }
+    const peindre = (paire, rgbv, force) => paire.forEach((c, niv) => {
+      ctx.fillStyle = `rgba(${rgbv[0]},${rgbv[1]},${rgbv[2]},${(melangeCerveau * force * (niv ? 0.55 : 0.28)).toFixed(3)})`; ctx.fill(c);
+    });
+    chem.forEach((paire, g) => peindre(paire, groupes[g].rgb, 1));
+    peindre(neutre, [255, 196, 120], 0.9);
+  }
+
+  // Repères
+  ctx.strokeStyle = "rgba(255,255,255,0.07)"; ctx.lineWidth = 1;
+  const tg = new Float32Array(3);
+  for (const ligne of guides) {
+    ctx.beginPath();
+    ligne.forEach(([x, y, z], q) => { projeter(x, y, z, tg, 0); q ? ctx.lineTo(tg[0], tg[1]) : ctx.moveTo(tg[0], tg[1]); });
+    ctx.stroke();
+  }
+
+  // Liens
+  if (document.getElementById("cLiens").checked) {
+    ctx.lineWidth = 0.7;
+    for (const [a, b] of LIENS) {
+      const fort = selection >= 0 && (a === selection || b === selection);
+      if (!fort && (!visible(a) || !visible(b))) continue;
+      const g = groupes[groupeDe[a]].rgb;
+      ctx.strokeStyle = fort ? "rgba(255,230,180,0.75)" : `rgba(${g[0]},${g[1]},${g[2]},${((selection >= 0 ? 0.06 : 0.16) * eclatLiens).toFixed(3)})`;
+      ctx.beginPath(); ctx.moveTo(ecran[a * 3], ecran[a * 3 + 1]); ctx.lineTo(ecran[b * 3], ecran[b * 3 + 1]); ctx.stroke();
+    }
+    // Impulsions lumineuses qui voyagent le long des liens
+    LIENS.forEach(([a, b], l) => {
+      if (!visible(a) || !visible(b) || ecran[a * 3 + 2] <= 0 || ecran[b * 3 + 2] <= 0) return;
+      const fort = selection >= 0 && (a === selection || b === selection);
+      if (selection >= 0 && !fort) return;
+      const u = (temps * (0.18 + 0.2 * hash(l, 21)) + hash(l, 22)) % 1;
+      const x = ecran[a * 3] + (ecran[b * 3] - ecran[a * 3]) * u, y = ecran[a * 3 + 1] + (ecran[b * 3 + 1] - ecran[a * 3 + 1]) * u;
+      const t = (fort ? 16 : 10) * Math.sin(Math.PI * u);
+      ctx.globalAlpha = (fort ? 1 : 0.7) * eclatLiens;
+      ctx.drawImage(sprite(groupes[groupeDe[a]].couleur), x - t / 2, y - t / 2, t, t);
+    });
+    ctx.globalAlpha = 1;
+  }
+
+  // Poussière
+  if (document.getElementById("cPoussiere").checked) {
+    // Les particules sont rangées par couleur et par niveau d'éclat (4 niveaux) puis dessinées d'un coup : c'est beaucoup plus rapide.
+    const { note, off, phase, vit } = poussiere, tmp = new Float32Array(3);
+    const NIV = 4, chemins = groupes.map(() => Array.from({ length: NIV + 1 }, () => new Path2D()));
+    for (let k = 0; k < note.length; k++) {
+      const i = note[k];
+      const ang = temps * vit[k], ca = Math.cos(ang), sa = Math.sin(ang);
+      const ox = off[k * 3] * ca - off[k * 3 + 2] * sa, oz = off[k * 3] * sa + off[k * 3 + 2] * ca;
+      projeter(pos[i * 3] + ox, pos[i * 3 + 1] + off[k * 3 + 1], pos[i * 3 + 2] + oz, tmp, 0);
+      if (tmp[2] <= 0 || tmp[0] < -5 || tmp[0] > L + 5 || tmp[1] < -5 || tmp[1] > Hh + 5) continue;
+      const niv = visible(i) ? Math.min(NIV - 1, Math.floor((0.5 + 0.5 * Math.sin(temps * 1.7 + phase[k])) * NIV)) : NIV;
+      const s = Math.max(0.7, tmp[2] * 1.4);
+      chemins[groupeDe[i]][niv].rect(tmp[0] - s / 2, tmp[1] - s / 2, s, s);
+    }
+    chemins.forEach((liste, g) => {
+      const [r, v, b] = groupes[g].rgb;
+      liste.forEach((ch, niv) => {
+        const a = niv === NIV ? 0.03 : eclatPoussiere * (0.35 + 0.85 * (niv + 0.5) / NIV);
+        ctx.fillStyle = `rgba(${r},${v},${b},${a.toFixed(3)})`; ctx.fill(ch);
+      });
+    });
+  }
+
+  // Noyaux des notes
+  for (let i = 0; i < N; i++) {
+    const s = ecran[i * 3 + 2]; if (s <= 0) continue;
+    const actif = visible(i);
+    const zoom = i === selection || i === survol;
+    const souffle = 1 + 0.14 * Math.sin(temps * 1.6 + i * 1.7);
+    const taille = (18 + Math.min(30, Math.sqrt(NOTES[i].mots) * 1.0)) * s * souffle * (zoom ? 1.9 : 0.45 + 0.55 * eclatNoyau);
+    const coul = groupes[groupeDe[i]].couleur;
+    ctx.globalAlpha = (actif ? (zoom ? 0.8 : eclatNoyau * eclatNoyau * 0.3) : 0.03);
+    ctx.drawImage(spriteNebuleuse(coul), ecran[i * 3] - taille * 1.2, ecran[i * 3 + 1] - taille * 1.2, taille * 2.4, taille * 2.4);
+    ctx.globalAlpha = actif ? (zoom ? 1 : eclatNoyau) : 0.12;
+    ctx.drawImage(sprite(coul), ecran[i * 3] - taille / 2, ecran[i * 3 + 1] - taille / 2, taille, taille);
+  }
+  ctx.globalAlpha = 1;
+
+  // Halo global (« bloom ») : on réduit l'image puis on la ré-agrandit par-dessus, ce qui la floute
+  if (bloomA) {
+    bloomCtxA.clearRect(0, 0, bloomA.width, bloomA.height);
+    bloomCtxA.drawImage(toile, 0, 0, bloomA.width, bloomA.height);
+    bloomCtxB.clearRect(0, 0, bloomB.width, bloomB.height);
+    bloomCtxB.drawImage(bloomA, 0, 0, bloomB.width, bloomB.height);
+    ctx.globalAlpha = 0.2 + 0.25 * eclatNoyau; ctx.drawImage(bloomA, 0, 0, L, Hh);
+    ctx.globalAlpha = 0.15 + 0.25 * eclatNoyau; ctx.drawImage(bloomB, 0, 0, L, Hh);
+    ctx.globalAlpha = 1;
+  }
+
+  // Étiquettes
+  ctx.globalCompositeOperation = "source-over";
+  if (document.getElementById("cEtiquettes").checked) {
+    const t = new Float32Array(3);
+    ctx.font = "11px Segoe UI, system-ui, sans-serif"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    for (const e of etiquettes) {
+      projeter(e.x, e.y, e.z, t, 0); if (t[2] <= 0) continue;
+      const w = ctx.measureText(e.texte).width + 12;
+      if (!e.discret) {
+        ctx.fillStyle = "rgba(0,0,0,0.65)"; ctx.fillRect(t[0] - w / 2, t[1] - 9, w, 18);
+        ctx.strokeStyle = "rgba(255,255,255,0.55)"; ctx.lineWidth = 1; ctx.strokeRect(t[0] - w / 2 + 0.5, t[1] - 8.5, w - 1, 17);
+      }
+      ctx.fillStyle = e.discret ? "rgba(255,255,255,0.4)" : "#fff"; ctx.fillText(e.texte, t[0], t[1]);
+    }
+  }
+  // Nom de la note sélectionnée
+  if (selection >= 0 && ecran[selection * 3 + 2] > 0) {
+    ctx.font = "600 12px Segoe UI, system-ui, sans-serif"; ctx.textAlign = "left"; ctx.fillStyle = "#fff";
+    ctx.fillText(NOTES[selection].titre, ecran[selection * 3] + 14, ecran[selection * 3 + 1] - 12);
+  }
+  requestAnimationFrame(dessiner);
+}
+
+// ---------- Interaction ----------
+let glisse = false, aBouge = false, dernier = null, pincement = null;
+function plusProche(x, y) {
+  let meilleur = -1, d0 = 16 * 16;
+  for (let i = 0; i < N; i++) {
+    if (ecran[i * 3 + 2] <= 0 || !visible(i)) continue;
+    const dx = ecran[i * 3] - x, dy = ecran[i * 3 + 1] - y, d = dx * dx + dy * dy;
+    if (d < d0) { d0 = d; meilleur = i; }
+  }
+  return meilleur;
+}
+const bulle = document.getElementById("bulle");
+toile.addEventListener("pointerdown", e => { glisse = true; aBouge = false; dernier = [e.clientX, e.clientY]; toile.classList.add("glisse"); toile.setPointerCapture(e.pointerId); });
+toile.addEventListener("pointermove", e => {
+  if (glisse && dernier && !pincement) {
+    const dx = e.clientX - dernier[0], dy = e.clientY - dernier[1];
+    if (Math.abs(dx) + Math.abs(dy) > 2) aBouge = true;
+    lacet += dx * 0.005; tangage = Math.max(-1.5, Math.min(1.5, tangage + dy * 0.005));
+    dernier = [e.clientX, e.clientY];
+    return;
+  }
+  survol = plusProche(e.clientX, e.clientY);
+  toile.classList.toggle("survol", survol >= 0);
+  if (survol >= 0) {
+    bulle.textContent = NOTES[survol].titre; bulle.style.display = "block";
+    bulle.style.left = (e.clientX + 14) + "px"; bulle.style.top = (e.clientY + 10) + "px";
+  } else bulle.style.display = "none";
+});
+toile.addEventListener("pointerup", e => {
+  glisse = false; toile.classList.remove("glisse");
+  if (!aBouge) choisir(plusProche(e.clientX, e.clientY));
+});
+toile.addEventListener("wheel", e => { e.preventDefault(); distanceCible = Math.max(150, Math.min(4000, distanceCible * Math.exp(e.deltaY * 0.001))); }, { passive: false });
+toile.addEventListener("touchstart", e => { if (e.touches.length === 2) pincement = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY); }, { passive: true });
+toile.addEventListener("touchmove", e => {
+  if (e.touches.length === 2 && pincement) {
+    const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    distanceCible = Math.max(150, Math.min(4000, distanceCible * pincement / d)); pincement = d; aBouge = true;
+  }
+}, { passive: true });
+toile.addEventListener("touchend", () => { pincement = null; });
+
+// ---------- Fiche de la note ----------
+const fiche = document.getElementById("fiche");
+function choisir(i) {
+  selection = i;
+  if (i < 0) { fiche.classList.remove("visible"); return; }
+  const n = NOTES[i], g = groupes[groupeDe[i]];
+  document.getElementById("fGroupe").textContent = g.nom; document.getElementById("fGroupe").style.color = g.couleur;
+  document.getElementById("fTitre").textContent = n.titre;
+  const fmtD = d => new Date(d + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+  const dateTxt = n.date ? fmtD(n.date) : "sans date (fichier modifié le " + fmtD(n.modif) + ")";
+  document.getElementById("fMeta").textContent = `${n.chemin} · ${dateTxt} · ${n.mots} mots` + (n.type ? ` · type ${n.type}` : "");
+  document.getElementById("fTags").innerHTML = "";
+  n.tags.forEach(t => { const s = document.createElement("span"); s.textContent = "#" + t; document.getElementById("fTags").appendChild(s); });
+  document.getElementById("fExtrait").textContent = n.extrait || "";
+  const ul = document.getElementById("fVoisins"); ul.innerHTML = "";
+  document.getElementById("fVoisinsTitre").textContent = voisins[i].length ? `Reliée à ${voisins[i].length} note(s) :` : "Aucun lien vers ou depuis cette note.";
+  voisins[i].forEach(j => { const li = document.createElement("li"); li.textContent = "→ " + NOTES[j].titre; li.onclick = () => choisir(j); ul.appendChild(li); });
+  document.getElementById("fOuvrir").href = "obsidian://open?vault=" + encodeURIComponent(D.coffre) + "&file=" + encodeURIComponent(n.chemin.replace(/\.md$/i, ""));
+  fiche.classList.add("visible");
+}
+document.getElementById("fFermer").onclick = () => choisir(-1);
+
+// ---------- Panneau ----------
+function majLegende() {
+  const ul = document.getElementById("legende"); ul.innerHTML = "";
+  groupes.forEach((g, k) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="pastille" style="background:${g.couleur};box-shadow:0 0 6px ${g.couleur}"></span><span class="nom"></span><span class="nb">${g.nb}</span>`;
+    li.querySelector(".nom").textContent = g.nom; li.title = "Cliquer pour masquer / afficher";
+    if (groupesEteints.has(k)) li.classList.add("eteint");
+    li.onclick = () => { groupesEteints.has(k) ? groupesEteints.delete(k) : groupesEteints.add(k); majLegende(); };
+    ul.appendChild(li);
+  });
+}
+document.querySelectorAll("#choixVue button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#choixVue button").forEach(x => x.classList.toggle("actif", x === b));
+  modeVue = b.dataset.v; disposer(false);
+  tangage = modeVue === "colonne" ? -0.12 : modeVue === "cerveau" ? -0.12 : -0.35;
+});
+document.querySelectorAll("#choixGroupe button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("#choixGroupe button").forEach(x => x.classList.toggle("actif", x === b));
+  modeGroupe = b.dataset.g; calculerGroupes(); majLegende(); disposer(false); if (selection >= 0) choisir(selection);
+});
+document.getElementById("cRotation").onchange = e => rotationAuto = e.target.checked;
+function cinema(on) {
+  document.body.classList.toggle("cinema", on);
+  if (on) { choisir(-1); rotationAuto = true; document.getElementById("cRotation").checked = true; distanceCible *= 0.85; }
+  else distanceCible /= 0.85;
+}
+document.getElementById("cinema").onclick = () => cinema(true);
+document.addEventListener("keydown", e => { if (e.key === "Escape" && document.body.classList.contains("cinema")) cinema(false); });
+toile.addEventListener("contextmenu", e => { if (document.body.classList.contains("cinema")) { e.preventDefault(); cinema(false); } });
+document.getElementById("cRepli").onchange = () => { calculerDates(); majStats(); disposer(false); };
+document.getElementById("recherche").oninput = e => {
+  const q = e.target.value.trim().toLowerCase();
+  if (!q) { filtre = null; return; }
+  filtre = new Set();
+  NOTES.forEach((n, i) => { if ((n.titre + " " + n.chemin + " " + n.tags.join(" ") + " " + n.extrait).toLowerCase().includes(q)) filtre.add(i); });
+};
+document.getElementById("replier").onclick = () => {
+  const p = document.getElementById("panneau"); p.classList.toggle("ferme");
+  document.getElementById("replier").textContent = p.classList.contains("ferme") ? "+" : "–";
+};
+
+// ---------- Guide vocal (voix du navigateur, gratuite, rien n'est envoyé sur internet) ----------
+const synthese = "speechSynthesis" in window ? window.speechSynthesis : null;
+let voixFr = [];
+function chargerVoix() {
+  if (!synthese) return;
+  voixFr = synthese.getVoices().filter(v => /^fr/i.test(v.lang));
+  const sel = document.getElementById("gVoix"), avant = sel.value;
+  sel.innerHTML = "";
+  const score = v => (/natural|online|neural/i.test(v.name) ? 3 : 0) + (/google/i.test(v.name) ? 2 : 0) + (/fr-FR/i.test(v.lang) ? 1 : 0);
+  voixFr.sort((a, b) => score(b) - score(a)).forEach((v, k) => {
+    const o = document.createElement("option"); o.value = String(k); o.textContent = v.name.replace(/^Microsoft /, "").replace(/ - .*$/, ""); sel.appendChild(o);
+  });
+  if (avant && Number(avant) < voixFr.length) sel.value = avant;
+  document.getElementById("gInfo").textContent = voixFr.length ? "" :
+    "Aucune voix française trouvée. Dans Windows : Paramètres › Heure et langue › Voix, ajoute une voix française, puis relance.";
+}
+if (synthese) { chargerVoix(); synthese.onvoiceschanged = chargerVoix; }
+
+const fmtJour = d => new Date(d + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long" });
+const pluriel = (n, mot) => n + " " + mot + (n > 1 ? "s" : "");
+function semaineCourante() {
+  return NOTES.filter(n => n.type === "semaine" && n.semaine != null && n.taches && n.taches.length)
+    .sort((a, b) => a.semaine - b.semaine)[0] || null;
+}
+function construireGuide() {
+  const segs = [], heure = new Date().getHours(), prenom = D.prenom || "";
+  segs.push({ texte: (heure >= 18 || heure < 5 ? "Bonsoir " : "Bonjour ") + prenom + ". Voici ton point du jour." });
+  const sem = semaineCourante();
+  if (sem) {
+    const reste = sem.taches.length, total = reste + (sem.faites || 0);
+    const theme = sem.titre.includes(":") ? sem.titre.split(":").slice(1).join(":").trim() : sem.titre;
+    segs.push({ texte: `Tu es en semaine ${sem.semaine} : ${theme}. Tu as coché ${sem.faites || 0} ${(sem.faites || 0) > 1 ? "tâches" : "tâche"} sur ${total}, il en reste ${reste}.`, note: sem.id });
+    sem.taches.slice(0, 3).forEach((t, k) => segs.push({ texte: (k === 0 ? "Ta prochaine tâche : " : k === 1 ? "Ensuite : " : "Puis : ") + t.texte + ".", note: sem.id, tache: k }));
+  } else {
+    segs.push({ texte: "Je ne trouve aucune case à cocher non cochée dans tes fiches Semaine. Soit tout est fait, bravo, soit il faut ajouter tes tâches sous la forme : tiret, crochets, puis le texte." });
+  }
+  const journaux = NOTES.filter(n => n.type === "journal" && n.date).sort((a, b) => a.date < b.date ? 1 : -1);
+  if (!journaux.length) segs.push({ texte: "Tu n'as encore aucune note de journal. Crée-en une aujourd'hui avec le modèle Journal du jour." });
+  else {
+    const j = journaux[0], ecart = Math.round((Date.parse(D.aujourdhui || new Date().toISOString().slice(0, 10)) - Date.parse(j.date)) / 864e5);
+    if (ecart <= 0) segs.push({ texte: "Tu as déjà écrit ton journal aujourd'hui. Bien joué.", note: j.id });
+    else if (ecart === 1) segs.push({ texte: "Ton dernier journal date d'hier. Pense à écrire celui d'aujourd'hui.", note: j.id });
+    else segs.push({ texte: `Ton dernier journal date du ${fmtJour(j.date)}, il y a ${ecart} jours. Prends cinq minutes aujourd'hui pour en écrire un, avec le modèle Journal du jour.`, note: j.id });
+  }
+  const idees = NOTES.filter(n => n.type === "idee" && n.statut === "a_trier");
+  if (idees.length) segs.push({ texte: `Tu as ${pluriel(idees.length, "idée")} de stratégie en attente de tri. Pas d'urgence : on les trie quand tu auras les bases.`, note: idees[0].id });
+  segs.push({ texte: "Une chose à la fois. Coche tes tâches dans Obsidian, puis relance le Laurisverse pour que je mette ta liste à jour." });
+  return segs;
+}
+function afficherGuide() {
+  const sem = semaineCourante(), ol = document.getElementById("gListe");
+  ol.innerHTML = "";
+  if (!sem) { document.getElementById("gSous").textContent = "Aucune tâche ouverte dans tes fiches Semaine."; return; }
+  document.getElementById("gSous").textContent = `Semaine ${sem.semaine} · ${pluriel(sem.taches.length, "tâche")} à faire`;
+  sem.taches.slice(0, 10).forEach((t, k) => {
+    const li = document.createElement("li"); li.textContent = t.texte; li.title = t.section ? "Partie : " + t.section : "";
+    li.onclick = () => parler([{ texte: t.texte + ".", note: sem.id, tache: k }]);
+    ol.appendChild(li);
+  });
+}
+function marquerTache(k) { document.querySelectorAll("#gListe li").forEach((li, j) => li.classList.toggle("dit", j === k)); }
+function parler(segs) {
+  if (!synthese) { document.getElementById("gInfo").textContent = "Ce navigateur ne sait pas parler. Ouvre le Laurisverse avec Edge ou Chrome."; return; }
+  synthese.cancel();
+  const voix = voixFr[Number(document.getElementById("gVoix").value)] || null;
+  const vitesse = Number(document.getElementById("gVitesse").value) || 1;
+  segs.forEach((seg, k) => {
+    const u = new SpeechSynthesisUtterance(seg.texte);
+    u.lang = "fr-FR"; if (voix) u.voice = voix; u.rate = vitesse;
+    u.onstart = () => { document.body.classList.add("parle"); if (seg.note != null) choisir(seg.note); marquerTache(seg.tache ?? -1); };
+    if (k === segs.length - 1) u.onend = u.onerror = () => { document.body.classList.remove("parle"); marquerTache(-1); };
+    synthese.speak(u);
+  });
+}
+document.getElementById("gEcouter").onclick = () => parler(construireGuide());
+document.getElementById("gStop").onclick = () => { if (synthese) synthese.cancel(); document.body.classList.remove("parle"); marquerTache(-1); };
+afficherGuide();
+
+// Lancement automatique : Lancer-Laurisverse-auto.bat ouvre la page avec #auto et le guide parle tout seul.
+// Si le navigateur bloque la voix sans clic, on affiche un grand bouton : un clic n'importe où suffit.
+if (location.hash === "#auto") {
+  const reveiller = () => { if (!document.body.classList.contains("attend")) return; document.body.classList.remove("attend"); parler(construireGuide()); };
+  document.getElementById("reveil").onclick = reveiller;
+  window.addEventListener("keydown", reveiller);
+  setTimeout(() => {
+    if (!synthese) { document.body.classList.add("attend"); return; }
+    chargerVoix();
+    parler(construireGuide());
+    setTimeout(() => { if (!document.body.classList.contains("parle")) { synthese.cancel(); document.body.classList.add("attend"); } }, 2500);
+  }, 3000);
+}
+
+// ---------- Démarrage ----------
+document.getElementById("titre").textContent = "l'univers de mes notes · " + D.coffre;
+function majStats() {
+  const vraies = NOTES.filter(n => n.date).length;
+  document.getElementById("stats").textContent = `${N} notes · ${LIENS.length} liens · ${vraies} datées` + (D.genere ? ` · lu le ${D.genere}` : " · données de démo");
+}
+calculerDates(); majStats();
+document.getElementById("aide").textContent = "Mon guide (en haut à gauche) lit tes tâches à voix haute. Glisser pour tourner, molette pour zoomer, cliquer un point pour voir la note. Relance Lancer-Laurisverse.bat après avoir écrit de nouvelles notes.";
+redimensionner();
+calculerGroupes(); majLegende(); creerPoussiere(); disposer(true);
+// Ouverture : tout part du centre, comme un big bang, et la caméra recule doucement
+for (let i = 0; i < N * 3; i++) pos[i] = cible[i] * 0.02;
+distance = distanceCible * 0.35;
+requestAnimationFrame(dessiner);
+</script>
+</body>
+</html>
