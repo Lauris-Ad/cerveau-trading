@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-16 08:27",
+ "maj": "2026-11-16 08:38",
  "cycles": [
   {
    "n": 1,
@@ -120,13 +120,19 @@
    "axe": "B",
    "titre": "Méthode TikTok « niveaux, flux, confirmation »",
    "dire": "J'ai analysé ta vidéo TikTok sur le gamma : le dashboard montre maintenant les niveaux à fort open interest et le flux de primes, la leçon 10 et quatre nouveaux épisodes de podcast sont en ligne, et la méthode sera testée vers la mi-décembre."
+  },
+  {
+   "n": 21,
+   "axe": "C",
+   "titre": "Cassure journalière BTC, ETH, SOL",
+   "dire": "La cassure journalière sur bitcoin, ether et solana gagnait en moyenne, mais seulement grâce à solana et pas sur la période récente : archivée, toujours aucune candidate."
   }
  ],
  "strategies": {
-  "testees": 4,
-  "archivees": 4,
+  "testees": 5,
+  "archivees": 5,
   "candidates": 0,
-  "variantes": 5
+  "variantes": 6
  },
- "prochaine": "Idée cassure hebdomadaire (horizon 1 à 4 semaines, où les coûts pèsent < 10 %), règles pré-enregistrées"
+ "prochaine": "Idée cassure hebdomadaire (la journalière est archivée au cycle 21) (horizon 1 à 4 semaines, où les coûts pèsent < 10 %), règles pré-enregistrées"
 }
