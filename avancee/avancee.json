@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-16 10:42",
+ "maj": "2026-11-16 13:25",
  "cycles": [
   {
    "n": 1,
@@ -138,6 +138,12 @@
    "axe": "B",
    "titre": "Leçon 12 « Suivre une tendance : pourquoi c'est dur »",
    "dire": "La leçon 12 explique pourquoi suivre une tendance marche sur un siècle de données mais reste dur en vrai, et pourquoi nos deux cassures ont échoué ; l'épisode 12 est en ligne."
+  },
+  {
+   "n": 24,
+   "axe": "A",
+   "titre": "Humeur du marché et calendrier macro dans le dashboard",
+   "dire": "Le dashboard aura bientôt une carte « humeur du marché », calme, tendance ou panique, et le calendrier des prochaines annonces de la Fed, de l'inflation et de l'emploi."
   }
  ],
  "strategies": {
