@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-13 16:29",
+ "maj": "2026-11-16 07:54",
  "cycles": [
   {
    "n": 1,
@@ -108,6 +108,12 @@
    "axe": "A",
    "titre": "Rendu du dashboard",
    "dire": "Le dashboard a un nouvel onglet Stratégies, et il s'affiche bien sur téléphone."
+  },
+  {
+   "n": 19,
+   "axe": "A",
+   "titre": "Moteur de paper trading (marche 4)",
+   "dire": "Le paper trading est prêt : il rejouera les stratégies en argent fictif toutes les 15 minutes et mesurera le vrai prix d'exécution. Pense à double-cliquer sur Installer-paper-trade dans le dossier Outil."
   }
  ],
  "strategies": {
