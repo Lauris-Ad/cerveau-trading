@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-16 14:58",
+ "maj": "2026-11-16 19:38",
  "cycles": [
   {
    "n": 1,
@@ -150,13 +150,19 @@
    "axe": "B",
    "titre": "Point d'étape (cycles 16 à 25)",
    "dire": "Point d'étape : cinq idées testées, aucune n'a passé le backtest, mais on sait maintenant pourquoi : les coûts sur les petits horizons, et des gains qui ne venaient que d'un seul contexte. Prochaines idées : la cassure seulement en tendance, puis la cassure hebdomadaire."
+  },
+  {
+   "n": 26,
+   "axe": "C",
+   "titre": "Cassure journalière seulement en tendance (8 cryptos)",
+   "dire": "La cassure journalière seulement en tendance, testée sur huit cryptos, gagne en moyenne 1,3 % par trade mais sa statistique t n'est que de 1,5 : le hasard peut encore l'expliquer, donc elle est archivée, sans retouche."
   }
  ],
  "strategies": {
-  "testees": 5,
-  "archivees": 5,
+  "testees": 6,
+  "archivees": 6,
   "candidates": 0,
-  "variantes": 6
+  "variantes": 7
  },
  "prochaine": "Idée cassure hebdomadaire (la journalière est archivée au cycle 21) (horizon 1 à 4 semaines, où les coûts pèsent < 10 %), règles pré-enregistrées"
 }
