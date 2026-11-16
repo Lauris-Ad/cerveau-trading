@@ -144,6 +144,12 @@
    "axe": "A",
    "titre": "Humeur du marché et calendrier macro dans le dashboard",
    "dire": "Le dashboard aura bientôt une carte « humeur du marché », calme, tendance ou panique, et le calendrier des prochaines annonces de la Fed, de l'inflation et de l'emploi."
+  },
+  {
+   "n": 25,
+   "axe": "B",
+   "titre": "Point d'étape (cycles 16 à 25)",
+   "dire": "Point d'étape : cinq idées testées, aucune n'a passé le backtest, mais on sait maintenant pourquoi : les coûts sur les petits horizons, et des gains qui ne venaient que d'un seul contexte. Prochaines idées : la cassure seulement en tendance, puis la cassure hebdomadaire."
   }
  ],
  "strategies": {
