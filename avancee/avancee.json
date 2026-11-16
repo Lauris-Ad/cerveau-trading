@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-16 08:38",
+ "maj": "2026-11-16 08:52",
  "cycles": [
   {
    "n": 1,
@@ -126,6 +126,12 @@
    "axe": "C",
    "titre": "Cassure journalière BTC, ETH, SOL",
    "dire": "La cassure journalière sur bitcoin, ether et solana gagnait en moyenne, mais seulement grâce à solana et pas sur la période récente : archivée, toujours aucune candidate."
+  },
+  {
+   "n": 22,
+   "axe": "C",
+   "titre": "Contexte macro et régimes de marché",
+   "dire": "J'ai marqué 139 grands événements, Fed, inflation, emploi et chocs, et découpé les résultats en marché calme, tendance et panique : la cassure 4 heures ne gagnait que pendant les annonces, la cassure journalière seulement en tendance. La leçon 11 sur le contexte macro est en ligne."
   }
  ],
  "strategies": {

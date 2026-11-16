@@ -460,5 +460,61 @@
 "episode": "e10",
 "q": "La vidéo prouve-t-elle que la méthode gagne de l'argent ? Que faut-il ?",
 "r": "Non, aucun chiffre. Il faut des règles écrites à l'avance, un backtest d'au moins 100 trades avec 0,30 % de coûts, puis hors échantillon et paper trade."
+},
+{
+"id": "l11-q1",
+"lecon": "11",
+"episode": "e11",
+"q": "Cite trois rendez-vous programmés qui font bouger les marchés, et qui les publie.",
+"r": "Décision de taux de la Fed (Réserve fédérale), inflation CPI et emploi (BLS), décision de taux de la BCE."
+},
+{
+"id": "l11-q2",
+"lecon": "11",
+"episode": "e11",
+"q": "À quelle heure de Paris tombent les chiffres d'inflation américains en hiver ?",
+"r": "14 h 30 (8 h 30 à New York)."
+},
+{
+"id": "l11-q3",
+"lecon": "11",
+"episode": "e11",
+"q": "Que montrent Savor et Wilson (2013) sur les jours d'annonce ?",
+"r": "De 1958 à 2009, +0,114 % par jour d'annonce (inflation, chômage, taux) contre +0,011 % les autres jours ; plus de 60 % de la prime annuelle des actions."
+},
+{
+"id": "l11-q4",
+"lecon": "11",
+"episode": "e11",
+"q": "Qu'est-ce que le « pre-FOMC drift » ?",
+"r": "Les actions américaines montent en moyenne fortement juste avant les décisions programmées de la Fed (Lucca et Moench, 2015)."
+},
+{
+"id": "l11-q5",
+"lecon": "11",
+"episode": "e11",
+"q": "Quels sont nos trois régimes, et comment reconnaît-on la panique ?",
+"r": "Calme, tendance, panique. Panique : volatilité sur 20 jours dans ses 20 % les plus hautes et prix en baisse sur 20 jours."
+},
+{
+"id": "l11-q6",
+"lecon": "11",
+"episode": "e11",
+"q": "Pourquoi une stratégie qui ne gagne qu'en régime calme est-elle fragile ?",
+"r": "Son gain peut venir du hasard d'une seule période ; elle peut s'arrêter dès que le marché change d'humeur."
+},
+{
+"id": "l11-q7",
+"lecon": "11",
+"episode": "e11",
+"q": "Quelles sont les deux conditions du contrôle « contexte » ?",
+"r": "Espérance > 0 hors des fenêtres d'événements, et espérance > 0 dans au moins 2 régimes ayant chacun ≥ 20 trades."
+},
+{
+"id": "l11-q8",
+"lecon": "11",
+"episode": "e11",
+"q": "Pourquoi la cassure 4 h aurait-elle échoué au contrôle contexte ?",
+"r": "Son gain venait des trades exposés aux événements (+0,67 %) ; hors événements elle perdait (−0,08 %), et elle ne gagnait qu'en calme."
 }
 ]
