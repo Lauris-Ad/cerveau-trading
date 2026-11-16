@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-16 08:52",
+ "maj": "2026-11-16 10:42",
  "cycles": [
   {
    "n": 1,
@@ -132,6 +132,12 @@
    "axe": "C",
    "titre": "Contexte macro et régimes de marché",
    "dire": "J'ai marqué 139 grands événements, Fed, inflation, emploi et chocs, et découpé les résultats en marché calme, tendance et panique : la cassure 4 heures ne gagnait que pendant les annonces, la cassure journalière seulement en tendance. La leçon 11 sur le contexte macro est en ligne."
+  },
+  {
+   "n": 23,
+   "axe": "B",
+   "titre": "Leçon 12 « Suivre une tendance : pourquoi c'est dur »",
+   "dire": "La leçon 12 explique pourquoi suivre une tendance marche sur un siècle de données mais reste dur en vrai, et pourquoi nos deux cassures ont échoué ; l'épisode 12 est en ligne."
   }
  ],
  "strategies": {

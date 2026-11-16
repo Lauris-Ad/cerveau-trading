@@ -516,5 +516,47 @@
 "episode": "e11",
 "q": "Pourquoi la cassure 4 h aurait-elle échoué au contrôle contexte ?",
 "r": "Son gain venait des trades exposés aux événements (+0,67 %) ; hors événements elle perdait (−0,08 %), et elle ne gagnait qu'en calme."
+},
+{
+"id": "l12-q1",
+"lecon": "12",
+"episode": "e12",
+"q": "Quelle différence entre momentum de série temporelle et cassure de canal ?",
+"r": "Le momentum regarde le rendement passé du marché (ex. 12 mois) ; la cassure achète quand le prix dépasse son plus haut des N dernières bougies. Les deux misent sur la continuation."
+},
+{
+"id": "l12-q2",
+"lecon": "12",
+"episode": "e12",
+"q": "Sur combien de marchés et quels horizons Moskowitz, Ooi et Pedersen (2012) trouvent-ils la persistance ?",
+"r": "58 marchés à terme liquides ; persistance de 1 à 12 mois, puis inversion partielle."
+},
+{
+"id": "l12-q3",
+"lecon": "12",
+"episode": "e12",
+"q": "Qu'ont trouvé Lempérière et al. (2014) sur les tendances courtes et longues ?",
+"r": "Les tendances longues ne faiblissent pas ; les tendances courtes ont nettement faibli."
+},
+{
+"id": "l12-q4",
+"lecon": "12",
+"episode": "e12",
+"q": "Pourquoi une stratégie de tendance peut-elle être bonne avec 42 % de trades gagnants ?",
+"r": "Ses gains moyens sont plus gros que ses pertes : elle coupe vite les pertes et laisse courir les gains."
+},
+{
+"id": "l12-q5",
+"lecon": "12",
+"episode": "e12",
+"q": "Pourquoi 3 cryptos ne suffisent-elles pas à diversifier une stratégie de tendance ?",
+"r": "Elles bougent souvent ensemble ; les études utilisent des dizaines de marchés de classes différentes."
+},
+{
+"id": "l12-q6",
+"lecon": "12",
+"episode": "e12",
+"q": "Pourquoi la cassure 4 h partait-elle avec un handicap ?",
+"r": "Tendance très courte (celles qui ont faibli) et coûts de 0,30 % lourds face au mouvement médian de 0,38 % sur 4 h."
 }
 ]
