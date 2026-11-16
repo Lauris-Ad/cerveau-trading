@@ -34,6 +34,7 @@ label{display:flex;gap:8px;align-items:center;margin:6px 0}
 <div class="doux" id="resume">Chargement…</div>
 
 <div class="carte" id="zone"></div>
+<div class="carte" id="progression" style="display:none"></div>
 
 <div class="carte">
   <b>À réécouter en priorité</b>
@@ -58,7 +59,7 @@ label{display:flex;gap:8px;align-items:center;margin:6px 0}
 <script>
 const INTERVALLES = [0, 1, 3, 7, 16, 35]; // jours, selon la boîte (Leitner)
 const CLE = "quiz-trading-v1";
-let Q = [], EP = [], etat = {cartes:{}, ecoutes:{}, historique:[]}, courante = null;
+let Q = [], EP = [], PROG = null, etat = {cartes:{}, ecoutes:{}, historique:[]}, courante = null;
 
 function charger(){ try{ const s = localStorage.getItem(CLE); if(s) etat = Object.assign(etat, JSON.parse(s)); }catch(e){} }
 function sauver(){ try{ localStorage.setItem(CLE, JSON.stringify(etat)); }catch(e){} }
@@ -94,7 +95,19 @@ function afficher(){
       document.getElementById("non").onclick = () => noter(false);
     };
   }
-  listeReecoute(); listeEcoutes();
+  listeReecoute(); listeEcoutes(); afficherProgression();
+}
+
+function afficherProgression(){
+  const z = document.getElementById("progression");
+  if(!PROG) return;
+  const l = PROG.lecon_en_cours, qs = Q.filter(q=>q.lecon===l);
+  if(!qs.length) return;
+  const ok = qs.filter(q=>carte(q.id).boite>=2).length;
+  z.style.display = "";
+  z.innerHTML = ok===qs.length
+    ? `<b>Leçon ${l} validée ✓</b><div class="doux">Toutes ses questions sont acquises. Dis-moi « leçon ${l} validée » (ou écris maitrise: ok dans la leçon Obsidian) : le prochain épisode se débloquera dans ton podcast.</div>`
+    : `<b>Leçon en cours : ${l}</b> · ${ok}/${qs.length} questions acquises<div class="doux">Une question est acquise quand tu la sais deux jours différents. À 100 %, l'épisode suivant se débloque.</div>`;
 }
 
 function noter(ok){
@@ -136,8 +149,8 @@ document.getElementById("importer").onclick = () => {
 };
 
 charger();
-Promise.all([fetch("questions.json").then(r=>r.json()), fetch("episodes.json").then(r=>r.json()).catch(()=>[])])
-  .then(([q,e])=>{ Q=q; EP=e; afficher(); })
+Promise.all([fetch("questions.json").then(r=>r.json()), fetch("episodes.json").then(r=>r.json()).catch(()=>[]), fetch("progression.json").then(r=>r.json()).catch(()=>null)])
+  .then(([q,e,p])=>{ Q=q; EP=e; PROG=p; afficher(); })
   .catch(()=>{ document.getElementById("resume").textContent="Impossible de charger les questions."; });
 if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>

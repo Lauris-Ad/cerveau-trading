@@ -129,6 +129,24 @@ def couverture(destination):
     img.save(destination)
 
 
+def numero_lecon(source):
+    """'02 - Leçons/07 - Options....md' -> '07' ; None pour une fiche sans numéro."""
+    import re as _re
+    m = _re.match(r"(\d{2}) - ", Path(source).name)
+    return m.group(1) if m else None
+
+
+def debloques(episodes):
+    """Garde seulement les épisodes dont toutes les leçons numérotées sont validées ou en cours (progression.json)."""
+    f = RACINE / "progression.json"
+    if not f.exists():
+        return episodes, None
+    prog = json.loads(f.read_text(encoding="utf-8"))
+    ouvertes = set(prog["lecons_validees"]) | {prog["lecon_en_cours"]}
+    garde = [ep for ep in episodes if all(n in ouvertes for n in map(numero_lecon, ep["sources"]) if n)]
+    return garde, prog
+
+
 def construire_laurisverse(coffre, out, pages, episodes):
     """Version téléphone du Laurisverse : même moteur que sur PC, dossiers publics seulement."""
     import importlib.util
@@ -181,7 +199,10 @@ def main():
         pages[rel] = "notes/" + nom
     lecons_html = {Path(k).stem: v for k, v in pages.items() if k.startswith("02 - ")}
 
-    episodes = [lire_episode(f) for f in sorted((RACINE / "episodes").glob("e*.md"))]
+    tous = [lire_episode(f) for f in sorted((RACINE / "episodes").glob("e*.md"))]
+    episodes, prog = debloques(tous)
+    print(f"::notice title=Progression::{len(episodes)}/{len(tous)} épisodes débloqués"
+          + (f", leçon en cours {prog['lecon_en_cours']}" if prog else ""))
     items, blocs, catalogue = [], [], []
     for ep in episodes:
         mp3 = out / "audio" / f"{ep['id']}.mp3"
@@ -231,10 +252,16 @@ def main():
     (out / "episodes.json").write_text(json.dumps(catalogue, ensure_ascii=False), encoding="utf-8")
     (out / "index.html").write_text(page(TITRE, f"<h1>{TITRE}</h1><p>{html.escape(RESUME)}</p>"
         f'<p><a href="laurisverse.html"><b>Laurisverse</b></a> · <a href="quiz.html"><b>Passer le quiz</b></a> · Flux podcast : <code>{base}feed.xml</code></p>'
-        + "".join(blocs)), encoding="utf-8")
+        + "".join(blocs) + (f'<p class="doux">🔒 {len(tous) - len(episodes)} épisode(s) à venir : '
+        f'ils se débloquent quand tu valides la leçon {prog["lecon_en_cours"]} dans le quiz.</p>' if prog and len(tous) > len(episodes) else "")),
+        encoding="utf-8")
     for f in ["quiz.html", "sw.js", "manifest.webmanifest"]:
         shutil.copy(RACINE / "web" / f, out / f)
-    shutil.copy(RACINE / "quiz" / "questions.json", out / "questions.json")
+    ids = {ep["id"] for ep in episodes}
+    questions = [q for q in json.loads((RACINE / "quiz" / "questions.json").read_text(encoding="utf-8")) if q["episode"] in ids]
+    (out / "questions.json").write_text(json.dumps(questions, ensure_ascii=False, indent=0), encoding="utf-8")
+    if prog:
+        (out / "progression.json").write_text(json.dumps(prog, ensure_ascii=False), encoding="utf-8")
     if (RACINE / "avancee" / "avancee.json").exists():      # avancée du projet, lue par le Laurisverse du téléphone
         shutil.copy(RACINE / "avancee" / "avancee.json", out / "avancee.json")
     for ep in catalogue:
