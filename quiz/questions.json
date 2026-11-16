@@ -254,155 +254,211 @@
 {
 "id": "fbt-q1",
 "lecon": "Fiche backtest",
-"episode": null,
+"episode": "e08",
 "q": "Pourquoi entre-t-on à l'ouverture de la bougie suivante dans un backtest ?",
 "r": "Parce que le signal n'est connu qu'à la clôture : utiliser ce prix-là, c'est regarder le futur."
 },
 {
 "id": "fbt-q2",
 "lecon": "Fiche backtest",
-"episode": null,
+"episode": "e08",
 "q": "Un test donne +0,20 % brut par trade. Que vaut-il net avec nos coûts ?",
 "r": "-0,10 % : on retire 0,30 % par aller-retour (2 × 0,10 % de frais + 2 × 0,05 % de slippage)."
 },
 {
 "id": "fbt-q3",
 "lecon": "Fiche backtest",
-"episode": null,
+"episode": "e08",
 "q": "Stop et objectif touchés dans la même bougie : que compte-t-on ?",
 "r": "Le stop, par prudence : on ne sait pas lequel est venu en premier."
 },
 {
 "id": "fbt-q4",
 "lecon": "Fiche backtest",
-"episode": null,
+"episode": "e08",
 "q": "À quoi servent les 30 % hors échantillon ?",
 "r": "À juger une seule fois la variante choisie sur des données jamais vues. Un seul essai."
 },
 {
 "id": "fbt-q5",
 "lecon": "Fiche backtest",
-"episode": null,
+"episode": "e08",
 "q": "J'ai testé 12 variantes d'une idée. Quel t minimal exige notre règle ?",
 "r": "3,0 (de 11 à 30 variantes)."
 },
 {
 "id": "fbt-q6",
 "lecon": "Fiche backtest",
-"episode": null,
+"episode": "e08",
 "q": "Un taux de réussite de 80 % garantit-il une stratégie rentable ?",
 "r": "Non : 80 % de petits gains peuvent être effacés par 20 % de grosses pertes et les frais."
 },
 {
 "id": "fbt-q7",
 "lecon": "Fiche backtest",
-"episode": null,
+"episode": "e08",
 "q": "Que recommandent Harvey, Liu et Zhu (2016) ?",
 "r": "Exiger une statistique t supérieure à 3, et non 2, quand on a beaucoup cherché."
 },
 {
 "id": "fbt-q8",
 "lecon": "Fiche backtest",
-"episode": null,
+"episode": "e08",
 "q": "Une idée échoue au hors échantillon. Que fait-on ?",
 "r": "On l'archive avec la raison. On ne retouche pas les règles pour la faire passer."
 },
 {
 "id": "l08-q1",
 "lecon": "08",
-"episode": null,
+"episode": "e07",
 "q": "Pourquoi un contrat perpétuel a-t-il un funding rate ?",
 "r": "Il n'a pas de date de fin : le paiement entre longs et shorts le garde collé au vrai prix."
 },
 {
 "id": "l08-q2",
 "lecon": "08",
-"episode": null,
+"episode": "e07",
 "q": "Funding positif : qui paie qui ?",
 "r": "Les longs paient les shorts."
 },
 {
 "id": "l08-q3",
 "lecon": "08",
-"episode": null,
+"episode": "e07",
 "q": "Quelle est la valeur « calme » du funding sur Binance ?",
 "r": "0,01 % par période de 8 h, le taux d'intérêt de base de la formule."
 },
 {
 "id": "l08-q4",
 "lecon": "08",
-"episode": null,
+"episode": "e07",
 "q": "À quelles heures de Paris tombe le funding en hiver ?",
 "r": "1 h, 9 h et 17 h (00 h, 08 h, 16 h UTC)."
 },
 {
 "id": "l08-q5",
 "lecon": "08",
-"episode": null,
+"episode": "e07",
 "q": "Différence entre volume et open interest ?",
 "r": "Le volume compte tout ce qui s'échange et repart de zéro ; l'OI compte les contrats encore ouverts."
 },
 {
 "id": "l08-q6",
 "lecon": "08",
-"episode": null,
+"episode": "e07",
 "q": "Le prix monte et l'OI baisse : lecture habituelle ?",
 "r": "Des vendeurs à découvert ferment leurs positions (rachat de shorts)."
 },
 {
 "id": "l08-q7",
 "lecon": "08",
-"episode": null,
+"episode": "e07",
 "q": "Pourquoi notre historique d'OI ne fait-il qu'un mois ?",
 "r": "L'API Binance ne fournit que le dernier mois ; il faut relancer le téléchargement régulièrement."
 },
 {
 "id": "l08-q8",
 "lecon": "08",
-"episode": null,
+"episode": "e07",
 "q": "Funding très positif depuis 2 semaines : signal de vente ?",
 "r": "Non, c'est une mesure de foule. Il faudrait une fiche, des critères figés et un backtest."
 },
 {
 "id": "l09-q1",
 "lecon": "09",
-"episode": null,
+"episode": "e08",
 "q": "Différence entre maker et taker ?",
 "r": "Maker : ordre qui attend dans le carnet (ordre limite). Taker : ordre exécuté tout de suite (ordre au marché)."
 },
 {
 "id": "l09-q2",
 "lecon": "09",
-"episode": null,
+"episode": "e08",
 "q": "Combien coûte un aller-retour dans nos backtests ?",
 "r": "0,30 % : 2 × 0,10 % de frais + 2 × 0,05 % de slippage."
 },
 {
 "id": "l09-q3",
 "lecon": "09",
-"episode": null,
+"episode": "e08",
 "q": "Sur BTC 1 h, le mouvement médian est de 0,20 %. Pourquoi est-ce un problème ?",
 "r": "Il est plus petit que le coût d'un aller-retour (0,30 %) : le coût en représente 154 %."
 },
 {
 "id": "l09-q4",
 "lecon": "09",
-"episode": null,
+"episode": "e08",
 "q": "À partir de quel horizon le coût pèse-t-il moins de 15 % du mouvement médian de BTC ?",
 "r": "3 jours (14 %), puis 9 % sur 1 semaine."
 },
 {
 "id": "l09-q5",
 "lecon": "09",
-"episode": null,
+"episode": "e08",
 "q": "Pourquoi un ordre limite n'est-il pas une solution gratuite ?",
 "r": "Il coûte moins cher, mais il peut ne jamais être exécuté : on rate alors le trade."
 },
 {
 "id": "l09-q6",
 "lecon": "09",
-"episode": null,
+"episode": "e08",
 "q": "Une idée fait +0,25 % brut par trade. Est-elle rentable chez nous ?",
 "r": "Non : -0,05 % net après 0,30 % de coûts."
+},
+{
+"id": "l10-q1",
+"lecon": "10",
+"episode": "e09",
+"q": "Quelles sont les trois règles de la vidéo TikTok sur le gamma ?",
+"r": "Garder les niveaux à plus fort open interest, ne pas trader contre le flux de primes, attendre une confirmation du prix."
+},
+{
+"id": "l10-q2",
+"lecon": "10",
+"episode": "e09",
+"q": "Pourquoi un strike avec un gros gamma mais peu d'open interest est-il un niveau faible ?",
+"r": "Peu de contrats ouverts derrière, donc peu de couverture réelle à ajuster quand le prix s'en approche."
+},
+{
+"id": "l10-q3",
+"lecon": "10",
+"episode": "e09",
+"q": "Que mesurent Ni, Pearson et Poteshman (2005), et sur quels jours ?",
+"r": "Les jours d'expiration, les actions avec options cotées clôturent plus souvent près d'un strike (déplacement moyen d'au moins 0,165 %)."
+},
+{
+"id": "l10-q4",
+"lecon": "10",
+"episode": "e09",
+"q": "Que veut dire « penchant puts » dans le dashboard ? Est-ce forcément baissier ?",
+"r": "Plus de primes échangées sur les puts hors de la monnaie que sur les calls. Non : on ne sait pas si ces puts ont été achetés ou vendus."
+},
+{
+"id": "l10-q5",
+"lecon": "10",
+"episode": "e09",
+"q": "Pourquoi les données de Pan et Poteshman (2006) étaient-elles plus informatives que notre flux gratuit ?",
+"r": "Elles disaient qui achetait pour ouvrir une position (données Cboe non publiques). Notre source gratuite donne le volume sans le sens."
+},
+{
+"id": "l10-q6",
+"lecon": "10",
+"episode": "e10",
+"q": "Selon Baltussen et al. (2021), que se passe-t-il quand les dealers sont courts en gamma ?",
+"r": "Leur couverture les fait acheter quand ça monte et vendre quand ça baisse : élan des prix, surtout en fin de journée."
+},
+{
+"id": "l10-q7",
+"lecon": "10",
+"episode": "e10",
+"q": "Pourquoi notre confirmation est-elle plus lente que celle de la vidéo ?",
+"r": "Données différées de 15 min, une photo toutes les 15 min, sur l'indice et pas sur le future NQ en direct."
+},
+{
+"id": "l10-q8",
+"lecon": "10",
+"episode": "e10",
+"q": "La vidéo prouve-t-elle que la méthode gagne de l'argent ? Que faut-il ?",
+"r": "Non, aucun chiffre. Il faut des règles écrites à l'avance, un backtest d'au moins 100 trades avec 0,30 % de coûts, puis hors échantillon et paper trade."
 }
 ]

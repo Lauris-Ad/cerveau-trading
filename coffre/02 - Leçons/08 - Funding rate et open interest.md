@@ -65,5 +65,8 @@ Lecture : un funding très haut et longtemps positif = beaucoup d'acheteurs à l
 - Binance, documentation API *Open Interest Statistics* : [« Only the data of the latest 1 month is available »](https://developers.binance.com/docs/derivatives/usds-margined-futures/market-data/rest-api/Open-Interest-Statistics).
 - Nos chiffres : `Outil/donnees/BTC-USDT_funding.csv` et `BTC-USDT_oi_1h.csv`, téléchargés le 13/11/2026.
 
+## 🎧 Écouter
+Épisode 7 du podcast *Cerveau trading* : [écouter sur le téléphone](https://lauris-ad.github.io/cerveau-trading/index.html#e07).
+
 ## 📒 Mots à ajouter au [[Glossaire]]
 Contrat perpétuel · Long · Short · Effet de levier · Funding rate · Open interest · Liquidation

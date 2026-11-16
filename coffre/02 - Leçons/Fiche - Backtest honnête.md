@@ -62,5 +62,8 @@ Un backtest qui passe ne promet rien : il reste le hors échantillon, puis le pa
 - Frais Binance (source secondaire, page officielle non lue) : [BitDegree](https://www.bitdegree.org/crypto/tutorials/binance-fees).
 - Nos résultats : `Outil/rapports_backtest/` et `JOURNAL.md`, cycles 8 et 10.
 
+## 🎧 Écouter
+Épisode 8 du podcast *Cerveau trading* : [écouter sur le téléphone](https://lauris-ad.github.io/cerveau-trading/index.html#e08).
+
 ## 📒 Mots à ajouter au [[Glossaire]]
 Backtest · Hors échantillon · Slippage · Espérance · Statistique t · Profit factor · Drawdown · Sur-ajustement · Variante

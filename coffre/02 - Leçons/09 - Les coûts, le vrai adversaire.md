@@ -55,5 +55,8 @@ Analogie : vendre des sandwichs à 3 € quand la livraison en coûte 4,60 €. 
 - Spread mesuré : séance du 01-02/10/2026 (`etat-du-parcours.md`).
 - Tableau des mouvements : `Outil/mesure_mouvements.py`, données `donnees/BTC-USDT_1h.csv` (70 % d'apprentissage).
 
+## 🎧 Écouter
+Épisode 8 du podcast *Cerveau trading* : [écouter sur le téléphone](https://lauris-ad.github.io/cerveau-trading/index.html#e08).
+
 ## 📒 Mots à ajouter au [[Glossaire]]
 Maker · Taker · Ordre au marché · Ordre limite · Spread · Slippage · Coût aller-retour

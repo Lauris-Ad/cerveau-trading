@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-16 07:54",
+ "maj": "2026-11-16 08:27",
  "cycles": [
   {
    "n": 1,
@@ -114,6 +114,12 @@
    "axe": "A",
    "titre": "Moteur de paper trading (marche 4)",
    "dire": "Le paper trading est prêt : il rejouera les stratégies en argent fictif toutes les 15 minutes et mesurera le vrai prix d'exécution. Pense à double-cliquer sur Installer-paper-trade dans le dossier Outil."
+  },
+  {
+   "n": 20,
+   "axe": "B",
+   "titre": "Méthode TikTok « niveaux, flux, confirmation »",
+   "dire": "J'ai analysé ta vidéo TikTok sur le gamma : le dashboard montre maintenant les niveaux à fort open interest et le flux de primes, la leçon 10 et quatre nouveaux épisodes de podcast sont en ligne, et la méthode sera testée vers la mi-décembre."
   }
  ],
  "strategies": {

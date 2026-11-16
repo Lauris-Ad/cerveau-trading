@@ -211,6 +211,9 @@ Le SPX est à 6 000. Tu achètes un **put strike 5 950** pour **15 points**.
 8. Cite 3 limites de l'onglet gamma.
 9. Le SPX passe sous le zéro gamma. Est-ce un signal de vente ? Pourquoi ?
 
+## 🎧 Écouter
+Épisodes 4, 5 et 6 du podcast *Cerveau trading* : [écouter sur le téléphone](https://lauris-ad.github.io/cerveau-trading/index.html#e04).
+
 ## 📒 Mots à ajouter au [[Glossaire]]
 Indice · ETF · Future · Base · Option · Call · Put · Strike · Échéance · Prime · Multiplicateur · ATM / ITM / OTM · Open interest · 0DTE · Delta · Gamma · Teneur de marché (dealer) · Couverture en delta · GEX · Call wall · Put wall · Zéro gamma · Régime gamma
 
