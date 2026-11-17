@@ -558,5 +558,173 @@
 "episode": "e12",
 "q": "Pourquoi la cassure 4 h partait-elle avec un handicap ?",
 "r": "Tendance très courte (celles qui ont faibli) et coûts de 0,30 % lourds face au mouvement médian de 0,38 % sur 4 h."
+},
+{
+"id": "l13-q1",
+"lecon": "13",
+"episode": "e13",
+"q": "Risque de 150 $, stop de 15 points sur MNQ : combien de contrats ?",
+"r": "5 contrats : 150 / (15 × 2 $) = 5."
+},
+{
+"id": "l13-q2",
+"lecon": "13",
+"episode": "e13",
+"q": "Combien vaut un point de NQ ? Et un tick de MNQ ?",
+"r": "20 $ par point de NQ ; un tick de MNQ (0,25 point) vaut 0,50 $."
+},
+{
+"id": "l13-q3",
+"lecon": "13",
+"episode": "e13",
+"q": "Pourquoi arrondit-on le nombre de contrats vers le bas ?",
+"r": "Pour ne jamais dépasser le risque en dollars décidé avant le trade."
+},
+{
+"id": "l13-q4",
+"lecon": "13",
+"episode": "e13",
+"q": "Ton stop passe de 15 à 30 points, risque inchangé : que devient la taille ?",
+"r": "Elle est divisée par deux (arrondie vers le bas) : stop plus large = moins de contrats."
+},
+{
+"id": "l14-q1",
+"lecon": "14",
+"episode": "e14",
+"q": "Prix sous la VWAP de la séance : qui est en profit ?",
+"r": "Les vendeurs de la séance, en moyenne (les acheteurs depuis l'ancrage sont en perte)."
+},
+{
+"id": "l14-q2",
+"lecon": "14",
+"episode": "e14",
+"q": "Pourquoi une VWAP ancrée à 15 h 30 et une autre à minuit ne donnent-elles pas le même niveau ?",
+"r": "Elles ne moyennent pas les mêmes transactions : le point de départ change tout."
+},
+{
+"id": "l14-q3",
+"lecon": "14",
+"episode": "e14",
+"q": "Quelle est la formule de la VWAP ?",
+"r": "Somme de (prix × volume) divisée par la somme des volumes, depuis l'ancrage."
+},
+{
+"id": "l14-q4",
+"lecon": "14",
+"episode": "e14",
+"q": "Pourquoi les institutions regardent-elles la VWAP ?",
+"r": "C'est le repère sur lequel on juge leurs exécutions et leurs coûts de transaction (Berkowitz et al. 1988, Madhavan 2002)."
+},
+{
+"id": "l15-q1",
+"lecon": "15",
+"episode": "e15",
+"q": "Quelle différence entre un ordre agressif et un ordre passif ?",
+"r": "L'agressif (taker) prend le prix au marché ; le passif (maker) attend avec un ordre limite dans le carnet."
+},
+{
+"id": "l15-q2",
+"lecon": "15",
+"episode": "e15",
+"q": "Comment calcule-t-on le delta d'une bougie ?",
+"r": "Volume acheté agressivement moins volume vendu agressivement."
+},
+{
+"id": "l15-q3",
+"lecon": "15",
+"episode": "e15",
+"q": "Qu'est-ce que l'absorption ?",
+"r": "Des ventes (ou achats) agressives fortes sans que le prix bouge : des ordres passifs en face encaissent tout."
+},
+{
+"id": "l15-q4",
+"lecon": "15",
+"episode": "e15",
+"q": "Pourquoi testons-nous l'absorption sur BTC et pas sur le NQ ?",
+"r": "Le volume agressif est gratuit sur Binance ; sur le NQ, ces données CME sont payantes."
+},
+{
+"id": "l16-q1",
+"lecon": "16",
+"episode": "e16",
+"q": "Dans la checklist VWAP, quel signal empêche le long s'il est absent ?",
+"r": "L'absorption : pas d'absorption, pas de long."
+},
+{
+"id": "l16-q2",
+"lecon": "16",
+"episode": "e16",
+"q": "Pourquoi un ordre limite subit-il une sélection adverse ?",
+"r": "Il est servi quand le prix vient contre toi, et rate les rebonds qui ne le touchent pas (Linnainmaa 2010)."
+},
+{
+"id": "l16-q3",
+"lecon": "16",
+"episode": "e16",
+"q": "Quel est le prix à payer pour entrer après confirmation ?",
+"r": "Un prix d'entrée un peu moins bon et quelques rebonds ratés, contre moins de faux départs."
+},
+{
+"id": "l17-q1",
+"lecon": "17",
+"episode": "e17",
+"q": "Que se passe-t-il en général pour la volatilité quand le prix passe sous le gamma flip (HVL) ?",
+"r": "Elle augmente : les teneurs de marché sont courts gamma et leurs couvertures amplifient les mouvements."
+},
+{
+"id": "l17-q2",
+"lecon": "17",
+"episode": "e17",
+"q": "Définis la Call Wall et la Put Wall.",
+"r": "Call Wall : strike avec le plus de calls au-dessus du prix (souvent résistance). Put Wall : strike avec le plus de puts en dessous (souvent support)."
+},
+{
+"id": "l17-q3",
+"lecon": "17",
+"episode": "e17",
+"q": "Pourquoi deux outils peuvent-ils afficher des niveaux gamma différents ?",
+"r": "Chacun utilise ses données et ses hypothèses de calcul (signe des positions, échéances, méthode)."
+},
+{
+"id": "l18-q1",
+"lecon": "18",
+"episode": "e18",
+"q": "Où se trouve la buy-side liquidity, et de quoi est-elle faite ?",
+"r": "Au-dessus des plus hauts visibles : stops des vendeurs et achats sur cassure."
+},
+{
+"id": "l18-q2",
+"lecon": "18",
+"episode": "e18",
+"q": "Quelle différence entre un sweep et une cassure ?",
+"r": "Après un sweep le prix revient dans le range ; après une vraie cassure il tient de l'autre côté."
+},
+{
+"id": "l18-q3",
+"lecon": "18",
+"episode": "e18",
+"q": "Qu'a trouvé Osler (2003) sur les prises de profit et les stop-loss ?",
+"r": "Prises de profit groupées sur les chiffres ronds (rebonds), stop-loss juste au-delà (accélérations)."
+},
+{
+"id": "l19-q1",
+"lecon": "19",
+"episode": "e19",
+"q": "Quelle part des day traders taïwanais gagne de façon fiable (Barber et al. 2014) ?",
+"r": "Moins de 1 %, après frais."
+},
+{
+"id": "l19-q2",
+"lecon": "19",
+"episode": "e19",
+"q": "Que montre l'étude brésilienne de Chague et al. (2019) ?",
+"r": "97 % de perdants parmi ceux qui ont tenu 300 jours, 0,4 % au-dessus d'un salaire de guichetier, aucune preuve d'apprentissage."
+},
+{
+"id": "l19-q3",
+"lecon": "19",
+"episode": "e19",
+"q": "Qu'est-ce que le biais du survivant ?",
+"r": "Ne voir que les gagnants, parce que ceux qui ont perdu ne publient rien."
 }
 ]
