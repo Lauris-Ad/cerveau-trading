@@ -39,7 +39,7 @@ Le premier agent de la liste est celui qui a fait le travail. Le Laurisverse lit
 
 ## Les autres projets
 
-- **Croq** : [[croq-ceo]] et ses postes se brancheront dès que Lauris aura dit où se trouve le projet (repo, dossier ou projet Claude). Le même schéma s'appliquera : un cycle Croq, un poste qui travaille, le [[hocs]] avant chaque « c'est fait », une ligne dans [[Passages]].
+- **Croq** (branché le 17/11) : un cycle Croq tourne tout seul **lundi, mercredi et vendredi vers 8 h** : [[croq-ceo]] choisit la tâche, un poste ([[croq-produit]], [[croq-dev]], [[croq-growth]]) la fait, [[hocs]] vérifie, et une pull request attend Lauris. Rien n'est mis en ligne sans sa fusion.
 - **Études** : leurs fiches sont des brouillons. Leurs fiches passent en « actif » quand Lauris donne les dates de contrôles et les intitulés des cours.
 
 ## Noter un passage hors de la boucle
