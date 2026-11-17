@@ -37,6 +37,17 @@ Le premier agent de la liste est celui qui a fait le travail. Le Laurisverse lit
 - [[cto-infra]] et [[cto-outils]] : une vérification par semaine (les tâches planifiées tournent-elles ? journaux d'erreurs dans Outil\logs), notée dans [[Passages]].
 - Tous les 5 cycles, le point d'étape cite les agents en sommeil et dit pourquoi.
 
+## Le design : créatif, jamais plus lent
+
+Lauris veut que les agents apportent du design avec le temps. Le [[designer]] (sous le CTO) fait **une** amélioration visuelle claire par tâche design : Croq (axe V de son équipe, au moins un cycle toutes les deux semaines), le dashboard et le Laurisverse (tâches design du BACKLOG trading, axe A, environ un cycle sur six).
+
+Budget vitesse, vérifié par le [[hocs]] :
+- aucune nouvelle police, bibliothèque JavaScript ni image lourde : CSS et SVG en ligne d'abord ;
+- Croq : le JavaScript chargé par page (First Load JS du build) n'augmente pas de plus de 1 kB, et les pages publiques restent pré-construites ;
+- dashboard et Laurisverse : la page ne met pas plus de temps à s'afficher (mesure avant / après), aucune nouvelle ressource externe ;
+- animations en transform / opacity seulement, coupées si le téléphone demande moins de mouvement ;
+- capture avant / après sur téléphone (390 px) et sur PC.
+
 ## Les autres projets
 
 - **Croq** (branché le 17/11) : un cycle Croq tourne tout seul **lundi, mercredi et vendredi vers 8 h** : [[croq-ceo]] choisit la tâche, un poste ([[croq-produit]], [[croq-dev]], [[croq-growth]]) la fait, [[hocs]] vérifie, et une pull request attend Lauris. Rien n'est mis en ligne sans sa fusion.

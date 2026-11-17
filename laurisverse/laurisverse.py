@@ -300,10 +300,10 @@ DOSSIER_AGENTS = "10 - Agents"
 PLACES = {"ceo", "cos", "board", "direction", "poste"}
 # Les cycles du chef d'orchestre sont des passages du Head of Markets et de ses postes
 POSTE_PAR_AXE = {"A": "markets-data-dashboard", "B": "markets-pedagogue", "C": "markets-backtest"}
-POSTE_CROQ = {"P": "croq-produit", "D": "croq-dev", "G": "croq-growth"}
+POSTE_CROQ = {"P": "croq-produit", "D": "croq-dev", "G": "croq-growth", "V": "designer"}
 CROQ_DEFAUT = Path.home() / "Documents" / "Croq"          # dépôt Lauris-Ad/Croq sur le PC
 JOURNAL_CROQ = "docs/equipe/JOURNAL.md"
-RE_CYCLE_CROQ = re.compile(r"^## Cycle (\d+) · ([PDG]) · (.+)$", re.M)
+RE_CYCLE_CROQ = re.compile(r"^## Cycle (\d+) · ([PDGV]) · (.+)$", re.M)
 
 
 def lire_journal_croq(dossier: Path):
