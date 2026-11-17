@@ -3,10 +3,13 @@
 Lit toutes les notes .md du coffre, en extrait : dossier, type, tags, date,
 longueur et liens [[...]], puis fabrique une page laurisverse.html
 (dans le dossier Outil) et l'ouvre dans le navigateur.
+Lit aussi les fiches d'agents (dossier « 10 - Agents ») pour la vue Organigramme,
+et recense les leçons du coffre et les épisodes du podcast.
 
 Lancement : double-clic sur Lancer-Laurisverse.bat, ou  py laurisverse.py
 Options   : py laurisverse.py --coffre "C:\\chemin\\vers\\un\\autre\\coffre"
-            py laurisverse.py --sans-ouvrir
+            py laurisverse.py --sans-ouvrir      (tâche planifiée : met à jour en silence)
+La voix automatique a été retirée (choix de Lauris) : le bouton « Écouter » de la page reste.
 """
 
 import argparse
@@ -21,6 +24,7 @@ from pathlib import Path
 ICI = Path(__file__).resolve().parent
 COFFRE_PAR_DEFAUT = ICI.parent           # Outil est rangé dans le coffre
 MODELE = ICI / "laurisverse_modele.html"
+ORGANIGRAMME = ICI / "laurisverse_organigramme.html"   # vue Organigramme, ajoutée à la page
 SORTIE = ICI / "laurisverse.html"
 
 DOSSIERS_IGNORES = {".obsidian", ".trash", "__pycache__", ".git", "Templates", "Modèles"}
@@ -181,76 +185,224 @@ def lire_coffre(coffre: Path):
     return notes, liens, introuvables
 
 
-MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
-        "septembre", "octobre", "novembre", "décembre"]
+# ---------- Avancée du projet (le chef d'orchestre écrit JOURNAL.md, BACKLOG.md et le registre des stratégies) ----------
+RE_CYCLE = re.compile(r"^## Cycle (\d+) · ([ABC]) · (.+)$", re.M)
+VU = ICI / "laurisverse_vu.json"           # dernier cycle déjà raconté par la voix
+NOMS_IDEES = {"pic_volatilite": "suite d'un pic de volatilité", "fair_value_gap": "fair value gap",
+              "funding_extreme": "funding extrême", "cassure_4h": "cassure de canal 4 heures"}
+AXES = {"A": "dashboard", "B": "connaissance", "C": "stratégies"}
 
 
-def texte_guide(notes, prenom):
-    """Même point du jour que le bouton Écouter de la page, en texte simple."""
-    heure = datetime.now().hour
-    phrases = [("Bonsoir " if heure >= 18 or 5 > heure else "Bonjour ") + prenom + ". Voici ton point du jour."]
-    semaines = sorted((n for n in notes if n["type"] == "semaine" and n["semaine"] is not None and n["taches"]),
-                      key=lambda n: n["semaine"])
-    if semaines:
-        s = semaines[0]
-        reste, faites = len(s["taches"]), s["faites"]
-        theme = s["titre"].split(":", 1)[1].strip() if ":" in s["titre"] else s["titre"]
-        phrases.append(f"Tu es en semaine {s['semaine']} : {theme}. Tu as coché {faites} "
-                       f"{'tâches' if faites > 1 else 'tâche'} sur {reste + faites}, il en reste {reste}.")
-        for k, tache in enumerate(s["taches"][:3]):
-            phrases.append(["Ta prochaine tâche : ", "Ensuite : ", "Puis : "][k] + tache["texte"] + ".")
-    else:
-        phrases.append("Je ne trouve aucune case à cocher non cochée dans tes fiches Semaine.")
-    journaux = sorted((n for n in notes if n["type"] == "journal" and n["date"]), key=lambda n: n["date"], reverse=True)
-    if not journaux:
-        phrases.append("Tu n'as encore aucune note de journal. Crée-en une aujourd'hui avec le modèle Journal du jour.")
-    else:
-        d = date.fromisoformat(journaux[0]["date"])
-        ecart = (date.today() - d).days
-        if 0 >= ecart:
-            phrases.append("Tu as déjà écrit ton journal aujourd'hui. Bien joué.")
-        elif ecart == 1:
-            phrases.append("Ton dernier journal date d'hier. Pense à écrire celui d'aujourd'hui.")
-        else:
-            phrases.append(f"Ton dernier journal date du {d.day} {MOIS[d.month - 1]}, il y a {ecart} jours. "
-                           "Prends cinq minutes aujourd'hui pour en écrire un, avec le modèle Journal du jour.")
-    idees = [n for n in notes if n["type"] == "idee" and n["statut"] == "a_trier"]
-    if idees:
-        nb = len(idees)
-        phrases.append(f"Tu as {nb} {'idées' if nb > 1 else 'idée'} de stratégie en attente de tri. "
-                       "Pas d'urgence : on les trie quand tu auras les bases.")
-    phrases.append("Une chose à la fois. Coche tes tâches dans Obsidian, puis relance le Laurisverse pour que je mette ta liste à jour.")
-    return " ".join(phrases)
+def phrase_courte(t, n=220):
+    t = texte_parle(t)
+    if len(t) <= n:
+        return t
+    coupe = t[:n].rsplit(". ", 1)[0]
+    return (coupe if len(coupe) > 60 else t[:n].rsplit(" ", 1)[0]) + "."
 
 
-# Voix de Windows (hors navigateur, donc aucun clic nécessaire). Code retour 3 = pas de voix française.
-PS_PARLER = (
-    "Add-Type -AssemblyName System.Speech; "
-    "$s = New-Object System.Speech.Synthesis.SpeechSynthesizer; "
-    "$v = $s.GetInstalledVoices() | Where-Object { $_.Enabled -and $_.VoiceInfo.Culture.Name -like 'fr*' } | Select-Object -First 1; "
-    "if (-not $v) { exit 3 }; "
-    "$s.SelectVoice($v.VoiceInfo.Name); $s.Rate = 0; $s.Speak($env:LAURISVERSE_TEXTE)"
-)
-
-
-def parler(texte):
-    import subprocess
-    env = dict(os.environ, LAURISVERSE_TEXTE=texte)
+def lire_orchestre(coffre: Path) -> dict:
+    """Ce que la boucle a fait : cycles du JOURNAL, échelle des stratégies, collecteur, prochaines tâches."""
+    out = {"cycles": [], "nouveaux": [], "strategies": [], "candidates": 0, "collecteur": None, "prochaines": [], "phrases": []}
+    journal = coffre / "JOURNAL.md"
+    if journal.exists():
+        texte = journal.read_text(encoding="utf-8", errors="replace")
+        blocs = list(RE_CYCLE.finditer(texte))
+        for k, m in enumerate(blocs):
+            corps = texte[m.end(): blocs[k + 1].start() if k + 1 < len(blocs) else len(texte)]
+            dire = re.search(r"\*\*À dire\*\*\s*:?\s*(.+)", corps)     # phrase écrite pour la voix
+            res = dire or re.search(r"\*\*Résultat\*\*\s*:?\s*(.+)", corps)
+            out["cycles"].append({"n": int(m.group(1)), "axe": m.group(2), "titre": texte_parle(m.group(3)),
+                                  "resultat": phrase_courte(res.group(1)) if res else "", "dire": bool(dire)})
     try:
-        r = subprocess.run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", PS_PARLER], env=env)
-    except OSError:
-        print("PowerShell introuvable : la voix ne peut pas parler.")
-        return
-    if r.returncode == 3:
-        print("Aucune voix française dans Windows. Paramètres > Heure et langue > Voix : ajoute une voix française.")
+        deja = json.loads(VU.read_text(encoding="utf-8")).get("dernier_cycle", 0)
+    except Exception:
+        deja = 0
+    out["nouveaux"] = [c for c in out["cycles"] if c["n"] > deja]
+    out["dernier_cycle"] = max((c["n"] for c in out["cycles"]), default=0)
+    reg = ICI / "registre_variantes.json"
+    if reg.exists():
+        try:
+            for idee, f in json.loads(reg.read_text(encoding="utf-8")).items():
+                out["strategies"].append({"idee": NOMS_IDEES.get(idee, idee.replace("_", " ")), "statut": f.get("statut"),
+                                          "variantes": len(f.get("variantes", []))})
+        except Exception:
+            pass
+    out["candidates"] = sum(1 for x in out["strategies"] if x["statut"] == "candidate")
+    etat = ICI / "archives_gamma" / "etat.json"
+    if etat.exists():
+        try:
+            e = json.loads(etat.read_text(encoding="utf-8"))
+            jours = len([d for d in (ICI / "archives_gamma").glob("20??-??-??") if d.is_dir()])
+            out["collecteur"] = {"photos": e.get("photos", 0), "erreurs": e.get("erreurs", 0), "jours": jours}
+        except Exception:
+            pass
+    backlog = coffre / "BACKLOG.md"
+    if backlog.exists():
+        for ligne in backlog.read_text(encoding="utf-8", errors="replace").splitlines():
+            m = re.match(r"^\|\s*(\d+)\s*\|\s*([ABC])\s*\|\s*(.+?)\s*\|", ligne)
+            if m:
+                out["prochaines"].append({"n": int(m.group(1)), "axe": m.group(2), "texte": phrase_courte(m.group(3), 140)})
+        out["prochaines"] = out["prochaines"][:3]
+    # Les phrases que la voix lira
+    ph = out["phrases"]
+    nv = out["nouveaux"]
+    if nv:
+        ph.append(f"Côté projet, {len(nv)} {'nouveaux cycles' if len(nv) > 1 else 'nouveau cycle'} depuis ta dernière écoute.")
+        for c in nv[-5:]:
+            ph.append(c["resultat"] if c["dire"] else f"Cycle {c['n']}, {AXES.get(c['axe'], '')} : {c['titre']}. {c['resultat']}")
+        if len(nv) > 5:
+            ph.append(f"Les {len(nv) - 5} autres sont dans le journal, et dans le guide à gauche.")
+    elif out["cycles"]:
+        ph.append(f"Côté projet, rien de nouveau depuis ta dernière écoute. Le dernier cycle est le numéro {out['dernier_cycle']}.")
+    if out["strategies"]:
+        arch = sum(1 for x in out["strategies"] if x["statut"] == "archivee")
+        ph.append(f"Stratégies : {len(out['strategies'])} idées testées, {arch} archivées, "
+                  + (f"{out['candidates']} candidate{'s' if out['candidates'] > 1 else ''}." if out["candidates"] else "aucune candidate pour l'instant."))
+    if out["candidates"]:
+        ph.insert(0, "Rappel important, et je le répéterai tant que tu ne m'as pas répondu : une stratégie est candidate. "
+                     "Pour qu'elle puisse être misée, crée une clé sur ta plateforme, autorisée à trader mais jamais à retirer, "
+                     "et dis-moi ton budget maximum.")
+    c = out["collecteur"]
+    if c:
+        ph.append(f"Collecteur gamma : {c['jours']} jour{'s' if c['jours'] > 1 else ''} d'archives sur 21 visés, {c['erreurs']} erreur{'s' if c['erreurs'] > 1 else ''}.")
+    if out["prochaines"]:
+        ph.append("Prochaine tâche de la boucle : " + out["prochaines"][0]["texte"].rstrip(".") + ".")
+    return out
+
+
+def marquer_vu(orchestre: dict) -> None:
+    try:
+        VU.write_text(json.dumps({"dernier_cycle": orchestre["dernier_cycle"],
+                                  "le": datetime.now().strftime("%Y-%m-%d %H:%M")}), encoding="utf-8")
+    except Exception:
+        pass
+
+
+# ---------- Organigramme : fiches d'agents (dossier « 10 - Agents ») ----------
+DOSSIER_AGENTS = "10 - Agents"
+PLACES = {"ceo", "cos", "board", "direction", "poste"}
+# Les cycles du chef d'orchestre sont des passages du Head of Markets et de ses postes
+POSTE_PAR_AXE = {"A": "markets-data-dashboard", "B": "markets-pedagogue", "C": "markets-backtest"}
+RE_LIGNE_TABLEAU = re.compile(r"^\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*([a-z0-9\-]+)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*$")
+
+
+def _liste(v):
+    if isinstance(v, list):
+        return [x.strip() for x in v if x.strip()]
+    return [x.strip() for x in str(v or "").split(",") if x.strip()]
+
+
+def lire_agents(coffre: Path, cycles=None) -> dict:
+    """Fiches d'agents + passages (tableau Passages.md) + cycles du JOURNAL rattachés aux postes Marchés."""
+    dossier = coffre / DOSSIER_AGENTS
+    agents, passages = [], []
+    if dossier.is_dir():
+        for f in sorted(dossier.glob("*.md")):
+            try:
+                texte = f.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            meta, corps = lire_frontmatter(texte)
+            if f.stem.lower() == "passages":
+                for ligne in corps.splitlines():
+                    m = RE_LIGNE_TABLEAU.match(ligne.strip())
+                    if m:
+                        passages.append({"date": m.group(1), "agent": m.group(2), "projet": texte_parle(m.group(3)),
+                                         "issue": texte_parle(m.group(4)), "note": texte_parle(m.group(5))})
+                continue
+            place = str(meta.get("place") or "").strip().lower()
+            if place not in PLACES:
+                continue
+            reports = meta.get("reports_to")
+            agents.append({
+                "id": str(meta.get("name") or f.stem).strip(),
+                "titre": str(meta.get("titre") or meta.get("name") or f.stem),
+                "sigle": str(meta.get("sigle") or "")[:7],
+                "place": place,
+                "direction": str(meta.get("direction") or "").strip().lower(),
+                "reports_to": reports.strip() if isinstance(reports, str) else "",
+                "works_with": _liste(meta.get("works_with")),
+                "description": str(meta.get("description") or ""),
+                "modele": str(meta.get("model") or "—"),
+                "outils": _liste(meta.get("tools")),
+                "skills": str(meta.get("skills") or "aucune"),
+                "statut": str(meta.get("statut") or "actif"),
+                "fichier": f.relative_to(coffre).as_posix(),
+                "corps": corps.strip()[:4000],
+            })
+    connus = {a["id"] for a in agents}
+    sortie_cycles = []
+    for c in cycles or []:
+        titre = c.get("titre", "")
+        poste = "markets-head" if "point d'étape" in titre.lower() else POSTE_PAR_AXE.get(c.get("axe"), "markets-head")
+        sortie_cycles.append({"n": c["n"], "axe": c.get("axe"), "titre": titre,
+                              "resultat": c.get("resultat") or c.get("dire") or "", "agent": poste})
+    return {"agents": agents, "passages": [p for p in passages if p["agent"] in connus] if connus else passages,
+            "cycles": sortie_cycles}
+
+
+# ---------- Bibliothèque : leçons du coffre et épisodes du podcast (repo cerveau-trading) ----------
+PODCAST_SITE = "https://lauris-ad.github.io/cerveau-trading/"
+PODCAST_DEPOT = "https://api.github.com/repos/Lauris-Ad/cerveau-trading/contents/episodes"
+PODCAST_PROGRESSION = "https://raw.githubusercontent.com/Lauris-Ad/cerveau-trading/main/progression.json"
+CACHE_PODCAST = ICI / "laurisverse_podcast.json"
+
+
+def _json_url(url):
+    import urllib.request
+    req = urllib.request.Request(url, headers={"User-Agent": "laurisverse", "Accept": "application/json"})
+    with urllib.request.urlopen(req, timeout=8) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def lire_podcast():
+    """Épisodes écrits (repo) et publiés (site). Sans réseau : dernière lecture gardée en cache."""
+    try:
+        ecrits = sorted(x["name"][:-3] for x in _json_url(PODCAST_DEPOT) if re.match(r"e\d+.*\.md$", x["name"]))
+        publies = _json_url(PODCAST_SITE + "episodes.json")
+        try:
+            prog = _json_url(PODCAST_PROGRESSION)
+        except Exception:
+            prog = {}
+        info = {"ecrits": ecrits, "publies": [{"id": e["id"], "numero": e["numero"], "titre": e["titre"], "duree": e.get("duree", 0)} for e in publies],
+                "lecon_en_cours": prog.get("lecon_en_cours"), "lecons_validees": prog.get("lecons_validees", []),
+                "lu_le": datetime.now().strftime("%d/%m/%Y %H:%M")}
+        try:
+            CACHE_PODCAST.write_text(json.dumps(info, ensure_ascii=False), encoding="utf-8")
+        except OSError:
+            pass
+        return info
+    except Exception:
+        try:
+            return json.loads(CACHE_PODCAST.read_text(encoding="utf-8"))
+        except Exception:
+            return None
+
+
+def bibliotheque(coffre: Path, podcast=None) -> dict:
+    lecons = []
+    dossier = coffre / "02 - Leçons"
+    if dossier.is_dir():
+        for f in sorted(dossier.glob("*.md")):
+            m = re.match(r"(\d+)\s*-\s*(.+)", f.stem)
+            lecons.append({"numero": m.group(1) if m else None, "titre": m.group(2) if m else f.stem,
+                           "chemin": f.relative_to(coffre).as_posix()})
+    pod = podcast if podcast is not None else lire_podcast()
+    out = {"lecons": lecons, "nb_lecons": sum(1 for l in lecons if l["numero"]), "nb_fiches": sum(1 for l in lecons if not l["numero"])}
+    if pod:
+        out.update({"episodes_total": len(pod.get("ecrits", [])), "episodes_publies": len(pod.get("publies", [])),
+                    "publies": pod.get("publies", []), "lecon_en_cours": pod.get("lecon_en_cours"),
+                    "lecons_validees": pod.get("lecons_validees", []), "podcast_lu_le": pod.get("lu_le")})
+    return out
 
 
 def main():
     p = argparse.ArgumentParser(description="Laurisverse : univers 3D du coffre Obsidian")
     p.add_argument("--coffre", default=str(COFFRE_PAR_DEFAUT), help="dossier du coffre")
     p.add_argument("--sans-ouvrir", action="store_true", help="ne pas ouvrir le navigateur")
-    p.add_argument("--prenom", default="Lauris", help="prénom utilisé par la voix")
-    p.add_argument("--parler", action="store_true", help="ouvrir la page puis lire le point du jour avec la voix de Windows")
+    p.add_argument("--prenom", default="Lauris", help="prénom affiché par le guide")
+    p.add_argument("--parler", action="store_true", help=argparse.SUPPRESS)   # ancienne option, ignorée
     args = p.parse_args()
 
     coffre = Path(args.coffre).resolve()
@@ -267,8 +419,13 @@ def main():
         "genere": datetime.now().strftime("%d/%m/%Y %H:%M"),
         "notes": notes,
         "liens": liens,
+        "orchestre": lire_orchestre(coffre),
     }
+    donnees["agents"] = lire_agents(coffre, donnees["orchestre"]["cycles"])
+    donnees["bibliotheque"] = bibliotheque(coffre)
     modele = MODELE.read_text(encoding="utf-8")
+    if ORGANIGRAMME.exists():
+        modele = modele.replace("</body>", ORGANIGRAMME.read_text(encoding="utf-8") + "\n</body>")
     json_txt = json.dumps(donnees, ensure_ascii=False).replace("</", "<\\/")
     SORTIE.write_text(modele.replace("/*__DONNEES__*/null", json_txt), encoding="utf-8")
 
@@ -276,14 +433,17 @@ def main():
     print(f"{len(notes)} notes, {len(liens)} liens entre notes, {datees} notes datées.")
     if introuvables:
         print(f"({introuvables} liens pointent vers des notes qui n'existent pas encore.)")
+    ag, bib = donnees["agents"], donnees["bibliotheque"]
+    print(f"Organigramme : {len(ag['agents'])} agents, {len(ag['passages'])} passages notés, {len(ag['cycles'])} cycles.")
+    print(f"Bibliothèque : {bib['nb_lecons']} leçons, "
+          + (f"{bib['episodes_publies']}/{bib['episodes_total']} épisodes publiés" if bib.get("episodes_total") else "épisodes inconnus (pas de réseau ni de cache)")
+          + (f" (lu le {bib['podcast_lu_le']})" if bib.get("podcast_lu_le") else "") + ".")
     print(f"Laurisverse prêt : {SORTIE}")
+    if args.parler:
+        print("La voix automatique est désactivée : ouvre la page et clique « Écouter » si tu veux l'entendre.")
     if not args.sans_ouvrir:
         webbrowser.open(SORTIE.as_uri())
-    if args.parler:
-        import time
-        time.sleep(4)  # laisse la page s'ouvrir avant de parler
-        print("Lecture du point du jour...")
-        parler(texte_guide(notes, args.prenom))
+        marquer_vu(donnees["orchestre"])   # ouvert à la main : les cycles affichés comptent comme vus
 
 
 if __name__ == "__main__":

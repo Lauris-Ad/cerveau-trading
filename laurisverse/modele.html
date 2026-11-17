@@ -169,7 +169,6 @@
   <p class="aide" id="aide"></p>
 </aside>
 
-<div class="reveil" id="reveil"><div><span class="orbe"></span>C'est l'heure de ton point du jour. Clique n'importe où pour écouter.</div></div>
 
 <div class="fiche" id="fiche">
   <div class="groupe" id="fGroupe"></div>
@@ -892,19 +891,7 @@ document.getElementById("gEcouter").onclick = () => parler(construireGuide());
 document.getElementById("gStop").onclick = () => { if (synthese) synthese.cancel(); document.body.classList.remove("parle"); marquerTache(-1); };
 afficherGuide();
 
-// Lancement automatique : Lancer-Laurisverse-auto.bat ouvre la page avec #auto et le guide parle tout seul.
-// Si le navigateur bloque la voix sans clic, on affiche un grand bouton : un clic n'importe où suffit.
-if (location.hash === "#auto") {
-  const reveiller = () => { if (!document.body.classList.contains("attend")) return; document.body.classList.remove("attend"); parler(construireGuide()); };
-  document.getElementById("reveil").onclick = reveiller;
-  window.addEventListener("keydown", reveiller);
-  setTimeout(() => {
-    if (!synthese) { document.body.classList.add("attend"); return; }
-    chargerVoix();
-    parler(construireGuide());
-    setTimeout(() => { if (!document.body.classList.contains("parle")) { synthese.cancel(); document.body.classList.add("attend"); } }, 2500);
-  }, 3000);
-}
+// (Plus de lancement automatique de la voix : le guide ne parle que quand on clique « Écouter ».)
 
 // ---------- Démarrage ----------
 document.getElementById("titre").textContent = "l'univers de mes notes · " + D.coffre;
@@ -913,7 +900,7 @@ function majStats() {
   document.getElementById("stats").textContent = `${N} notes · ${LIENS.length} liens · ${vraies} datées` + (D.genere ? ` · lu le ${D.genere}` : " · données de démo");
 }
 calculerDates(); majStats();
-document.getElementById("aide").textContent = "Mon guide (en haut à gauche) lit tes tâches à voix haute. Glisser pour tourner, molette pour zoomer, cliquer un point pour voir la note. Relance Lancer-Laurisverse.bat après avoir écrit de nouvelles notes.";
+document.getElementById("aide").textContent = "Mon guide (en haut à gauche) lit tes tâches à voix haute quand tu cliques « Écouter ». Glisser pour tourner, molette pour zoomer, cliquer un point pour voir la note. Relance Lancer-Laurisverse.bat après avoir écrit de nouvelles notes.";
 redimensionner();
 calculerGroupes(); majLegende(); creerPoussiere(); disposer(true);
 // Ouverture : tout part du centre, comme un big bang, et la caméra recule doucement

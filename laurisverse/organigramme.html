@@ -1,0 +1,389 @@
+<!-- Vue Organigramme (Laurisverse Map) : les agents du Laurisverse en graphe radial. Ajoutée à la page par laurisverse.py (PC) et generer.py (téléphone). -->
+<style>
+  #org { position: fixed; inset: 0; display: none; z-index: 5; overflow: hidden;
+    background: radial-gradient(ellipse at 50% 50%, #120a1a 0%, #030306 70%); }
+  body.org #org { display: block; }
+  body.org .guide, body.org .fiche, body.org .bulle, body.org .entete .stats { display: none !important; }
+  body.org .entete { z-index: 6; }
+  body.org .panneau { z-index: 8; }
+  body.org .panneau > :not(h2:first-of-type):not(#choixVue):not(.replier) { display: none; }
+  #orgSvg { width: 100%; height: 100%; display: block; cursor: grab; touch-action: none; }
+  #orgSvg.glisse { cursor: grabbing; }
+  #orgSvg text { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; pointer-events: none; }
+  .o-noeud { cursor: pointer; }
+  .o-noeud circle.c { transition: opacity .2s; }
+  .o-noeud:hover circle.c { stroke-width: 2.5; }
+  .o-pulse { animation: oPulse 2.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes oPulse { 0%,100% { opacity: .15; transform: scale(1); } 50% { opacity: .55; transform: scale(1.35); } }
+  .o-barre { position: fixed; top: 92px; left: 26px; z-index: 7; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; max-width: calc(100% - 310px); }
+  .o-barre button { font: inherit; font-size: 12px; color: var(--texte); background: rgba(255,255,255,.05); border: 1px solid var(--bord);
+    border-radius: 14px; padding: 5px 11px; cursor: pointer; }
+  .o-barre button:hover { border-color: rgba(255,255,255,.35); }
+  .o-barre button.actif { background: rgba(255,181,71,.16); border-color: var(--accent); color: #fff; }
+  .o-barre .o-sep { width: 1px; height: 20px; background: var(--bord); margin: 0 4px; }
+  .o-resume { position: fixed; left: 26px; top: 128px; z-index: 7; color: var(--doux); font-size: 12px; max-width: calc(100% - 310px); }
+  .o-panneau { position: fixed; z-index: 9; left: 22px; top: 160px; width: 360px; max-width: calc(100% - 44px); max-height: calc(100% - 180px); overflow-y: auto;
+    background: rgba(12,10,20,.94); border: 1px solid var(--bord); border-radius: 12px; padding: 14px 16px; display: none;
+    backdrop-filter: blur(10px); box-shadow: 0 10px 40px rgba(0,0,0,.4); }
+  .o-panneau.visible { display: block; }
+  .o-panneau .o-place { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+  .o-panneau h3 { margin: 4px 0 4px; font-size: 17px; font-weight: 600; }
+  .o-panneau .o-desc { color: #d8d5cf; margin: 6px 0 10px; }
+  .o-panneau .o-badge { display: inline-block; font-size: 11px; padding: 1px 8px; border-radius: 10px; border: 1px dashed rgba(255,255,255,.35); color: var(--doux); margin-left: 6px; vertical-align: 2px; }
+  .o-panneau dl { display: grid; grid-template-columns: 92px 1fr; gap: 4px 10px; margin: 8px 0; font-size: 12.5px; }
+  .o-panneau dt { color: var(--doux); }
+  .o-panneau dd { margin: 0; }
+  .o-puce { display: inline-block; font-size: 11.5px; padding: 1px 8px; margin: 0 4px 4px 0; border-radius: 10px; border: 1px solid var(--bord); cursor: pointer; }
+  .o-puce:hover { border-color: rgba(255,255,255,.4); color: #fff; }
+  .o-panneau h4 { font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--doux); margin: 14px 0 6px; font-weight: 600; }
+  .o-role { font-size: 12.5px; color: #cfccc6; }
+  .o-role p { margin: 4px 0; }
+  .o-role ul, .o-role ol { margin: 4px 0; padding-left: 18px; }
+  .o-role h5 { font-size: 12px; margin: 10px 0 2px; color: #fff; font-weight: 600; }
+  .o-passages { list-style: none; margin: 0; padding: 0; font-size: 12px; }
+  .o-passages li { padding: 5px 0; border-top: 1px solid rgba(255,255,255,.06); }
+  .o-passages li:first-child { border-top: 0; }
+  .o-passages .o-quand { color: var(--doux); font-variant-numeric: tabular-nums; }
+  .o-passages .o-agent { cursor: pointer; text-decoration: underline; text-decoration-color: rgba(255,255,255,.25); }
+  .o-issue { display: inline-block; font-size: 10.5px; padding: 0 6px; border-radius: 8px; margin-left: 4px; background: rgba(255,255,255,.08); }
+  .o-issue.go { background: rgba(110,220,150,.18); color: #9ef0bb; }
+  .o-issue.nogo { background: rgba(255,90,90,.2); color: #ff9c9c; }
+  .o-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .o-actions a, .o-actions button { font: inherit; font-size: 12px; color: #111; background: var(--accent); border: 0; border-radius: 6px; padding: 6px 10px; text-decoration: none; cursor: pointer; }
+  .o-actions .discret { background: transparent; color: var(--doux); border: 1px solid var(--bord); }
+  .o-copie { color: #9ef0bb; font-size: 12px; margin-top: 6px; min-height: 1em; }
+  .o-biblio { font-size: 12px; color: #cfccc6; }
+  .o-biblio li { padding: 1px 0; }
+  .g-biblio { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--bord); color: var(--doux); font-size: 12px; }
+  .g-biblio b { color: var(--texte); font-weight: 600; }
+  @media (max-width: 760px), (pointer: coarse) {
+    .o-barre { top: calc(64px + env(safe-area-inset-top)); left: 10px; right: 10px; max-width: none; gap: 5px; }
+    .o-barre button { font-size: 13px; padding: 7px 10px; }
+    .o-resume { display: none; }
+    .o-panneau { left: 8px !important; right: 8px; width: auto; max-width: none; top: auto; bottom: calc(70px + env(safe-area-inset-bottom)); max-height: 60vh; border-radius: 16px; }
+    .o-panneau dl { font-size: 14px; } .o-role, .o-passages { font-size: 14px; }
+    .o-actions a, .o-actions button { min-height: 42px; font-size: 14px; padding: 8px 12px; }
+    body.org .panneau { display: none !important; }
+    body.org.m-vue .panneau { display: block !important; }
+  }
+</style>
+
+<div id="org">
+  <svg id="orgSvg" viewBox="-600 -600 1200 1200" preserveAspectRatio="xMidYMid meet">
+    <g id="orgMonde"><g id="orgLiens"></g><g id="orgNoeuds"></g></g>
+  </svg>
+  <div class="o-barre" id="orgBarre">
+    <button id="orgRecentrer">⌖ Recentrer</button>
+    <button id="orgHistoBtn">⟲ Historique</button>
+    <span class="o-sep"></span>
+  </div>
+  <div class="o-resume" id="orgResume"></div>
+  <aside class="o-panneau" id="orgFiche"></aside>
+</div>
+
+<script>
+(() => {
+  const AG = (D.agents && D.agents.agents && D.agents.agents.length) ? D.agents : null;
+  const BIB = D.bibliotheque || null;
+  const DIRS = {
+    "direction-generale": { nom: "Direction", couleur: "#ffd166" },
+    board: { nom: "Board", couleur: "#ff6f61" },
+    etudes: { nom: "Études", couleur: "#6fb3ff" },
+    marches: { nom: "Marchés", couleur: "#ffb547" },
+    croq: { nom: "Croq", couleur: "#7be0a2" },
+    finances: { nom: "Finances", couleur: "#c27bff" },
+    tech: { nom: "Tech", couleur: "#4dd0e1" },
+  };
+  const ORDRE_DIRS = ["etudes", "marches", "croq", "finances", "tech"];
+  const PLACES = { ceo: "Toi, au centre", cos: "Chief of Staff", board: "Membre du board", direction: "Direction", poste: "Poste" };
+  const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (nom, attrs, parent) => { const e = document.createElementNS(NS, nom); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; };
+
+  // ---------- Bibliothèque dans le guide (leçons et podcasts recensés) ----------
+  function texteBiblio() {
+    if (!BIB) return "";
+    let t = `📚 <b>${BIB.nb_lecons}</b> leçons` + (BIB.nb_fiches ? ` + ${BIB.nb_fiches} fiche${BIB.nb_fiches > 1 ? "s" : ""}` : "");
+    if (BIB.episodes_total) t += ` · 🎧 <b>${BIB.episodes_publies}</b> épisode${BIB.episodes_publies > 1 ? "s" : ""} publié${BIB.episodes_publies > 1 ? "s" : ""} sur ${BIB.episodes_total}`;
+    else t += " · 🎧 podcast non lu (pas de réseau)";
+    if (BIB.lecon_en_cours) t += ` · leçon en cours ${esc(BIB.lecon_en_cours)}`;
+    return t;
+  }
+  const guide = document.getElementById("guide");
+  if (guide && BIB) { const d = document.createElement("div"); d.className = "g-biblio"; d.innerHTML = texteBiblio(); guide.appendChild(d); }
+
+  // ---------- Bouton de vue ----------
+  const choixVue = document.getElementById("choixVue");
+  const bouton = document.createElement("button"); bouton.textContent = "Organigramme"; bouton.dataset.org = "1";
+  choixVue.appendChild(bouton);
+  function montrer(on) {
+    document.body.classList.toggle("org", on);
+    choixVue.querySelectorAll("button").forEach(b => b.classList.toggle("actif", on ? b === bouton : b.dataset.v === modeVue));
+    if (on) { choisir(-1); if (!construit) construire(); }
+  }
+  bouton.onclick = () => montrer(true);
+  choixVue.querySelectorAll("button[data-v]").forEach(b => b.addEventListener("click", () => montrer(false)));
+  const mbarre = document.getElementById("mbarre");
+  if (mbarre) {   // téléphone : un bouton « Équipe » dans la barre du bas
+    const b = document.createElement("button"); b.dataset.p = "equipe"; b.textContent = "🏢 Équipe";
+    mbarre.insertBefore(b, mbarre.children[2] || null);
+    b.onclick = () => { ["guide", "vue", "podcasts"].forEach(p => document.body.classList.remove("m-" + p));
+      const on = !document.body.classList.contains("org"); montrer(on);
+      mbarre.querySelectorAll("button").forEach(x => x.classList.toggle("actif", on && x === b)); };
+    mbarre.querySelectorAll("button:not([data-p=equipe])").forEach(x => x.addEventListener("click", () => {
+      if (x.dataset.p !== "vue") { montrer(false); b.classList.remove("actif"); } }));
+  }
+
+  // ---------- Données ----------
+  let construit = false;
+  const parId = {}, enfants = {}, pos = {};
+  const passagesDe = {}, recents = new Set();
+  function preparer() {
+    AG.agents.forEach(a => { parId[a.id] = a; enfants[a.id] = []; passagesDe[a.id] = []; });
+    AG.agents.forEach(a => { if (a.reports_to && parId[a.reports_to]) enfants[a.reports_to].push(a.id); });
+    const auj = Date.parse(D.aujourdhui || new Date().toISOString().slice(0, 10));
+    (AG.passages || []).forEach(p => { if (passagesDe[p.agent]) passagesDe[p.agent].push({ ...p, type: "passage" });
+      if (auj - Date.parse(p.date) <= 7 * 864e5) recents.add(p.agent); });
+    const cycles = (AG.cycles || []).slice().sort((a, b) => b.n - a.n);
+    cycles.forEach((c, k) => {
+      const p = { type: "cycle", n: c.n, agent: c.agent, projet: `Cycle ${c.n} · ${c.titre}`, note: c.resultat, issue: "" };
+      if (passagesDe[c.agent]) passagesDe[c.agent].push(p);
+      if (passagesDe["markets-head"] && c.agent !== "markets-head") passagesDe["markets-head"].push({ ...p, via: c.agent });
+      if (k < 5) { recents.add(c.agent); recents.add("markets-head"); }
+    });
+    Object.values(passagesDe).forEach(l => l.sort((a, b) => (b.date || "") > (a.date || "") ? 1 : (b.date || "") < (a.date || "") ? -1 : (b.n || 0) - (a.n || 0)));
+  }
+
+  // ---------- Disposition radiale ----------
+  const R1 = 150, R2 = 285, R3 = 455;
+  function disposer() {
+    const ceo = AG.agents.find(a => a.place === "ceo");
+    if (ceo) pos[ceo.id] = [0, 0, -Math.PI / 2];
+    const anneau1 = AG.agents.filter(a => a.place === "cos").concat(AG.agents.filter(a => a.place === "board"));
+    anneau1.forEach((a, k) => { const t = -Math.PI / 2 + k * 2 * Math.PI / anneau1.length; pos[a.id] = [R1 * Math.cos(t), R1 * Math.sin(t), t]; });
+    const dirs = ORDRE_DIRS.map(d => AG.agents.find(a => a.place === "direction" && a.direction === d)).filter(Boolean)
+      .concat(AG.agents.filter(a => a.place === "direction" && !ORDRE_DIRS.includes(a.direction)));
+    const poids = dirs.map(d => Math.max(enfants[d.id].length, 2) + 1), total = poids.reduce((s, x) => s + x, 0) || 1;
+    let t0 = -Math.PI / 2 - Math.PI * poids[0] / total;
+    dirs.forEach((d, k) => {
+      const largeur = 2 * Math.PI * poids[k] / total, tc = t0 + largeur / 2;
+      pos[d.id] = [R2 * Math.cos(tc), R2 * Math.sin(tc), tc];
+      const postes = enfants[d.id].map(id => parId[id]).filter(a => a.place === "poste"), n = postes.length;
+      postes.forEach((p, j) => {
+        const t = n === 1 ? tc : t0 + largeur * (j + 0.5) / n, r = R3 + (n > 7 && j % 2 ? 62 : 0);
+        pos[p.id] = [r * Math.cos(t), r * Math.sin(t), t];
+      });
+      t0 += largeur;
+    });
+    let reste = AG.agents.filter(a => !pos[a.id]);   // postes sans direction connue : en bordure
+    reste.forEach((a, k) => { const t = 2 * Math.PI * k / Math.max(reste.length, 1); pos[a.id] = [560 * Math.cos(t), 560 * Math.sin(t), t]; });
+  }
+  const couleurDe = a => (DIRS[a.direction] || DIRS[a.place === "board" ? "board" : "direction-generale"]).couleur;
+  const rayonDe = a => ({ ceo: 34, cos: 23, board: 19, direction: 24, poste: 13 }[a.place] || 12);
+
+  // ---------- Dessin ----------
+  const gLiens = document.getElementById("orgLiens"), gNoeuds = document.getElementById("orgNoeuds");
+  const liens = [];   // {a, b, type, el}
+  const noeuds = {};
+  function construire() {
+    if (!AG) {
+      document.getElementById("orgResume").textContent = "Aucune fiche d'agent trouvée : ajoute le dossier « 10 - Agents » au coffre puis relance le Laurisverse.";
+      construit = true; return;
+    }
+    preparer(); disposer();
+    AG.agents.forEach(a => {
+      if (a.reports_to && pos[a.reports_to]) {
+        const [x1, y1] = pos[a.reports_to], [x2, y2] = pos[a.id];
+        liens.push({ a: a.reports_to, b: a.id, type: "h", el: el("line", { x1, y1, x2, y2, stroke: couleurDe(a), "stroke-opacity": .35, "stroke-width": a.place === "poste" ? 1 : 1.6 }, gLiens) });
+      }
+    });
+    AG.agents.forEach(a => a.works_with.forEach(w => {
+      if (!pos[w] || w === a.reports_to || (parId[w] && parId[w].reports_to === a.id)) return;
+      const [x1, y1] = pos[a.id], [x2, y2] = pos[w];
+      const cx = (x1 + x2) * 0.32, cy = (y1 + y2) * 0.32;   // courbe tirée vers le centre
+      const allume = recents.has(a.id) || recents.has(w);
+      liens.push({ a: a.id, b: w, type: "c", allume, el: el("path", { d: `M${x1},${y1} Q${cx},${cy} ${x2},${y2}`, fill: "none",
+        stroke: allume ? "#ff6f61" : "#ffffff", "stroke-opacity": allume ? .45 : .09, "stroke-width": allume ? 1.3 : 1, "stroke-dasharray": "4 5" }, gLiens) });
+    }));
+    AG.agents.forEach(a => {
+      const [x, y, t] = pos[a.id], r = rayonDe(a), c = a.place === "ceo" ? "#ff4d4d" : couleurDe(a), brouillon = a.statut === "brouillon";
+      const g = el("g", { class: "o-noeud", transform: `translate(${x},${y})` }, gNoeuds);
+      if (recents.has(a.id)) el("circle", { r: r + 7, fill: c, class: "o-pulse" }, g);
+      el("circle", { class: "c", r, fill: c, "fill-opacity": brouillon ? .12 : .28, stroke: c, "stroke-width": 1.6, "stroke-dasharray": brouillon ? "3 3" : "none" }, g);
+      if (a.place !== "poste") {
+        el("text", { "text-anchor": "middle", dy: "0.35em", fill: "#fff", "font-size": a.place === "ceo" ? 13 : 10.5, "font-weight": 600 }, g).textContent = a.sigle || a.titre.slice(0, 4);
+        const lab = el("text", { "text-anchor": "middle", y: r + 14, fill: brouillon ? "rgba(255,255,255,.55)" : "#e8e6e1", "font-size": 11.5 }, g);
+        lab.textContent = a.titre;
+      } else {
+        const cos = Math.cos(t), sin = Math.sin(t), droite = cos >= 0;
+        const lab = el("text", { x: cos * (r + 6), y: sin * (r + 6), dy: "0.35em", "text-anchor": Math.abs(cos) < 0.25 ? "middle" : droite ? "start" : "end",
+          fill: brouillon ? "rgba(255,255,255,.55)" : "#e8e6e1", "font-size": 11 }, g);
+        if (Math.abs(cos) < 0.25) lab.setAttribute("y", sin * (r + 12) + (sin > 0 ? 4 : -4));
+        lab.textContent = a.titre.replace(/^Poste cours /, "");
+      }
+      el("title", {}, g).textContent = a.titre + (brouillon ? " (brouillon)" : "");
+      g.addEventListener("click", e => { e.stopPropagation(); if (!glissa) ouvrirFiche(a.id); });
+      noeuds[a.id] = g;
+    });
+    // filtres par direction
+    const barre = document.getElementById("orgBarre");
+    [["tout", "Tout"]].concat(ORDRE_DIRS.map(d => [d, DIRS[d].nom])).forEach(([d, nom], k) => {
+      const b = document.createElement("button"); b.textContent = nom; if (!k) b.classList.add("actif");
+      if (k) b.style.borderColor = DIRS[d].couleur + "88";
+      b.onclick = () => { barre.querySelectorAll("button[data-f]").forEach(x => x.classList.toggle("actif", x === b)); filtre = d === "tout" ? null : d; majStyle(); };
+      b.dataset.f = d; barre.appendChild(b);
+    });
+    const nbP = (AG.passages || []).length + (AG.cycles || []).length, nbB = AG.agents.filter(a => a.statut === "brouillon").length;
+    document.getElementById("orgResume").innerHTML = `${AG.agents.length} agents · ${nbB} fiches brouillon (pointillés) · ${nbP} passages · ` +
+      `cercle qui pulse = passage récent · traits pointillés = collaborations` + (BIB ? "<br>" + texteBiblio() : "");
+    construit = true;
+  }
+
+  let filtre = null, selection = null;
+  function voisinsDe(id) { const s = new Set([id]); liens.forEach(l => { if (l.a === id) s.add(l.b); if (l.b === id) s.add(l.a); }); return s; }
+  function dansFiltre(a) { return !filtre || a.direction === filtre || a.place === "ceo" || a.place === "cos"; }
+  function majStyle() {
+    const vois = selection ? voisinsDe(selection) : null;
+    AG.agents.forEach(a => {
+      const on = dansFiltre(a) && (!vois || vois.has(a.id));
+      noeuds[a.id].style.opacity = on ? 1 : 0.18;
+      noeuds[a.id].querySelector("circle.c").setAttribute("stroke-width", a.id === selection ? 3.5 : 1.6);
+    });
+    liens.forEach(l => {
+      const A = parId[l.a], B = parId[l.b];
+      let op = dansFiltre(A) && dansFiltre(B) ? 1 : 0.15;
+      if (selection) op = (l.a === selection || l.b === selection) ? 1 : 0.08;
+      l.el.style.opacity = op;
+      if (l.type === "c" && selection && (l.a === selection || l.b === selection)) { l.el.setAttribute("stroke-opacity", .85); l.el.setAttribute("stroke", "#ff6f61"); }
+      else if (l.type === "c") { l.el.setAttribute("stroke-opacity", l.allume ? .45 : .09); l.el.setAttribute("stroke", l.allume ? "#ff6f61" : "#ffffff"); }
+    });
+  }
+
+  // ---------- Fiche d'agent ----------
+  const fiche = document.getElementById("orgFiche");
+  function puce(id) { const a = parId[id]; if (!a) return ""; return `<span class="o-puce" data-id="${esc(id)}" style="border-color:${couleurDe(a)}88">${esc(a.titre)}</span>`; }
+  function rendreCorps(md) {
+    const lignes = md.replace(/^#\s+.*$/m, "").split(/\n/); let h = "", liste = null, saute = false;
+    const fermer = () => { if (liste) { h += `</${liste}>`; liste = null; } };
+    const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/`([^`]+)`/g, "<code>$1</code>")
+      .replace(/\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g, (m, x, y) => parId[x] ? parId[x].titre : (y || x));
+    for (const l of lignes) {
+      const t = l.trim();
+      if (/^##\s+/.test(t)) { fermer(); saute = /^##\s+Liens/i.test(t); if (!saute) h += `<h5>${inline(t.replace(/^#+\s+/, ""))}</h5>`; continue; }
+      if (saute || !t) { if (!t) fermer(); continue; }
+      let m;
+      if ((m = t.match(/^[-*]\s+(.*)/))) { if (liste !== "ul") { fermer(); h += "<ul>"; liste = "ul"; } h += `<li>${inline(m[1])}</li>`; }
+      else if ((m = t.match(/^\d+\.\s+(.*)/))) { if (liste !== "ol") { fermer(); h += "<ol>"; liste = "ol"; } h += `<li>${inline(m[1])}</li>`; }
+      else { fermer(); h += `<p>${inline(t)}</p>`; }
+    }
+    fermer(); return h;
+  }
+  function lignePassage(p, avecAgent) {
+    const quand = p.type === "cycle" ? `cycle ${p.n}` : new Date(p.date + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+    const iss = (p.issue || "").toLowerCase(), cls = /no-go/.test(iss) ? "nogo" : /^go/.test(iss) ? "go" : "";
+    const qui = avecAgent && parId[p.agent] ? ` · <span class="o-agent" data-id="${esc(p.agent)}">${esc(parId[p.agent].titre)}</span>` : "";
+    const via = p.via && parId[p.via] ? ` · via ${esc(parId[p.via].titre)}` : "";
+    const titre = p.type === "cycle" ? esc(p.projet.replace(/^Cycle \d+ · /, "")) : esc(p.projet);
+    return `<li><span class="o-quand">${quand}</span>${qui}${via} · ${titre}` + (p.issue && p.issue !== "fait" ? `<span class="o-issue ${cls}">${esc(p.issue)}</span>` : "") +
+      (p.note ? `<br><span style="color:var(--doux)">${esc(p.note)}</span>` : "") + "</li>";
+  }
+  function appel(a) {
+    if (a.place === "ceo") return "";
+    return `Agis comme l'agent « ${a.titre} » du Laurisverse : lis sa fiche « ${a.fichier} » dans mon coffre Trading-Vault et suis ses règles. Ma demande : `;
+  }
+  function ouvrirFiche(id) {
+    const a = parId[id]; if (!a) return;
+    selection = id; majStyle();
+    const c = a.place === "ceo" ? "#ff4d4d" : couleurDe(a), dir = DIRS[a.direction];
+    const chef = a.reports_to ? puce(a.reports_to) : "—";
+    const equipe = (enfants[id] || []).map(puce).join("") || "";
+    const avec = a.works_with.map(puce).join("") || "—";
+    const ps = passagesDe[id] || [];
+    const note = NOTES.find(n => n.chemin === a.fichier);
+    const lien = D.mobile ? (note && note.page ? `<a href="${esc(note.page)}">Lire la fiche</a>` : "")
+      : `<a href="obsidian://open?vault=${encodeURIComponent(D.coffre)}&file=${encodeURIComponent(a.fichier.replace(/\.md$/i, ""))}">Ouvrir dans Obsidian</a>`;
+    let biblio = "";
+    if (id === "markets-pedagogue" && BIB) {
+      biblio = `<h4>Bibliothèque recensée</h4><div class="o-biblio">${texteBiblio()}` +
+        (BIB.publies && BIB.publies.length ? "<ol>" + BIB.publies.map(e => `<li>${esc(e.titre)}${e.duree ? ` · ${Math.round(e.duree / 60)} min` : ""}</li>`).join("") + "</ol>" : "") +
+        (BIB.podcast_lu_le ? `<div style="color:var(--doux)">Podcast lu le ${esc(BIB.podcast_lu_le)}</div>` : "") + "</div>";
+    }
+    fiche.innerHTML = `<div class="o-place" style="color:${c}">${esc(PLACES[a.place] || a.place)}${dir && a.place !== "board" ? " · " + esc(dir.nom) : ""}</div>
+      <h3>${esc(a.titre)}${a.statut === "brouillon" ? '<span class="o-badge">brouillon, à compléter</span>' : ""}</h3>
+      <div class="o-desc">${esc(a.description)}</div>
+      <dl><dt>Place</dt><dd>${esc(PLACES[a.place] || a.place)}</dd>
+      <dt>Rend compte à</dt><dd>${chef}</dd>
+      ${equipe ? `<dt>Son équipe</dt><dd>${equipe}</dd>` : ""}
+      <dt>Travaille avec</dt><dd>${avec}</dd>
+      <dt>Modèle</dt><dd>${esc(a.modele)}</dd>
+      <dt>Outils</dt><dd>${esc(a.outils.join(", ") || "aucun")}</dd>
+      <dt>Skills</dt><dd>${esc(a.skills)}</dd>
+      <dt>Fichier</dt><dd><code>${esc(a.fichier)}</code></dd></dl>
+      <h4>Rôle</h4><div class="o-role">${rendreCorps(a.corps || "")}</div>
+      ${biblio}
+      <h4>Derniers passages (${ps.length})</h4>
+      ${ps.length ? `<ul class="o-passages">${ps.slice(0, 6).map(p => lignePassage(p, false)).join("")}</ul>` : '<div style="color:var(--doux);font-size:12px">Aucun passage pour l\'instant.</div>'}
+      <div class="o-actions">${appel(a) ? '<button id="orgCopier">Copier l\'appel</button>' : ""}${lien}<button class="discret" id="orgFermer">Fermer</button></div>
+      <div class="o-copie" id="orgCopie"></div>`;
+    fiche.classList.add("visible");
+    brancherPuces();
+    const bc = document.getElementById("orgCopier");
+    if (bc) bc.onclick = () => copier(appel(a));
+    document.getElementById("orgFermer").onclick = fermerFiche;
+  }
+  function brancherPuces() { fiche.querySelectorAll("[data-id]").forEach(s => s.onclick = () => ouvrirFiche(s.dataset.id)); }
+  function fermerFiche() { fiche.classList.remove("visible"); selection = null; if (construit && AG) majStyle(); }
+  function copier(txt) {
+    const ok = () => { document.getElementById("orgCopie").textContent = "Copié. Colle-le dans le projet Claude, puis écris ta demande à la suite."; };
+    const secours = () => { const ta = document.createElement("textarea"); ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); ok(); } catch (e) { document.getElementById("orgCopie").textContent = txt; } ta.remove(); };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(ok, secours); else secours();
+  }
+  function historique() {
+    if (!AG) return;
+    selection = null; majStyle();
+    const tous = [];
+    (AG.passages || []).forEach(p => tous.push({ ...p, type: "passage" }));
+    const dates = tous.slice().sort((a, b) => a.date < b.date ? 1 : -1);
+    const cycles = (AG.cycles || []).slice().sort((a, b) => b.n - a.n).map(c => ({ type: "cycle", n: c.n, agent: c.agent, projet: `Cycle ${c.n} · ${c.titre}`, note: c.resultat }));
+    fiche.innerHTML = `<div class="o-place" style="color:var(--accent)">Historique</div><h3>Derniers passages</h3>
+      <div class="o-desc">Tableau « 10 - Agents/Passages » du coffre : une ligne par passage. Les cycles du chef d'orchestre viennent de JOURNAL.md.</div>
+      <h4>Passages notés (${dates.length})</h4><ul class="o-passages">${dates.map(p => lignePassage(p, true)).join("") || "<li>Aucun.</li>"}</ul>
+      <h4>Cycles du chef d'orchestre (${cycles.length})</h4><ul class="o-passages">${cycles.slice(0, 15).map(p => lignePassage(p, true)).join("") || "<li>Aucun.</li>"}</ul>
+      <div class="o-actions"><button class="discret" id="orgFermer">Fermer</button></div>`;
+    fiche.classList.add("visible"); brancherPuces();
+    document.getElementById("orgFermer").onclick = fermerFiche;
+  }
+  document.getElementById("orgHistoBtn").onclick = historique;
+
+  // ---------- Glisser, zoomer, recentrer ----------
+  const svg = document.getElementById("orgSvg"), monde = document.getElementById("orgMonde");
+  let vue = { x: 0, y: 0, k: 1 }, glissa = false, depart = null, pointeurs = new Map(), pinceDepart = null;
+  const appliquer = () => monde.setAttribute("transform", `translate(${vue.x},${vue.y}) scale(${vue.k})`);
+  const echelle = () => 1200 / Math.min(svg.clientWidth || 1, svg.clientHeight || 1);   // pixels écran -> unités du dessin
+  function recentrer() { vue = { x: 0, y: 0, k: 1 }; appliquer(); fermerFiche(); }
+  document.getElementById("orgRecentrer").onclick = recentrer;
+  svg.addEventListener("pointerdown", e => { pointeurs.set(e.pointerId, [e.clientX, e.clientY]); glissa = false; depart = [e.clientX, e.clientY, vue.x, vue.y];
+    if (pointeurs.size === 2) { const [p, q] = [...pointeurs.values()]; pinceDepart = [Math.hypot(p[0] - q[0], p[1] - q[1]), vue.k]; }
+    svg.classList.add("glisse"); });
+  svg.addEventListener("pointermove", e => {
+    if (!pointeurs.has(e.pointerId)) return;
+    pointeurs.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pointeurs.size === 2 && pinceDepart) { const [p, q] = [...pointeurs.values()];
+      vue.k = Math.max(0.4, Math.min(4, pinceDepart[1] * Math.hypot(p[0] - q[0], p[1] - q[1]) / pinceDepart[0])); glissa = true; appliquer(); return; }
+    const dx = e.clientX - depart[0], dy = e.clientY - depart[1];
+    if (Math.abs(dx) + Math.abs(dy) > 4) glissa = true;
+    if (glissa) { const s = echelle(); vue.x = depart[2] + dx * s; vue.y = depart[3] + dy * s; appliquer(); }
+  });
+  const fin = e => { pointeurs.delete(e.pointerId); if (pointeurs.size < 2) pinceDepart = null; svg.classList.remove("glisse");
+    if (!pointeurs.size) setTimeout(() => { glissa = false; }, 0); };
+  svg.addEventListener("pointerup", fin); svg.addEventListener("pointercancel", fin);
+  svg.addEventListener("click", () => { if (!glissa) fermerFiche(); });
+  svg.addEventListener("wheel", e => { e.preventDefault(); const k = Math.max(0.4, Math.min(4, vue.k * Math.exp(-e.deltaY * 0.0012)));
+    vue.x *= k / vue.k; vue.y *= k / vue.k; vue.k = k; appliquer(); }, { passive: false });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && document.body.classList.contains("org")) fermerFiche(); });
+
+  // Ouvrir directement l'organigramme avec laurisverse.html#organigramme
+  if (location.hash === "#organigramme") montrer(true);
+})();
+</script>

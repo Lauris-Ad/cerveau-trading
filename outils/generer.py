@@ -147,7 +147,7 @@ def debloques(episodes):
     return garde, prog
 
 
-def construire_laurisverse(coffre, out, pages, episodes):
+def construire_laurisverse(coffre, out, pages, episodes, tous=None, prog=None):
     """Version téléphone du Laurisverse : même moteur que sur PC, dossiers publics seulement."""
     import importlib.util
     spec = importlib.util.spec_from_file_location("laurisverse", RACINE / "laurisverse" / "laurisverse.py")
@@ -163,9 +163,22 @@ def construire_laurisverse(coffre, out, pages, episodes):
         n["episodes"] = par_lecon.get(n["chemin"], [])
     donnees = {"coffre": "Trading-Vault", "prenom": "Lauris", "aujourdhui": datetime.now().date().isoformat(),
                "genere": datetime.now().strftime("%d/%m/%Y"), "notes": notes, "liens": liens, "mobile": True}
+    # Organigramme des agents (dossier « 10 - Agents ») et bibliothèque (leçons + épisodes)
+    cycles = []
+    if (RACINE / "avancee" / "avancee.json").exists():
+        cycles = json.loads((RACINE / "avancee" / "avancee.json").read_text(encoding="utf-8")).get("cycles", [])
+    donnees["agents"] = lv.lire_agents(coffre, cycles)
+    podcast = {"ecrits": [ep["id"] for ep in (tous or episodes)],
+               "publies": [{"id": ep["id"], "numero": int(ep["numero"]), "titre": ep["titre"]} for ep in episodes],
+               "lecon_en_cours": (prog or {}).get("lecon_en_cours"), "lecons_validees": (prog or {}).get("lecons_validees", []),
+               "lu_le": datetime.now().strftime("%d/%m/%Y")}
+    donnees["bibliotheque"] = lv.bibliotheque(coffre, podcast)
     modele = (RACINE / "laurisverse" / "modele.html").read_text(encoding="utf-8")
     ajout = (RACINE / "laurisverse" / "mobile.html").read_text(encoding="utf-8")
     json_txt = json.dumps(donnees, ensure_ascii=False).replace("</", "<\\/")
+    org = RACINE / "laurisverse" / "organigramme.html"
+    if org.exists():
+        ajout += "\n" + org.read_text(encoding="utf-8")
     page_lv = modele.replace("/*__DONNEES__*/null", json_txt).replace("</body>", ajout + "\n</body>")
     page_lv = page_lv.replace("<head>", '<head>\n<link rel="apple-touch-icon" href="couverture.png">\n<meta name="apple-mobile-web-app-capable" content="yes">', 1)
     (out / "laurisverse.html").write_text(page_lv, encoding="utf-8")
@@ -236,7 +249,7 @@ def main():
                           "audio": f"audio/{ep['id']}.mp3", "duree": sec})
 
     couverture(out / "couverture.png")
-    construire_laurisverse(coffre, out, pages, episodes)
+    construire_laurisverse(coffre, out, pages, episodes, tous, prog)
     rss = f"""<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom"><channel>
 <atom:link href="{base}feed.xml" rel="self" type="application/rss+xml"/>
