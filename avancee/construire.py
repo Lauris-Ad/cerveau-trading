@@ -18,8 +18,15 @@ def main(journal, backlog, registre):
         corps = texte[m.end(): blocs[k + 1].start() if k + 1 < len(blocs) else len(texte)]
         d = re.search(r"\*\*À dire\*\*\s*:?\s*(.+)", corps)
         if d:
+            ag = re.search(r"\*\*Agents\*\*\s*:?\s*(.+)", corps)      # rituels de l'Équipe (organigramme)
+            dt = re.search(r"\*\*Date\*\*\s*:?\s*(\d{4}-\d{2}-\d{2})", corps)
+            membres = []
+            for morceau in re.split(r"[,;·]", ag.group(1)) if ag else []:
+                mm = re.search(r"`?\[{0,2}([a-z0-9][a-z0-9\-]+)\]{0,2}`?\s*(?:\(([^)]*)\))?", morceau.strip())
+                if mm:
+                    membres.append({"id": mm.group(1), "issue": (mm.group(2) or "").strip()})
             cycles.append({"n": int(m.group(1)), "axe": m.group(2), "titre": re.sub(r"[*_`]", "", m.group(3)).strip(),
-                           "dire": d.group(1).strip()})
+                           "dire": d.group(1).strip(), "agents": membres, "date": dt.group(1) if dt else None})
     reg = json.loads(Path(registre).read_text(encoding="utf-8"))
     strat = {"testees": len(reg), "archivees": sum(1 for f in reg.values() if f.get("statut") == "archivee"),
              "candidates": sum(1 for f in reg.values() if f.get("statut") == "candidate"),

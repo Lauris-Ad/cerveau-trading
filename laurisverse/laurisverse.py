@@ -201,6 +201,19 @@ def phrase_courte(t, n=220):
     return (coupe if len(coupe) > 60 else t[:n].rsplit(" ", 1)[0]) + "."
 
 
+RE_MEMBRE = re.compile(r"`?\[{0,2}([a-z0-9][a-z0-9\-]+)\]{0,2}`?\s*(?:\(([^)]*)\))?")
+
+
+def lire_membres(texte):
+    """« markets-backtest, hocs (GO), avocat-du-diable (NO-GO) » -> [{id, issue}]"""
+    out = []
+    for morceau in re.split(r"[,;·]", texte):
+        m = RE_MEMBRE.search(morceau.strip())
+        if m:
+            out.append({"id": m.group(1), "issue": (m.group(2) or "").strip()})
+    return out
+
+
 def lire_orchestre(coffre: Path) -> dict:
     """Ce que la boucle a fait : cycles du JOURNAL, échelle des stratégies, collecteur, prochaines tâches."""
     out = {"cycles": [], "nouveaux": [], "strategies": [], "candidates": 0, "collecteur": None, "prochaines": [], "phrases": []}
@@ -212,8 +225,11 @@ def lire_orchestre(coffre: Path) -> dict:
             corps = texte[m.end(): blocs[k + 1].start() if k + 1 < len(blocs) else len(texte)]
             dire = re.search(r"\*\*À dire\*\*\s*:?\s*(.+)", corps)     # phrase écrite pour la voix
             res = dire or re.search(r"\*\*Résultat\*\*\s*:?\s*(.+)", corps)
+            ag = re.search(r"\*\*Agents\*\*\s*:?\s*(.+)", corps)       # qui a travaillé (rituels de l'Équipe)
+            dt = re.search(r"\*\*Date\*\*\s*:?\s*(\d{4}-\d{2}-\d{2})", corps)
             out["cycles"].append({"n": int(m.group(1)), "axe": m.group(2), "titre": texte_parle(m.group(3)),
-                                  "resultat": phrase_courte(res.group(1)) if res else "", "dire": bool(dire)})
+                                  "resultat": phrase_courte(res.group(1)) if res else "", "dire": bool(dire),
+                                  "agents": lire_membres(ag.group(1)) if ag else [], "date": dt.group(1) if dt else None})
     try:
         deja = json.loads(VU.read_text(encoding="utf-8")).get("dernier_cycle", 0)
     except Exception:
@@ -332,12 +348,13 @@ def lire_agents(coffre: Path, cycles=None) -> dict:
                 "corps": corps.strip()[:4000],
             })
     connus = {a["id"] for a in agents}
-    sortie_cycles = []
+    sortie_cycles = []   # un cycle sans ligne « Agents » est rattaché au poste de son axe
     for c in cycles or []:
         titre = c.get("titre", "")
         poste = "markets-head" if "point d'étape" in titre.lower() else POSTE_PAR_AXE.get(c.get("axe"), "markets-head")
-        sortie_cycles.append({"n": c["n"], "axe": c.get("axe"), "titre": titre,
-                              "resultat": c.get("resultat") or c.get("dire") or "", "agent": poste})
+        membres = [m for m in (c.get("agents") or []) if m.get("id") in connus] or [{"id": poste, "issue": ""}]
+        sortie_cycles.append({"n": c["n"], "axe": c.get("axe"), "titre": titre, "date": c.get("date"),
+                              "resultat": c.get("resultat") or c.get("dire") or "", "agent": membres[0]["id"], "membres": membres})
     return {"agents": agents, "passages": [p for p in passages if p["agent"] in connus] if connus else passages,
             "cycles": sortie_cycles}
 

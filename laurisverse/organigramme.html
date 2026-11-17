@@ -137,7 +137,7 @@
   // ---------- Données ----------
   let construit = false;
   const parId = {}, enfants = {}, pos = {};
-  const passagesDe = {}, recents = new Set();
+  const passagesDe = {}, recents = new Set(), derniere = {}, sommeil = [];
   function preparer() {
     AG.agents.forEach(a => { parId[a.id] = a; enfants[a.id] = []; passagesDe[a.id] = []; });
     AG.agents.forEach(a => { if (a.reports_to && parId[a.reports_to]) enfants[a.reports_to].push(a.id); });
@@ -145,11 +145,32 @@
     (AG.passages || []).forEach(p => { if (passagesDe[p.agent]) passagesDe[p.agent].push({ ...p, type: "passage" });
       if (auj - Date.parse(p.date) <= 7 * 864e5) recents.add(p.agent); });
     const cycles = (AG.cycles || []).slice().sort((a, b) => b.n - a.n);
+    const dernierCycle = cycles.length ? cycles[0].n : 0;
+    const noter = (id, quand, n) => { const d = derniere[id] || (derniere[id] = { date: null, n: null });
+      if (quand && (!d.date || quand > d.date)) d.date = quand; if (n != null && (d.n == null || n > d.n)) d.n = n; };
+    (AG.passages || []).forEach(p => noter(p.agent, p.date, null));
     cycles.forEach((c, k) => {
-      const p = { type: "cycle", n: c.n, agent: c.agent, projet: `Cycle ${c.n} · ${c.titre}`, note: c.resultat, issue: "" };
-      if (passagesDe[c.agent]) passagesDe[c.agent].push(p);
-      if (passagesDe["markets-head"] && c.agent !== "markets-head") passagesDe["markets-head"].push({ ...p, via: c.agent });
-      if (k < 5) { recents.add(c.agent); recents.add("markets-head"); }
+      const membres = c.membres && c.membres.length ? c.membres : [{ id: c.agent, issue: "" }];
+      membres.forEach((m, j) => {
+        const p = { type: "cycle", n: c.n, date: c.date || null, agent: m.id, projet: `Cycle ${c.n} · ${c.titre}`, note: j ? "" : c.resultat, issue: m.issue || "",
+          via: j ? membres[0].id : null };
+        if (passagesDe[m.id]) passagesDe[m.id].push(p);
+        noter(m.id, c.date, c.n);
+        if (k < 5 || (c.date && auj - Date.parse(c.date) <= 7 * 864e5)) recents.add(m.id);
+      });
+      if (passagesDe["markets-head"] && !membres.some(m => m.id === "markets-head")) {
+        passagesDe["markets-head"].push({ type: "cycle", n: c.n, date: c.date || null, agent: "markets-head", projet: `Cycle ${c.n} · ${c.titre}`, note: c.resultat, via: membres[0].id });
+        noter("markets-head", c.date, c.n);
+        if (k < 5) recents.add("markets-head");
+      }
+    });
+    // En sommeil : agent actif sans passage daté depuis 7 jours ni dans les 10 derniers cycles
+    AG.agents.forEach(a => {
+      if (a.place === "ceo" || a.statut === "brouillon") return;
+      const d = derniere[a.id] || {};
+      const age = d.date ? Math.round((auj - Date.parse(d.date)) / 864e5) : null;
+      const ok = (age != null && age <= 7) || (d.n != null && dernierCycle - d.n < 10);
+      if (!ok) sommeil.push({ id: a.id, age, n: d.n });
     });
     Object.values(passagesDe).forEach(l => l.sort((a, b) => (b.date || "") > (a.date || "") ? 1 : (b.date || "") < (a.date || "") ? -1 : (b.n || 0) - (a.n || 0)));
   }
@@ -209,6 +230,8 @@
       const [x, y, t] = pos[a.id], r = rayonDe(a), c = a.place === "ceo" ? "#ff4d4d" : couleurDe(a), brouillon = a.statut === "brouillon";
       const g = el("g", { class: "o-noeud", transform: `translate(${x},${y})` }, gNoeuds);
       if (recents.has(a.id)) el("circle", { r: r + 7, fill: c, class: "o-pulse" }, g);
+      if (sommeil.some(s => s.id === a.id)) { el("circle", { r: r + 5, fill: "none", stroke: "#8d8a85", "stroke-width": 1, "stroke-dasharray": "1 3" }, g);
+        el("text", { x: r * 0.75, y: -r * 0.75, fill: "#b9b6b0", "font-size": 10 }, g).textContent = "z"; }
       el("circle", { class: "c", r, fill: c, "fill-opacity": brouillon ? .12 : .28, stroke: c, "stroke-width": 1.6, "stroke-dasharray": brouillon ? "3 3" : "none" }, g);
       if (a.place !== "poste") {
         el("text", { "text-anchor": "middle", dy: "0.35em", fill: "#fff", "font-size": a.place === "ceo" ? 13 : 10.5, "font-weight": 600 }, g).textContent = a.sigle || a.titre.slice(0, 4);
@@ -233,6 +256,8 @@
       b.onclick = () => { barre.querySelectorAll("button[data-f]").forEach(x => x.classList.toggle("actif", x === b)); filtre = d === "tout" ? null : d; majStyle(); };
       b.dataset.f = d; barre.appendChild(b);
     });
+    const bz = document.createElement("button"); bz.textContent = `💤 En sommeil (${sommeil.length})`; bz.onclick = enSommeil;
+    barre.insertBefore(bz, barre.querySelector(".o-sep"));
     const nbP = (AG.passages || []).length + (AG.cycles || []).length, nbB = AG.agents.filter(a => a.statut === "brouillon").length;
     document.getElementById("orgResume").innerHTML = `${AG.agents.length} agents · ${nbB} fiches brouillon (pointillés) · ${nbP} passages · ` +
       `cercle qui pulse = passage récent · traits pointillés = collaborations` + (BIB ? "<br>" + texteBiblio() : "");
@@ -279,7 +304,8 @@
     fermer(); return h;
   }
   function lignePassage(p, avecAgent) {
-    const quand = p.type === "cycle" ? `cycle ${p.n}` : new Date(p.date + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+    const jour = p.date ? new Date(p.date + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "";
+    const quand = p.type === "cycle" ? `cycle ${p.n}` + (jour ? ` · ${jour}` : "") : jour;
     const iss = (p.issue || "").toLowerCase(), cls = /no-go/.test(iss) ? "nogo" : /^go/.test(iss) ? "go" : "";
     const qui = avecAgent && parId[p.agent] ? ` · <span class="o-agent" data-id="${esc(p.agent)}">${esc(parId[p.agent].titre)}</span>` : "";
     const via = p.via && parId[p.via] ? ` · via ${esc(parId[p.via].titre)}` : "";
@@ -311,6 +337,9 @@
     fiche.innerHTML = `<div class="o-place" style="color:${c}">${esc(PLACES[a.place] || a.place)}${dir && a.place !== "board" ? " · " + esc(dir.nom) : ""}</div>
       <h3>${esc(a.titre)}${a.statut === "brouillon" ? '<span class="o-badge">brouillon, à compléter</span>' : ""}</h3>
       <div class="o-desc">${esc(a.description)}</div>
+      ${a.place !== "ceo" ? `<div style="font-size:12px;color:${sommeil.some(s => s.id === id) ? "#e0a96d" : "#9ef0bb"};margin:-4px 0 8px">` +
+        (a.statut === "brouillon" ? "" : sommeil.some(s => s.id === id) ? "💤 En sommeil · " : "● Actif · ") + "dernier passage : " +
+        quandTxt({ age: derniere[id] && derniere[id].date ? Math.round((Date.parse(D.aujourdhui || new Date().toISOString().slice(0, 10)) - Date.parse(derniere[id].date)) / 864e5) : null, n: derniere[id] ? derniere[id].n : null }) + "</div>" : ""}
       <dl><dt>Place</dt><dd>${esc(PLACES[a.place] || a.place)}</dd>
       <dt>Rend compte à</dt><dd>${chef}</dd>
       ${equipe ? `<dt>Son équipe</dt><dd>${equipe}</dd>` : ""}
@@ -345,7 +374,8 @@
     const tous = [];
     (AG.passages || []).forEach(p => tous.push({ ...p, type: "passage" }));
     const dates = tous.slice().sort((a, b) => a.date < b.date ? 1 : -1);
-    const cycles = (AG.cycles || []).slice().sort((a, b) => b.n - a.n).map(c => ({ type: "cycle", n: c.n, agent: c.agent, projet: `Cycle ${c.n} · ${c.titre}`, note: c.resultat }));
+    const cycles = (AG.cycles || []).slice().sort((a, b) => b.n - a.n).map(c => ({ type: "cycle", n: c.n, date: c.date || null, agent: c.agent, projet: `Cycle ${c.n} · ${c.titre}`, note: c.resultat,
+      issue: (c.membres || []).filter(m => m.issue).map(m => (parId[m.id] ? parId[m.id].sigle || parId[m.id].titre : m.id) + " " + m.issue).join(" · ") }));
     fiche.innerHTML = `<div class="o-place" style="color:var(--accent)">Historique</div><h3>Derniers passages</h3>
       <div class="o-desc">Tableau « 10 - Agents/Passages » du coffre : une ligne par passage. Les cycles du chef d'orchestre viennent de JOURNAL.md.</div>
       <h4>Passages notés (${dates.length})</h4><ul class="o-passages">${dates.map(p => lignePassage(p, true)).join("") || "<li>Aucun.</li>"}</ul>
@@ -355,6 +385,18 @@
     document.getElementById("orgFermer").onclick = fermerFiche;
   }
   document.getElementById("orgHistoBtn").onclick = historique;
+  function quandTxt(s) { return s.age != null ? (s.age === 0 ? "aujourd'hui" : `il y a ${s.age} jour${s.age > 1 ? "s" : ""}`) : s.n != null ? `cycle ${s.n}` : "jamais"; }
+  function enSommeil() {
+    selection = null; majStyle();
+    const liste = sommeil.slice().sort((a, b) => (b.age ?? 999) - (a.age ?? 999));
+    fiche.innerHTML = `<div class="o-place" style="color:#b9b6b0">Santé de l'équipe</div><h3>Agents en sommeil (${liste.length})</h3>
+      <div class="o-desc">Un agent actif est « en sommeil » quand il n'a aucun passage depuis 7 jours, ni dans les 10 derniers cycles du chef d'orchestre. ` +
+      `Les rituels de l'Équipe (fiche « 10 - Agents/Rituels de l'Équipe ») servent à les réveiller. Les fiches brouillon ne comptent pas : elles attendent tes précisions.</div>
+      <ul class="o-passages">${liste.map(s => `<li><span class="o-agent" data-id="${esc(s.id)}">${esc(parId[s.id].titre)}</span> · dernier passage : ${quandTxt(s)}</li>`).join("") || "<li>Aucun : toute l'équipe a travaillé récemment. 👏</li>"}</ul>
+      <div class="o-actions"><button class="discret" id="orgFermer">Fermer</button></div>`;
+    fiche.classList.add("visible"); brancherPuces();
+    document.getElementById("orgFermer").onclick = fermerFiche;
+  }
 
   // ---------- Glisser, zoomer, recentrer ----------
   const svg = document.getElementById("orgSvg"), monde = document.getElementById("orgMonde");
