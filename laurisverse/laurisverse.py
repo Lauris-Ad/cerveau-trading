@@ -300,6 +300,43 @@ DOSSIER_AGENTS = "10 - Agents"
 PLACES = {"ceo", "cos", "board", "direction", "poste"}
 # Les cycles du chef d'orchestre sont des passages du Head of Markets et de ses postes
 POSTE_PAR_AXE = {"A": "markets-data-dashboard", "B": "markets-pedagogue", "C": "markets-backtest"}
+POSTE_CROQ = {"P": "croq-produit", "D": "croq-dev", "G": "croq-growth"}
+CROQ_DEFAUT = Path.home() / "Documents" / "Croq"          # dépôt Lauris-Ad/Croq sur le PC
+JOURNAL_CROQ = "docs/equipe/JOURNAL.md"
+RE_CYCLE_CROQ = re.compile(r"^## Cycle (\d+) · ([PDG]) · (.+)$", re.M)
+
+
+def lire_journal_croq(dossier: Path):
+    """Cycles de l'équipe Croq : journal de la branche main sur GitHub (git fetch silencieux), sinon copie locale."""
+    import subprocess
+    texte = None
+    if (dossier / ".git").exists():
+        env = dict(os.environ, GIT_TERMINAL_PROMPT="0", GCM_INTERACTIVE="never")
+        options = {"capture_output": True, "env": env, "timeout": 25}
+        if os.name == "nt":
+            options["creationflags"] = 0x08000000           # aucune fenêtre
+        try:
+            subprocess.run(["git", "-C", str(dossier), "fetch", "--quiet", "origin", "main"], **options)
+            r = subprocess.run(["git", "-C", str(dossier), "show", "origin/main:" + JOURNAL_CROQ], **options)
+            if r.returncode == 0:
+                texte = r.stdout.decode("utf-8", errors="replace")
+        except Exception:
+            pass
+    if texte is None and (dossier / JOURNAL_CROQ).exists():
+        texte = (dossier / JOURNAL_CROQ).read_text(encoding="utf-8", errors="replace")
+    cycles = []
+    if not texte:
+        return cycles
+    blocs = list(RE_CYCLE_CROQ.finditer(texte))
+    for k, m in enumerate(blocs):
+        corps = texte[m.end(): blocs[k + 1].start() if k + 1 < len(blocs) else len(texte)]
+        dire = re.search(r"\*\*À dire\*\*\s*:?\s*(.+)", corps) or re.search(r"\*\*Résultat\*\*\s*:?\s*(.+)", corps)
+        ag = re.search(r"\*\*Agents\*\*\s*:?\s*(.+)", corps)
+        dt = re.search(r"\*\*Date\*\*\s*:?\s*(\d{4}-\d{2}-\d{2})", corps)
+        cycles.append({"n": int(m.group(1)), "axe": m.group(2), "titre": texte_parle(m.group(3)), "projet": "croq",
+                       "resultat": phrase_courte(dire.group(1)) if dire else "", "agents": lire_membres(ag.group(1)) if ag else [],
+                       "date": dt.group(1) if dt else None})
+    return cycles
 RE_LIGNE_TABLEAU = re.compile(r"^\|\s*(\d{4}-\d{2}-\d{2})\s*\|\s*([a-z0-9\-]+)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*$")
 
 
@@ -351,9 +388,12 @@ def lire_agents(coffre: Path, cycles=None) -> dict:
     sortie_cycles = []   # un cycle sans ligne « Agents » est rattaché au poste de son axe
     for c in cycles or []:
         titre = c.get("titre", "")
-        poste = "markets-head" if "point d'étape" in titre.lower() else POSTE_PAR_AXE.get(c.get("axe"), "markets-head")
+        croq = c.get("projet") == "croq"
+        chef = "croq-ceo" if croq else "markets-head"
+        poste = chef if "point d'étape" in titre.lower() else (POSTE_CROQ if croq else POSTE_PAR_AXE).get(c.get("axe"), chef)
         membres = [m for m in (c.get("agents") or []) if m.get("id") in connus] or [{"id": poste, "issue": ""}]
         sortie_cycles.append({"n": c["n"], "axe": c.get("axe"), "titre": titre, "date": c.get("date"),
+                              "projet": "croq" if croq else "trading", "chef": chef,
                               "resultat": c.get("resultat") or c.get("dire") or "", "agent": membres[0]["id"], "membres": membres})
     return {"agents": agents, "passages": [p for p in passages if p["agent"] in connus] if connus else passages,
             "cycles": sortie_cycles}
@@ -419,6 +459,7 @@ def main():
     p.add_argument("--coffre", default=str(COFFRE_PAR_DEFAUT), help="dossier du coffre")
     p.add_argument("--sans-ouvrir", action="store_true", help="ne pas ouvrir le navigateur")
     p.add_argument("--prenom", default="Lauris", help="prénom affiché par le guide")
+    p.add_argument("--croq", default=str(CROQ_DEFAUT), help="dossier du dépôt Croq (journal de l'équipe Croq)")
     p.add_argument("--parler", action="store_true", help=argparse.SUPPRESS)   # ancienne option, ignorée
     args = p.parse_args()
 
@@ -438,7 +479,8 @@ def main():
         "liens": liens,
         "orchestre": lire_orchestre(coffre),
     }
-    donnees["agents"] = lire_agents(coffre, donnees["orchestre"]["cycles"])
+    cycles_croq = lire_journal_croq(Path(args.croq))
+    donnees["agents"] = lire_agents(coffre, donnees["orchestre"]["cycles"] + cycles_croq)
     donnees["bibliotheque"] = bibliotheque(coffre)
     modele = MODELE.read_text(encoding="utf-8")
     if ORGANIGRAMME.exists():
@@ -451,7 +493,8 @@ def main():
     if introuvables:
         print(f"({introuvables} liens pointent vers des notes qui n'existent pas encore.)")
     ag, bib = donnees["agents"], donnees["bibliotheque"]
-    print(f"Organigramme : {len(ag['agents'])} agents, {len(ag['passages'])} passages notés, {len(ag['cycles'])} cycles.")
+    print(f"Organigramme : {len(ag['agents'])} agents, {len(ag['passages'])} passages notés, "
+          f"{len(ag['cycles']) - len(cycles_croq)} cycles trading, {len(cycles_croq)} cycles Croq.")
     print(f"Bibliothèque : {bib['nb_lecons']} leçons, "
           + (f"{bib['episodes_publies']}/{bib['episodes_total']} épisodes publiés" if bib.get("episodes_total") else "épisodes inconnus (pas de réseau ni de cache)")
           + (f" (lu le {bib['podcast_lu_le']})" if bib.get("podcast_lu_le") else "") + ".")

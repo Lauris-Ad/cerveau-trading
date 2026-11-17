@@ -144,24 +144,27 @@
     const auj = Date.parse(D.aujourdhui || new Date().toISOString().slice(0, 10));
     (AG.passages || []).forEach(p => { if (passagesDe[p.agent]) passagesDe[p.agent].push({ ...p, type: "passage" });
       if (auj - Date.parse(p.date) <= 7 * 864e5) recents.add(p.agent); });
-    const cycles = (AG.cycles || []).slice().sort((a, b) => b.n - a.n);
-    const dernierCycle = cycles.length ? cycles[0].n : 0;
-    const noter = (id, quand, n) => { const d = derniere[id] || (derniere[id] = { date: null, n: null });
-      if (quand && (!d.date || quand > d.date)) d.date = quand; if (n != null && (d.n == null || n > d.n)) d.n = n; };
+    const cycles = (AG.cycles || []).slice().sort((a, b) => (a.projet === b.projet ? 0 : a.projet < b.projet ? -1 : 1) || b.n - a.n);
+    const rangs = {};   // rang du cycle dans son projet (0 = le plus récent)
+    const noter = (id, quand, rang) => { const d = derniere[id] || (derniere[id] = { date: null, rang: null, n: null, projet: null });
+      if (quand && (!d.date || quand > d.date)) d.date = quand; if (rang != null && (d.rang == null || rang < d.rang)) d.rang = rang; };
     (AG.passages || []).forEach(p => noter(p.agent, p.date, null));
-    cycles.forEach((c, k) => {
+    cycles.forEach(c => {
+      const pr = c.projet || "trading", k = rangs[pr] = (rangs[pr] ?? -1) + 1;
+      const chef = c.chef || "markets-head", nomCycle = pr === "croq" ? `Croq · cycle ${c.n}` : `Cycle ${c.n}`;
       const membres = c.membres && c.membres.length ? c.membres : [{ id: c.agent, issue: "" }];
+      const marquer = id => { const d = derniere[id] || (derniere[id] = {}); if (d.n == null || k <= (d.rang ?? 99)) { d.n = c.n; d.projet = pr; } };
       membres.forEach((m, j) => {
-        const p = { type: "cycle", n: c.n, date: c.date || null, agent: m.id, projet: `Cycle ${c.n} · ${c.titre}`, note: j ? "" : c.resultat, issue: m.issue || "",
+        const p = { type: "cycle", n: c.n, projetCycle: pr, date: c.date || null, agent: m.id, projet: `${nomCycle} · ${c.titre}`, note: j ? "" : c.resultat, issue: m.issue || "",
           via: j ? membres[0].id : null };
         if (passagesDe[m.id]) passagesDe[m.id].push(p);
-        noter(m.id, c.date, c.n);
+        marquer(m.id); noter(m.id, c.date, k);
         if (k < 5 || (c.date && auj - Date.parse(c.date) <= 7 * 864e5)) recents.add(m.id);
       });
-      if (passagesDe["markets-head"] && !membres.some(m => m.id === "markets-head")) {
-        passagesDe["markets-head"].push({ type: "cycle", n: c.n, date: c.date || null, agent: "markets-head", projet: `Cycle ${c.n} · ${c.titre}`, note: c.resultat, via: membres[0].id });
-        noter("markets-head", c.date, c.n);
-        if (k < 5) recents.add("markets-head");
+      if (passagesDe[chef] && !membres.some(m => m.id === chef)) {
+        passagesDe[chef].push({ type: "cycle", n: c.n, projetCycle: pr, date: c.date || null, agent: chef, projet: `${nomCycle} · ${c.titre}`, note: c.resultat, via: membres[0].id });
+        marquer(chef); noter(chef, c.date, k);
+        if (k < 5) recents.add(chef);
       }
     });
     // En sommeil : agent actif sans passage daté depuis 7 jours ni dans les 10 derniers cycles
@@ -169,8 +172,8 @@
       if (a.place === "ceo" || a.statut === "brouillon") return;
       const d = derniere[a.id] || {};
       const age = d.date ? Math.round((auj - Date.parse(d.date)) / 864e5) : null;
-      const ok = (age != null && age <= 7) || (d.n != null && dernierCycle - d.n < 10);
-      if (!ok) sommeil.push({ id: a.id, age, n: d.n });
+      const ok = (age != null && age <= 7) || (d.rang != null && d.rang < 10);
+      if (!ok) sommeil.push({ id: a.id, age, n: d.n, projet: d.projet });
     });
     Object.values(passagesDe).forEach(l => l.sort((a, b) => (b.date || "") > (a.date || "") ? 1 : (b.date || "") < (a.date || "") ? -1 : (b.n || 0) - (a.n || 0)));
   }
@@ -305,11 +308,11 @@
   }
   function lignePassage(p, avecAgent) {
     const jour = p.date ? new Date(p.date + "T12:00").toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) : "";
-    const quand = p.type === "cycle" ? `cycle ${p.n}` + (jour ? ` · ${jour}` : "") : jour;
+    const quand = p.type === "cycle" ? (p.projetCycle === "croq" ? "Croq · " : "") + `cycle ${p.n}` + (jour ? ` · ${jour}` : "") : jour;
     const iss = (p.issue || "").toLowerCase(), cls = /no-go/.test(iss) ? "nogo" : /^go/.test(iss) ? "go" : "";
     const qui = avecAgent && parId[p.agent] ? ` · <span class="o-agent" data-id="${esc(p.agent)}">${esc(parId[p.agent].titre)}</span>` : "";
     const via = p.via && parId[p.via] ? ` · via ${esc(parId[p.via].titre)}` : "";
-    const titre = p.type === "cycle" ? esc(p.projet.replace(/^Cycle \d+ · /, "")) : esc(p.projet);
+    const titre = p.type === "cycle" ? esc(p.projet.replace(/^(Croq · )?[Cc]ycle \d+ · /, "")) : esc(p.projet);
     return `<li><span class="o-quand">${quand}</span>${qui}${via} · ${titre}` + (p.issue && p.issue !== "fait" ? `<span class="o-issue ${cls}">${esc(p.issue)}</span>` : "") +
       (p.note ? `<br><span style="color:var(--doux)">${esc(p.note)}</span>` : "") + "</li>";
   }
@@ -339,7 +342,7 @@
       <div class="o-desc">${esc(a.description)}</div>
       ${a.place !== "ceo" ? `<div style="font-size:12px;color:${sommeil.some(s => s.id === id) ? "#e0a96d" : "#9ef0bb"};margin:-4px 0 8px">` +
         (a.statut === "brouillon" ? "" : sommeil.some(s => s.id === id) ? "💤 En sommeil · " : "● Actif · ") + "dernier passage : " +
-        quandTxt({ age: derniere[id] && derniere[id].date ? Math.round((Date.parse(D.aujourdhui || new Date().toISOString().slice(0, 10)) - Date.parse(derniere[id].date)) / 864e5) : null, n: derniere[id] ? derniere[id].n : null }) + "</div>" : ""}
+        quandTxt({ age: derniere[id] && derniere[id].date ? Math.round((Date.parse(D.aujourdhui || new Date().toISOString().slice(0, 10)) - Date.parse(derniere[id].date)) / 864e5) : null, n: derniere[id] ? derniere[id].n : null, projet: derniere[id] ? derniere[id].projet : null }) + "</div>" : ""}
       <dl><dt>Place</dt><dd>${esc(PLACES[a.place] || a.place)}</dd>
       <dt>Rend compte à</dt><dd>${chef}</dd>
       ${equipe ? `<dt>Son équipe</dt><dd>${equipe}</dd>` : ""}
@@ -374,23 +377,26 @@
     const tous = [];
     (AG.passages || []).forEach(p => tous.push({ ...p, type: "passage" }));
     const dates = tous.slice().sort((a, b) => a.date < b.date ? 1 : -1);
-    const cycles = (AG.cycles || []).slice().sort((a, b) => b.n - a.n).map(c => ({ type: "cycle", n: c.n, date: c.date || null, agent: c.agent, projet: `Cycle ${c.n} · ${c.titre}`, note: c.resultat,
-      issue: (c.membres || []).filter(m => m.issue).map(m => (parId[m.id] ? parId[m.id].sigle || parId[m.id].titre : m.id) + " " + m.issue).join(" · ") }));
+    const versCycle = c => ({ type: "cycle", n: c.n, projetCycle: c.projet, date: c.date || null, agent: c.agent, projet: `Cycle ${c.n} · ${c.titre}`, note: c.resultat,
+      issue: (c.membres || []).filter(m => m.issue).map(m => (parId[m.id] ? parId[m.id].sigle || parId[m.id].titre : m.id) + " " + m.issue).join(" · ") });
+    const tri = l => l.slice().sort((a, b) => b.n - a.n).map(versCycle);
+    const cycles = tri((AG.cycles || []).filter(c => c.projet !== "croq")), cyclesCroq = tri((AG.cycles || []).filter(c => c.projet === "croq"));
     fiche.innerHTML = `<div class="o-place" style="color:var(--accent)">Historique</div><h3>Derniers passages</h3>
       <div class="o-desc">Tableau « 10 - Agents/Passages » du coffre : une ligne par passage. Les cycles du chef d'orchestre viennent de JOURNAL.md.</div>
       <h4>Passages notés (${dates.length})</h4><ul class="o-passages">${dates.map(p => lignePassage(p, true)).join("") || "<li>Aucun.</li>"}</ul>
-      <h4>Cycles du chef d'orchestre (${cycles.length})</h4><ul class="o-passages">${cycles.slice(0, 15).map(p => lignePassage(p, true)).join("") || "<li>Aucun.</li>"}</ul>
+      <h4>Cycles Croq (${cyclesCroq.length})</h4><ul class="o-passages">${cyclesCroq.slice(0, 10).map(p => lignePassage(p, true)).join("") || "<li>Aucun pour l'instant.</li>"}</ul>
+      <h4>Cycles trading (${cycles.length})</h4><ul class="o-passages">${cycles.slice(0, 15).map(p => lignePassage(p, true)).join("") || "<li>Aucun.</li>"}</ul>
       <div class="o-actions"><button class="discret" id="orgFermer">Fermer</button></div>`;
     fiche.classList.add("visible"); brancherPuces();
     document.getElementById("orgFermer").onclick = fermerFiche;
   }
   document.getElementById("orgHistoBtn").onclick = historique;
-  function quandTxt(s) { return s.age != null ? (s.age === 0 ? "aujourd'hui" : `il y a ${s.age} jour${s.age > 1 ? "s" : ""}`) : s.n != null ? `cycle ${s.n}` : "jamais"; }
+  function quandTxt(s) { return s.age != null ? (s.age === 0 ? "aujourd'hui" : `il y a ${s.age} jour${s.age > 1 ? "s" : ""}`) : s.n != null ? (s.projet === "croq" ? `Croq · cycle ${s.n}` : `cycle ${s.n}`) : "jamais"; }
   function enSommeil() {
     selection = null; majStyle();
     const liste = sommeil.slice().sort((a, b) => (b.age ?? 999) - (a.age ?? 999));
     fiche.innerHTML = `<div class="o-place" style="color:#b9b6b0">Santé de l'équipe</div><h3>Agents en sommeil (${liste.length})</h3>
-      <div class="o-desc">Un agent actif est « en sommeil » quand il n'a aucun passage depuis 7 jours, ni dans les 10 derniers cycles du chef d'orchestre. ` +
+      <div class="o-desc">Un agent actif est « en sommeil » quand il n'a aucun passage depuis 7 jours, ni dans les 10 derniers cycles de son projet (trading ou Croq). ` +
       `Les rituels de l'Équipe (fiche « 10 - Agents/Rituels de l'Équipe ») servent à les réveiller. Les fiches brouillon ne comptent pas : elles attendent tes précisions.</div>
       <ul class="o-passages">${liste.map(s => `<li><span class="o-agent" data-id="${esc(s.id)}">${esc(parId[s.id].titre)}</span> · dernier passage : ${quandTxt(s)}</li>`).join("") || "<li>Aucun : toute l'équipe a travaillé récemment. 👏</li>"}</ul>
       <div class="o-actions"><button class="discret" id="orgFermer">Fermer</button></div>`;
