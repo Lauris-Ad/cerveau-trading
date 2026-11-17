@@ -1,185 +1,278 @@
 {
- "maj": "2026-11-17 09:53",
+ "maj": "2026-11-17 15:29",
  "cycles": [
   {
    "n": 1,
    "axe": "C",
    "titre": "Critères de passage",
-   "dire": "J'ai écrit les règles de réussite de chaque stratégie, et elles ne changeront plus."
+   "dire": "J'ai écrit les règles de réussite de chaque stratégie, et elles ne changeront plus.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 2,
    "axe": "A",
    "titre": "Réparer le collecteur gamma",
-   "dire": "Le collecteur gamma ne s'était jamais lancé tout seul. C'est réparé, il prend ses photos."
+   "dire": "Le collecteur gamma ne s'était jamais lancé tout seul. C'est réparé, il prend ses photos.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 3,
    "axe": "B",
    "titre": "Fiche « Backtest honnête »",
-   "dire": "Nouvelle fiche dans ton coffre : comment faire un backtest honnête."
+   "dire": "Nouvelle fiche dans ton coffre : comment faire un backtest honnête.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 4,
    "axe": "C",
    "titre": "Historique BTC",
-   "dire": "J'ai téléchargé quatre ans d'historique du bitcoin, heure par heure."
+   "dire": "J'ai téléchargé quatre ans d'historique du bitcoin, heure par heure.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 5,
    "axe": "C",
    "titre": "Moteur de backtest",
-   "dire": "Le moteur de backtest est prêt et vérifié par huit tests."
+   "dire": "Le moteur de backtest est prêt et vérifié par huit tests.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 6,
    "axe": "A",
    "titre": "Tuile « Santé des collecteurs »",
-   "dire": "Le dashboard montre maintenant si tes collecteurs tournent bien."
+   "dire": "Le dashboard montre maintenant si tes collecteurs tournent bien.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 7,
    "axe": "B",
    "titre": "Leçon 08 funding rate et open interest",
-   "dire": "Nouvelle leçon 8 : le funding rate et l'open interest."
+   "dire": "Nouvelle leçon 8 : le funding rate et l'open interest.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 8,
    "axe": "C",
    "titre": "Suite d'un pic de volatilité",
-   "dire": "L'idée du pic de volatilité a échoué : elle perdait environ 0,3 pour cent par trade. Elle est archivée."
+   "dire": "L'idée du pic de volatilité a échoué : elle perdait environ 0,3 pour cent par trade. Elle est archivée.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 9,
    "axe": "A",
    "titre": "Funding et open interest dans le dashboard",
-   "dire": "Le dashboard affiche maintenant le funding et l'open interest du bitcoin."
+   "dire": "Le dashboard affiche maintenant le funding et l'open interest du bitcoin.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 10,
    "axe": "C",
    "titre": "Fair value gap",
-   "dire": "Le fair value gap a échoué : le trou n'était comblé que 41 pour cent du temps, pas 71. Archivé."
+   "dire": "Le fair value gap a échoué : le trou n'était comblé que 41 pour cent du temps, pas 71. Archivé.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 11,
    "axe": "A",
    "titre": "Tout se met à jour tout seul (demande de Lauris, 13/11 16 h 58)",
-   "dire": "Tout se met maintenant à jour tout seul : le gardien relance le collecteur, et les données se complètent chaque matin."
+   "dire": "Tout se met maintenant à jour tout seul : le gardien relance le collecteur, et les données se complètent chaque matin.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 12,
    "axe": "A",
    "titre": "Gamma : contrôle des calculs + historique des niveaux",
-   "dire": "J'ai vérifié les calculs du gamma : ils collent à ceux de Cboe à 0,5 pour cent près."
+   "dire": "J'ai vérifié les calculs du gamma : ils collent à ceux de Cboe à 0,5 pour cent près.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 13,
    "axe": "C",
    "titre": "Funding extrême",
-   "dire": "L'idée du funding extrême a échoué : trop peu de trades et un résultat négatif. Archivée."
+   "dire": "L'idée du funding extrême a échoué : trop peu de trades et un résultat négatif. Archivée.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 14,
    "axe": "B",
    "titre": "Leçon 09 « Les coûts, le vrai adversaire »",
-   "dire": "Nouvelle leçon 9 : les coûts, le vrai adversaire."
+   "dire": "Nouvelle leçon 9 : les coûts, le vrai adversaire.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 15,
    "axe": "C",
    "titre": "Taille de mouvement face aux coûts (mesure)",
-   "dire": "Sur une heure, le bitcoin bouge moins que ce que coûte un trade. Sur une semaine, les coûts ne pèsent plus que 9 pour cent."
+   "dire": "Sur une heure, le bitcoin bouge moins que ce que coûte un trade. Sur une semaine, les coûts ne pèsent plus que 9 pour cent.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 16,
    "axe": "C",
    "titre": "Cassure de canal 4 h (tendance lente)",
-   "dire": "La cassure de canal sur 4 heures gagnait un peu, mais pas assez pour exclure la chance. Archivée."
+   "dire": "La cassure de canal sur 4 heures gagnait un peu, mais pas assez pour exclure la chance. Archivée.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 17,
    "axe": "B",
    "titre": "Quiz du téléphone publié",
-   "dire": "Tes nouvelles leçons et 22 questions sont en ligne dans le quiz du téléphone."
+   "dire": "Tes nouvelles leçons et 22 questions sont en ligne dans le quiz du téléphone.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 18,
    "axe": "A",
    "titre": "Rendu du dashboard",
-   "dire": "Le dashboard a un nouvel onglet Stratégies, et il s'affiche bien sur téléphone."
+   "dire": "Le dashboard a un nouvel onglet Stratégies, et il s'affiche bien sur téléphone.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 19,
    "axe": "A",
    "titre": "Moteur de paper trading (marche 4)",
-   "dire": "Le paper trading est prêt : il rejouera les stratégies en argent fictif toutes les 15 minutes et mesurera le vrai prix d'exécution. Pense à double-cliquer sur Installer-paper-trade dans le dossier Outil."
+   "dire": "Le paper trading est prêt : il rejouera les stratégies en argent fictif toutes les 15 minutes et mesurera le vrai prix d'exécution. Pense à double-cliquer sur Installer-paper-trade dans le dossier Outil.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 20,
    "axe": "B",
    "titre": "Méthode TikTok « niveaux, flux, confirmation »",
-   "dire": "J'ai analysé ta vidéo TikTok sur le gamma : le dashboard montre maintenant les niveaux à fort open interest et le flux de primes, la leçon 10 et quatre nouveaux épisodes de podcast sont en ligne, et la méthode sera testée vers la mi-décembre."
+   "dire": "J'ai analysé ta vidéo TikTok sur le gamma : le dashboard montre maintenant les niveaux à fort open interest et le flux de primes, la leçon 10 et quatre nouveaux épisodes de podcast sont en ligne, et la méthode sera testée vers la mi-décembre.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 21,
    "axe": "C",
    "titre": "Cassure journalière BTC, ETH, SOL",
-   "dire": "La cassure journalière sur bitcoin, ether et solana gagnait en moyenne, mais seulement grâce à solana et pas sur la période récente : archivée, toujours aucune candidate."
+   "dire": "La cassure journalière sur bitcoin, ether et solana gagnait en moyenne, mais seulement grâce à solana et pas sur la période récente : archivée, toujours aucune candidate.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 22,
    "axe": "C",
    "titre": "Contexte macro et régimes de marché",
-   "dire": "J'ai marqué 139 grands événements, Fed, inflation, emploi et chocs, et découpé les résultats en marché calme, tendance et panique : la cassure 4 heures ne gagnait que pendant les annonces, la cassure journalière seulement en tendance. La leçon 11 sur le contexte macro est en ligne."
+   "dire": "J'ai marqué 139 grands événements, Fed, inflation, emploi et chocs, et découpé les résultats en marché calme, tendance et panique : la cassure 4 heures ne gagnait que pendant les annonces, la cassure journalière seulement en tendance. La leçon 11 sur le contexte macro est en ligne.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 23,
    "axe": "B",
    "titre": "Leçon 12 « Suivre une tendance : pourquoi c'est dur »",
-   "dire": "La leçon 12 explique pourquoi suivre une tendance marche sur un siècle de données mais reste dur en vrai, et pourquoi nos deux cassures ont échoué ; l'épisode 12 est en ligne."
+   "dire": "La leçon 12 explique pourquoi suivre une tendance marche sur un siècle de données mais reste dur en vrai, et pourquoi nos deux cassures ont échoué ; l'épisode 12 est en ligne.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 24,
    "axe": "A",
    "titre": "Humeur du marché et calendrier macro dans le dashboard",
-   "dire": "Le dashboard aura bientôt une carte « humeur du marché », calme, tendance ou panique, et le calendrier des prochaines annonces de la Fed, de l'inflation et de l'emploi."
+   "dire": "Le dashboard aura bientôt une carte « humeur du marché », calme, tendance ou panique, et le calendrier des prochaines annonces de la Fed, de l'inflation et de l'emploi.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 25,
    "axe": "B",
    "titre": "Point d'étape (cycles 16 à 25)",
-   "dire": "Point d'étape : cinq idées testées, aucune n'a passé le backtest, mais on sait maintenant pourquoi : les coûts sur les petits horizons, et des gains qui ne venaient que d'un seul contexte. Prochaines idées : la cassure seulement en tendance, puis la cassure hebdomadaire."
+   "dire": "Point d'étape : cinq idées testées, aucune n'a passé le backtest, mais on sait maintenant pourquoi : les coûts sur les petits horizons, et des gains qui ne venaient que d'un seul contexte. Prochaines idées : la cassure seulement en tendance, puis la cassure hebdomadaire.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 26,
    "axe": "C",
    "titre": "Cassure journalière seulement en tendance (8 cryptos)",
-   "dire": "La cassure journalière seulement en tendance, testée sur huit cryptos, gagne en moyenne 1,3 % par trade mais sa statistique t n'est que de 1,5 : le hasard peut encore l'expliquer, donc elle est archivée, sans retouche."
+   "dire": "La cassure journalière seulement en tendance, testée sur huit cryptos, gagne en moyenne 1,3 % par trade mais sa statistique t n'est que de 1,5 : le hasard peut encore l'expliquer, donc elle est archivée, sans retouche.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 27,
    "axe": "C",
    "titre": "Veille TikTok du 17/11 : plan et hypothèses H1 à H4",
-   "dire": "J'ai trié ta veille TikTok : cinq sujets utiles, quatre hypothèses écrites avant tout test, et une bonne nouvelle : le delta acheteurs contre vendeurs est gratuit sur la crypto, alors qu'il est payant sur le Nasdaq."
+   "dire": "J'ai trié ta veille TikTok : cinq sujets utiles, quatre hypothèses écrites avant tout test, et une bonne nouvelle : le delta acheteurs contre vendeurs est gratuit sur la crypto, alors qu'il est payant sur le Nasdaq.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 28,
    "axe": "A",
    "titre": "Calculateur NQ / MNQ, VWAP, sources gratuites",
-   "dire": "Le dashboard calcule maintenant ta taille en contrats NQ ou MNQ et trace deux VWAP sur le bitcoin ; j'ai aussi récupéré quatre ans de bougies de cinq minutes avec les achats et ventes agressifs, gratuitement."
+   "dire": "Le dashboard calcule maintenant ta taille en contrats NQ ou MNQ et trace deux VWAP sur le bitcoin ; j'ai aussi récupéré quatre ans de bougies de cinq minutes avec les achats et ventes agressifs, gratuitement.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 29,
    "axe": "B",
    "titre": "Leçons 13 à 19 de la veille du 17/11",
-   "dire": "Sept nouvelles leçons sont prêtes, de la VWAP à la liquidité, avec leurs épisodes ; elles se débloqueront dans ton podcast au fil de ta progression."
+   "dire": "Sept nouvelles leçons sont prêtes, de la VWAP à la liquidité, avec leurs épisodes ; elles se débloqueront dans ton podcast au fil de ta progression.",
+   "agents": [],
+   "date": null
   },
   {
    "n": 30,
    "axe": "C",
    "titre": "Point d'étape (cycles 26 à 30)",
-   "dire": "J'ai testé les deux idées d'orderflow de ta veille sur quatre ans de bitcoin en cinq minutes : avant les frais, elles ne gagnent rien, et après les frais elles perdent 0,3 % par trade, donc archivées ; ça confirme que les petits horizons sont mangés par les coûts."
+   "dire": "J'ai testé les deux idées d'orderflow de ta veille sur quatre ans de bitcoin en cinq minutes : avant les frais, elles ne gagnent rien, et après les frais elles perdent 0,3 % par trade, donc archivées ; ça confirme que les petits horizons sont mangés par les coûts.",
+   "agents": [],
+   "date": null
+  },
+  {
+   "n": 31,
+   "axe": "C",
+   "titre": "Pré-enregistrer H5 à H10 (Discord Dualis Flow)",
+   "dire": "J'ai écrit les règles des six hypothèses du Discord avant de toucher aux données ; la première testée sera l'alignement des VWAP sur une journée entière, l'horizon où nos frais pèsent le moins.",
+   "agents": [
+    {
+     "id": "markets-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "avocat-du-diable",
+     "issue": "GO"
+    },
+    {
+     "id": "markets-gardien-backtest",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-17"
   }
  ],
  "strategies": {
@@ -188,5 +281,5 @@
   "candidates": 0,
   "variantes": 11
  },
- "prochaine": "Idée cassure hebdomadaire (la journalière est archivée au cycle 21) (horizon 1 à 4 semaines, où les coûts pèsent < 10 %), règles pré-enregistrées"
+ "prochaine": "Backtest H6 alignement multi-VWAP (8 cryptos 1 h, 3 variantes, t 2,4) : horizon 1 jour, priorité"
 }
