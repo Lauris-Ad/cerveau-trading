@@ -726,5 +726,61 @@
 "episode": "e19",
 "q": "Qu'est-ce que le biais du survivant ?",
 "r": "Ne voir que les gagnants, parce que ceux qui ont perdu ne publient rien."
+},
+{
+"id": "l20-q1",
+"lecon": "20",
+"episode": "e20",
+"q": "Win rate 70 %, gain moyen 100 $, perte moyenne 300 $ : quelle est l'espérance par trade ?",
+"r": "0,70 × 100 − 0,30 × 300 = 70 − 90 = −20 $ par trade, avant frais."
+},
+{
+"id": "l20-q2",
+"lecon": "20",
+"episode": "e20",
+"q": "Win rate 40 %, gain moyen 250 $, perte moyenne 100 $ : quelle est l'espérance par trade ?",
+"r": "0,40 × 250 − 0,60 × 100 = 100 − 60 = +40 $ par trade, avant frais."
+},
+{
+"id": "l20-q3",
+"lecon": "20",
+"episode": "e20",
+"q": "Sur 100 trades : 30 gagnants, 30 points morts, 40 perdants. Quel est le win rate sans les points morts, puis avec les points morts comptés comme gagnés ?",
+"r": "Sans les points morts : 30 / 70, soit environ 43 %. Avec : 60 / 100, soit 60 %."
+},
+{
+"id": "l20-q4",
+"lecon": "20",
+"episode": "e20",
+"q": "Pourquoi remonter très tôt son stop au point mort peut-il embellir le win rate sans prouver un avantage ?",
+"r": "Des pertes deviennent des points morts, mais des trades sont aussi coupés avant de gagner, et les frais restent dus. Seule l'espérance après frais tranche."
+},
+{
+"id": "l20-q5",
+"lecon": "20",
+"episode": "e20",
+"q": "Pourquoi une position dessinée ou un calendrier de P&L ne remplacent-ils pas un relevé de compte ?",
+"r": "Un dessin se place après coup et une capture est choisie. On ne voit ni tous les trades, ni les frais, ni si le compte est réel, de prop firm ou simulé."
+},
+{
+"id": "l20-q6",
+"lecon": "20",
+"episode": "e20",
+"q": "Que prouve un certificat de prop firm, et que ne prouve-t-il pas ?",
+"r": "Il prouve qu'une évaluation a été réussie. Il ne prouve ni un revenu, ni une méthode rentable dans la durée."
+},
+{
+"id": "l20-q7",
+"lecon": "20",
+"episode": "e20",
+"q": "Une vidéo porte #Ad et donne un code promo : qu'est-ce que cela change à ta lecture ?",
+"r": "L'auteur a un intérêt à ce que j'y croie. Ça ne prouve pas que c'est faux, mais je dois vérifier ailleurs, avec des données."
+},
+{
+"id": "l20-q8",
+"lecon": "20",
+"episode": "e20",
+"q": "On te propose un lanceur gratuit qui ouvre des logiciels de trading payants : que fais-tu, et pourquoi ?",
+"r": "Je ne l'installe pas : c'est très probablement du piratage, et un programme inconnu peut voler mots de passe, comptes et wallets."
 }
 ]
