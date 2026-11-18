@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-18 15:48",
+ "maj": "2026-11-18 19:20",
  "cycles": [
   {
    "n": 1,
@@ -327,13 +327,46 @@
     }
    ],
    "date": "2026-11-18"
+  },
+  {
+   "n": 34,
+   "axe": "C",
+   "titre": "H8 divergence du CVD testée et archivée",
+   "dire": "J'ai testé l'idée du Discord sur les achats agressifs qui ne suivent pas le prix : elle perd même avant les frais, donc elle est archivée.",
+   "agents": [
+    {
+     "id": "markets-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "markets-gardien-backtest",
+     "issue": ""
+    },
+    {
+     "id": "variante",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-18"
   }
  ],
  "strategies": {
-  "testees": 9,
-  "archivees": 9,
+  "testees": 10,
+  "archivees": 10,
   "candidates": 0,
-  "variantes": 14
+  "variantes": 15
  },
- "prochaine": "Backtest H8 divergence du CVD (BTC, 5 min vision regroupé en 1 h, t 2,0)"
+ "prochaine": "Idée cassure hebdomadaire (la journalière est archivée au cycle 21) (horizon 1 à 4 semaines, où les coûts pèsent < 10 %), règles pré-enregistrées"
 }
