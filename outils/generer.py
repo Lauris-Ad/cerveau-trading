@@ -270,6 +270,7 @@ def main():
         encoding="utf-8")
     for f in ["quiz.html", "liquidite.html", "sw.js", "manifest.webmanifest"]:
         shutil.copy(RACINE / "web" / f, out / f)
+    shutil.copy(RACINE / "quiz" / "liquidite.json", out / "liquidite.json")   # quiz liquidité, indépendant du déblocage des épisodes
     ids = {ep["id"] for ep in episodes}
     questions = [q for q in json.loads((RACINE / "quiz" / "questions.json").read_text(encoding="utf-8")) if q["episode"] in ids]
     (out / "questions.json").write_text(json.dumps(questions, ensure_ascii=False, indent=0), encoding="utf-8")
