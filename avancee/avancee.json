@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-18 12:11",
+ "maj": "2026-11-18 15:48",
  "cycles": [
   {
    "n": 1,
@@ -290,6 +290,31 @@
     },
     {
      "id": "markets-gardien-backtest",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-18"
+  },
+  {
+   "n": 33,
+   "axe": "A",
+   "titre": "Niveaux gamma NDX en points NQ",
+   "dire": "L'onglet Options montre maintenant les niveaux gamma du Nasdaq directement en points NQ ; relance le dashboard pour la voir.",
+   "agents": [
+    {
+     "id": "markets-data-dashboard",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
      "issue": ""
     },
     {
