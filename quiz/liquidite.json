@@ -1,0 +1,786 @@
+[
+{
+"id": "l21-q1",
+"lecon": "21",
+"titre": "Les trois sens du mot liquidité",
+"concept": "",
+"q": "Quel type d'ordre n'est pas visible dans le carnet public avant son déclenchement ?",
+"choix": [
+"Un ordre limite",
+"Un ordre stop",
+"Un ordre déjà exécuté"
+],
+"bonne": 1,
+"r": "Un stop reste invisible tant qu'il n'est pas déclenché."
+},
+{
+"id": "l21-q2",
+"lecon": "21",
+"titre": "Les trois sens du mot liquidité",
+"concept": "",
+"q": "Sur un graphique seul, que peux-tu affirmer ?",
+"choix": [
+"Les stops sont là",
+"Une zone de stops est probable",
+"Les institutions visent ce niveau"
+],
+"bonne": 1,
+"r": "Le graphique suggère une zone, il ne montre pas les ordres."
+},
+{
+"id": "l21-q3",
+"lecon": "21",
+"titre": "Les trois sens du mot liquidité",
+"concept": "",
+"q": "Pourquoi « le prix l'a pris, donc la liquidité était là » est-il faible ?",
+"choix": [
+"C'est circulaire",
+"C'est trop précis",
+"Cela demande trop de données"
+],
+"bonne": 0,
+"r": "La conclusion est tirée du résultat qu'elle prétend expliquer."
+},
+{
+"id": "l21-q4",
+"lecon": "21",
+"titre": "Les trois sens du mot liquidité",
+"concept": "",
+"q": "Laquelle est une liquidité observable en direct ?",
+"choix": [
+"Le carnet d'ordres",
+"L'intention d'un fonds",
+"Le récit d'une vidéo"
+],
+"bonne": 0,
+"r": "Le carnet montre les ordres limites affichés."
+},
+{
+"id": "l22-q1",
+"lecon": "22",
+"titre": "Swings et structure",
+"concept": "swings",
+"q": "Combien de bougies faut-il après un swing pour le confirmer ici ?",
+"choix": [
+"1",
+"3",
+"10"
+],
+"bonne": 1,
+"r": "Notre règle demande 3 bougies après le point."
+},
+{
+"id": "l22-q2",
+"lecon": "22",
+"titre": "Swings et structure",
+"concept": "swings",
+"q": "Pour un swing haut, que compare-t-on ?",
+"choix": [
+"Les plus hauts",
+"Les ouvertures",
+"Les volumes"
+],
+"bonne": 0,
+"r": "On compare les mèches hautes."
+},
+{
+"id": "l22-q3",
+"lecon": "22",
+"titre": "Swings et structure",
+"concept": "swings",
+"q": "La dernière bougie forme un sommet net. Que fais-tu ?",
+"choix": [
+"Je le marque comme swing",
+"J'attends la confirmation",
+"Je vends"
+],
+"bonne": 1,
+"r": "Il peut encore être dépassé."
+},
+{
+"id": "l22-q4",
+"lecon": "22",
+"titre": "Swings et structure",
+"concept": "swings",
+"q": "Pourquoi cette attente protège-t-elle ?",
+"choix": [
+"Elle évite de lire le futur",
+"Elle augmente le volume",
+"Elle supprime les pertes"
+],
+"bonne": 0,
+"r": "Elle retire le biais du recul."
+},
+{
+"id": "l23-q1",
+"lecon": "23",
+"titre": "Buy-side, sell-side, hauts et bas égaux",
+"concept": "niveaux",
+"q": "Où se trouve la buy-side liquidity ?",
+"choix": [
+"Au-dessus d'un haut intact",
+"Sous un bas intact",
+"Dans une bougie verte"
+],
+"bonne": 0,
+"r": "Elle se place au-dessus des hauts."
+},
+{
+"id": "l23-q2",
+"lecon": "23",
+"titre": "Buy-side, sell-side, hauts et bas égaux",
+"concept": "niveaux",
+"q": "Quand deux hauts sont-ils égaux ici ?",
+"choix": [
+"Écart ≤ 0,25 ATR",
+"Même heure",
+"Même volume"
+],
+"bonne": 0,
+"r": "C'est notre seuil écrit."
+},
+{
+"id": "l23-q3",
+"lecon": "23",
+"titre": "Buy-side, sell-side, hauts et bas égaux",
+"concept": "niveaux",
+"q": "Un niveau a été dépassé de 0,1 ATR. Est-il encore intact ?",
+"choix": [
+"Oui",
+"Non",
+"Seulement en 1 heure"
+],
+"bonne": 1,
+"r": "Le dépassement minimal est 0,05 ATR."
+},
+{
+"id": "l23-q4",
+"lecon": "23",
+"titre": "Buy-side, sell-side, hauts et bas égaux",
+"concept": "niveaux",
+"q": "Un niveau visible doit-il être atteint ?",
+"choix": [
+"Oui, toujours",
+"Non",
+"Oui, si le volume monte"
+],
+"bonne": 1,
+"r": "Beaucoup de niveaux restent intacts."
+},
+{
+"id": "l24-q1",
+"lecon": "24",
+"titre": "Sweep ou vraie cassure",
+"concept": "sweep",
+"q": "Qu'est-ce qui définit un sweep ici ?",
+"choix": [
+"Une clôture de retour en 3 bougies",
+"Une grosse mèche",
+"Un volume élevé"
+],
+"bonne": 0,
+"r": "Le critère est la clôture de retour dans le délai."
+},
+{
+"id": "l24-q2",
+"lecon": "24",
+"titre": "Sweep ou vraie cassure",
+"concept": "sweep",
+"q": "Le prix dépasse un bas et clôture dessous pendant 4 bougies. C'est ?",
+"choix": [
+"Un sweep",
+"Une cassure",
+"Un order block"
+],
+"bonne": 1,
+"r": "Aucune clôture n'est revenue au-dessus."
+},
+{
+"id": "l24-q3",
+"lecon": "24",
+"titre": "Sweep ou vraie cassure",
+"concept": "sweep",
+"q": "Quel dépassement minimal utilise-t-on ?",
+"choix": [
+"0,05 ATR",
+"1 ATR",
+"1 %"
+],
+"bonne": 0,
+"r": "C'est le seuil de la règle."
+},
+{
+"id": "l24-q4",
+"lecon": "24",
+"titre": "Sweep ou vraie cassure",
+"concept": "sweep",
+"q": "La bougie vient de dépasser le niveau et clôture au-delà. Que sais-tu ?",
+"choix": [
+"C'est un sweep",
+"C'est une cassure",
+"Le résultat reste ouvert"
+],
+"bonne": 2,
+"r": "Il reste 3 bougies pour trancher."
+},
+{
+"id": "l25-q1",
+"lecon": "25",
+"titre": "Les stops créés par les breakouts",
+"concept": "stops",
+"q": "Après une cassure baissière, où chercher des stops probables ?",
+"choix": [
+"Au dernier swing haut",
+"Au dernier swing bas",
+"Au milieu de la bougie"
+],
+"bonne": 0,
+"r": "Les vendeurs placent souvent leur stop au-dessus."
+},
+{
+"id": "l25-q2",
+"lecon": "25",
+"titre": "Les stops créés par les breakouts",
+"concept": "stops",
+"q": "Quelle information reste invisible ?",
+"choix": [
+"Le stop réel",
+"Le swing",
+"La clôture"
+],
+"bonne": 0,
+"r": "Le graphique montre le swing, pas les ordres."
+},
+{
+"id": "l25-q3",
+"lecon": "25",
+"titre": "Les stops créés par les breakouts",
+"concept": "stops",
+"q": "La zone a déjà été dépassée. La garde-t-on ?",
+"choix": [
+"Oui",
+"Non",
+"Seulement si elle est ronde"
+],
+"bonne": 1,
+"r": "On garde les zones intactes."
+},
+{
+"id": "l25-q4",
+"lecon": "25",
+"titre": "Les stops créés par les breakouts",
+"concept": "stops",
+"q": "Une zone de stops doit-elle être reprise ?",
+"choix": [
+"Toujours",
+"Non",
+"Après 3 bougies"
+],
+"bonne": 1,
+"r": "Elle peut rester intacte."
+},
+{
+"id": "l26-q1",
+"lecon": "26",
+"titre": "Fair value gap et piège du FVG",
+"concept": "fvg",
+"q": "Un FVG haussier existe quand...",
+"choix": [
+"Bas 3 > haut 1",
+"Haut 3 > haut 2",
+"Clôture 3 > ouverture 3"
+],
+"bonne": 0,
+"r": "Le bas de la bougie 3 reste au-dessus du haut de la bougie 1."
+},
+{
+"id": "l26-q2",
+"lecon": "26",
+"titre": "Fair value gap et piège du FVG",
+"concept": "fvg",
+"q": "Quelle taille minimale retient-on ?",
+"choix": [
+"0,25 ATR",
+"2 ATR",
+"10 $"
+],
+"bonne": 0,
+"r": "C'est notre filtre écrit."
+},
+{
+"id": "l26-q3",
+"lecon": "26",
+"titre": "Fair value gap et piège du FVG",
+"concept": "fvg",
+"q": "Que dit notre backtest FVG ?",
+"choix": [
+"Il a perdu 0,36 % par trade",
+"Il a gagné 90 %",
+"Il n'a jamais été testé"
+],
+"bonne": 0,
+"r": "L'idée a été archivée."
+},
+{
+"id": "l26-q4",
+"lecon": "26",
+"titre": "Fair value gap et piège du FVG",
+"concept": "fvg",
+"q": "La vidéo annonce 90 %. Comment le traiter ?",
+"choix": [
+"Comme un fait",
+"Comme une affirmation à mesurer",
+"Comme un seuil de notre outil"
+],
+"bonne": 1,
+"r": "Aucun comptage n'est montré."
+},
+{
+"id": "l27-q1",
+"lecon": "27",
+"titre": "Accumulation, manipulation, distribution",
+"concept": "amd",
+"q": "Dans quel ordre vient AMD ?",
+"choix": [
+"Accumulation, manipulation, distribution",
+"Distribution, accumulation, manipulation",
+"Manipulation, distribution, accumulation"
+],
+"bonne": 0,
+"r": "C'est l'ordre du cycle."
+},
+{
+"id": "l27-q2",
+"lecon": "27",
+"titre": "Accumulation, manipulation, distribution",
+"concept": "amd",
+"q": "Quand le cycle est-il validé ici ?",
+"choix": [
+"Après la cassure de structure",
+"Dès le sweep",
+"Dès le range"
+],
+"bonne": 0,
+"r": "Il faut la cassure opposée."
+},
+{
+"id": "l27-q3",
+"lecon": "27",
+"titre": "Accumulation, manipulation, distribution",
+"concept": "amd",
+"q": "Quelle longueur minimale pour l'accumulation ?",
+"choix": [
+"12 bougies",
+"3 bougies",
+"100 bougies"
+],
+"bonne": 0,
+"r": "C'est notre seuil."
+},
+{
+"id": "l27-q4",
+"lecon": "27",
+"titre": "Accumulation, manipulation, distribution",
+"concept": "amd",
+"q": "Un sweep sans cassure opposée en 36 bougies est...",
+"choix": [
+"Un AMD valide",
+"Un cycle incomplet",
+"Un extrême protégé"
+],
+"bonne": 1,
+"r": "La distribution n'est pas confirmée."
+},
+{
+"id": "l28-q1",
+"lecon": "28",
+"titre": "Break of structure",
+"concept": "bos",
+"q": "Qu'exige une cassure de structure ?",
+"choix": [
+"Une clôture au-delà du swing",
+"Une mèche",
+"Un gap"
+],
+"bonne": 0,
+"r": "La clôture décide."
+},
+{
+"id": "l28-q2",
+"lecon": "28",
+"titre": "Break of structure",
+"concept": "bos",
+"q": "Quel swing compte ?",
+"choix": [
+"Le dernier opposé confirmé",
+"Le plus ancien",
+"Le plus gros"
+],
+"bonne": 0,
+"r": "Il doit déjà être connu."
+},
+{
+"id": "l28-q3",
+"lecon": "28",
+"titre": "Break of structure",
+"concept": "bos",
+"q": "Une cassure garantit-elle la suite ?",
+"choix": [
+"Oui",
+"Non",
+"Oui en 5 minutes"
+],
+"bonne": 1,
+"r": "Elle peut être annulée."
+},
+{
+"id": "l28-q4",
+"lecon": "28",
+"titre": "Break of structure",
+"concept": "bos",
+"q": "Peut-on utiliser un swing non confirmé ?",
+"choix": [
+"Oui",
+"Non",
+"Si le volume monte"
+],
+"bonne": 1,
+"r": "Ce serait lire le futur."
+},
+{
+"id": "l29-q1",
+"lecon": "29",
+"titre": "Hauts et bas protégés",
+"concept": "protege",
+"q": "Que faut-il pour qu'un extrême soit protégé ?",
+"choix": [
+"Un second AMD de même sens",
+"Un seul sweep",
+"Un chiffre rond"
+],
+"bonne": 0,
+"r": "Le cycle suivant confirme l'extrême."
+},
+{
+"id": "l29-q2",
+"lecon": "29",
+"titre": "Hauts et bas protégés",
+"concept": "protege",
+"q": "Un extrême protégé peut-il casser ?",
+"choix": [
+"Non",
+"Oui",
+"Seulement la nuit"
+],
+"bonne": 1,
+"r": "Le mot ne donne aucune garantie."
+},
+{
+"id": "l29-q3",
+"lecon": "29",
+"titre": "Hauts et bas protégés",
+"concept": "protege",
+"q": "Un haut protégé vient d'un cycle...",
+"choix": [
+"Baissier",
+"Haussier",
+"Sans direction"
+],
+"bonne": 0,
+"r": "C'est le miroir du bas protégé."
+},
+{
+"id": "l29-q4",
+"lecon": "29",
+"titre": "Hauts et bas protégés",
+"concept": "protege",
+"q": "Que ne prouve pas un niveau respecté ?",
+"choix": [
+"L'absence de stops",
+"Le prix observé",
+"La date"
+],
+"bonne": 0,
+"r": "Les stops ne sont pas visibles."
+},
+{
+"id": "l30-q1",
+"lecon": "30",
+"titre": "Order block",
+"concept": "order_block",
+"q": "Quelle bougie forme l'order block ici ?",
+"choix": [
+"La dernière opposée avant la cassure",
+"La plus grosse",
+"La première du jour"
+],
+"bonne": 0,
+"r": "C'est notre définition écrite."
+},
+{
+"id": "l30-q2",
+"lecon": "30",
+"titre": "Order block",
+"concept": "order_block",
+"q": "Pourquoi écrire cette règle ?",
+"choix": [
+"Pour pouvoir la vérifier",
+"Pour garantir un gain",
+"Pour copier une institution"
+],
+"bonne": 0,
+"r": "Une définition fixe évite le choix après coup."
+},
+{
+"id": "l30-q3",
+"lecon": "30",
+"titre": "Order block",
+"concept": "order_block",
+"q": "Quelle zone marque-t-on ?",
+"choix": [
+"Du bas au haut de la bougie",
+"Seulement la clôture",
+"Le volume"
+],
+"bonne": 0,
+"r": "Toute l'amplitude compte."
+},
+{
+"id": "l30-q4",
+"lecon": "30",
+"titre": "Order block",
+"concept": "order_block",
+"q": "Un retour dans l'order block garantit-il une réaction ?",
+"choix": [
+"Oui",
+"Non",
+"Oui après un sweep"
+],
+"bonne": 1,
+"r": "La zone peut être traversée."
+},
+{
+"id": "l31-q1",
+"lecon": "31",
+"titre": "Grande direction et counter AMD",
+"concept": "direction",
+"q": "Comment mesure-t-on la grande direction ici ?",
+"choix": [
+"Dernière cassure 1 h",
+"Couleur de la dernière bougie",
+"Moyenne mobile"
+],
+"bonne": 0,
+"r": "C'est notre règle."
+},
+{
+"id": "l31-q2",
+"lecon": "31",
+"titre": "Grande direction et counter AMD",
+"concept": "direction",
+"q": "Que signifie counter AMD ?",
+"choix": [
+"Cycle opposé à la direction",
+"Deux AMD identiques",
+"Un gap"
+],
+"bonne": 0,
+"r": "Il va contre la grande direction."
+},
+{
+"id": "l31-q3",
+"lecon": "31",
+"titre": "Grande direction et counter AMD",
+"concept": "direction",
+"q": "Une direction 1 h garantit-elle la suite ?",
+"choix": [
+"Oui",
+"Non",
+"Oui pendant 12 h"
+],
+"bonne": 1,
+"r": "C'est un contexte."
+},
+{
+"id": "l31-q4",
+"lecon": "31",
+"titre": "Grande direction et counter AMD",
+"concept": "direction",
+"q": "Quel statut donner au chiffre de 80 % ?",
+"choix": [
+"À vérifier",
+"Démontré",
+"Seuil officiel"
+],
+"bonne": 0,
+"r": "Aucun comptage n'est présenté."
+},
+{
+"id": "l32-q1",
+"lecon": "32",
+"titre": "La prévision complète",
+"concept": "prevision",
+"q": "Risque 0,10 %, coûts 0,30 %. Combien valent les coûts ?",
+"choix": [
+"3 R",
+"0,3 R",
+"1 R"
+],
+"bonne": 0,
+"r": "0,30 divisé par 0,10 donne 3."
+},
+{
+"id": "l32-q2",
+"lecon": "32",
+"titre": "La prévision complète",
+"concept": "prevision",
+"q": "Que se passe-t-il si cible et stop sont dans la même bougie ?",
+"choix": [
+"Perte",
+"Gain",
+"Exercice annulé"
+],
+"bonne": 0,
+"r": "C'est le choix prudent du simulateur."
+},
+{
+"id": "l32-q3",
+"lecon": "32",
+"titre": "La prévision complète",
+"concept": "prevision",
+"q": "Que signifie invalidation ?",
+"choix": [
+"Le prix où la lecture est fausse",
+"Le prix d'entrée",
+"Le prix moyen"
+],
+"bonne": 0,
+"r": "Il doit être fixé avant la suite."
+},
+{
+"id": "l32-q4",
+"lecon": "32",
+"titre": "La prévision complète",
+"concept": "prevision",
+"q": "Quand répondre « Rien » ?",
+"choix": [
+"Sans lecture propre",
+"Après une perte",
+"Jamais"
+],
+"bonne": 0,
+"r": "S'abstenir fait partie de l'exercice."
+},
+{
+"id": "l33-q1",
+"lecon": "33",
+"titre": "Confronter la lecture à l'order flow",
+"concept": "",
+"q": "Le delta mesure...",
+"choix": [
+"Achats agressifs moins ventes agressives",
+"Prix moins volume",
+"Stops moins limites"
+],
+"bonne": 0,
+"r": "C'est l'agressivité nette."
+},
+{
+"id": "l33-q2",
+"lecon": "33",
+"titre": "Confronter la lecture à l'order flow",
+"concept": "",
+"q": "Un pic de volume prouve-t-il des stops ?",
+"choix": [
+"Oui",
+"Non",
+"Oui sur BTC"
+],
+"bonne": 1,
+"r": "D'autres ordres peuvent créer ce pic."
+},
+{
+"id": "l33-q3",
+"lecon": "33",
+"titre": "Confronter la lecture à l'order flow",
+"concept": "",
+"q": "Quelle donnée manque pour le NQ Yahoo ?",
+"choix": [
+"Le delta",
+"La clôture",
+"Le plus haut"
+],
+"bonne": 0,
+"r": "Yahoo ne donne pas les achats agressifs."
+},
+{
+"id": "l33-q4",
+"lecon": "33",
+"titre": "Confronter la lecture à l'order flow",
+"concept": "",
+"q": "Que suggère beaucoup d'agressivité sans progression ?",
+"choix": [
+"Une absorption possible",
+"Un gain certain",
+"Un FVG"
+],
+"bonne": 0,
+"r": "Cela reste une hypothèse à confronter."
+},
+{
+"id": "l34-q1",
+"lecon": "34",
+"titre": "Quand le schéma échoue",
+"concept": "tenue",
+"q": "Que signifie « le sweep tient » ici ?",
+"choix": [
+"Son extrême n'est pas dépassé en 24 bougies",
+"Le prix monte de 1 %",
+"Le volume baisse"
+],
+"bonne": 0,
+"r": "C'est la règle de tenue."
+},
+{
+"id": "l34-q2",
+"lecon": "34",
+"titre": "Quand le schéma échoue",
+"concept": "tenue",
+"q": "Que faire d'un échec ?",
+"choix": [
+"Le compter",
+"Le retirer",
+"Changer sa définition"
+],
+"bonne": 0,
+"r": "Les échecs font partie des statistiques."
+},
+{
+"id": "l34-q3",
+"lecon": "34",
+"titre": "Quand le schéma échoue",
+"concept": "tenue",
+"q": "Quelle fenêtre couvre une décision FOMC ?",
+"choix": [
+"2 h avant à 2 h après",
+"1 semaine",
+"5 minutes"
+],
+"bonne": 0,
+"r": "C'est notre filtre écrit."
+},
+{
+"id": "l34-q4",
+"lecon": "34",
+"titre": "Quand le schéma échoue",
+"concept": "tenue",
+"q": "Après un échec, quelle phrase est un biais ?",
+"choix": [
+"Ce n'était pas un vrai sweep",
+"La règle a échoué ici",
+"Je note ce cas"
+],
+"bonne": 0,
+"r": "Elle change la définition après le résultat."
+}
+]

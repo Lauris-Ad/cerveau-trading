@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#11161C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Quiz liquidité</title>
+<style>
+:root{--f:#11161C;--p:#1C242D;--l:#2A333D;--b:#3A4551;--t:#E7EAEE;--d:#AEB8C2;--a:#7FB5FF;--ok:#8BE0A8;--ko:#FF9C9C}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{margin:0;min-height:100%;background:var(--f);color:var(--t);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{min-height:100dvh;max-width:520px;margin:auto;padding:max(18px,env(safe-area-inset-top)) 20px max(18px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:16px}
+header{display:flex;justify-content:space-between;color:var(--d);font-size:14px}.barre{height:5px;background:var(--l);border-radius:3px}.barre i{display:block;height:5px;background:var(--a);border-radius:3px}
+h1{font-size:24px;line-height:1.25;margin:0;font-weight:600}button,select{font:inherit;color:var(--t);border-radius:8px;touch-action:manipulation}button{min-height:54px;padding:10px 15px;text-align:left;background:var(--p);border:1px solid var(--b)}
+button.bon{border-color:var(--ok);color:var(--ok)}button.non{border-color:var(--ko);color:var(--ko)}button:disabled{opacity:1}.ch{display:flex;flex-direction:column;gap:10px}.ex{background:var(--p);border-radius:8px;padding:15px}.pied{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.fort{background:var(--a);border:0;color:var(--f);font-weight:700;text-align:center}.doux{color:var(--d)}select{width:100%;min-height:48px;background:var(--p);border:1px solid var(--b);padding:0 10px}.tag{color:#F5D76E;font-size:13px;font-weight:600}a{color:var(--a)}
+</style>
+</head>
+<body><main id="m"><p class="doux">Chargement…</p></main>
+<script>
+const CLE="liquidite-quiz-v1",m=document.getElementById("m");let Q=[],S=lit(),file=[],i=0,bons=0,filtre=new URLSearchParams(location.hash.slice(1)).get("focus")||"";
+function lit(){try{return JSON.parse(localStorage.getItem(CLE))||{}}catch{return{}}}function garde(){try{localStorage.setItem(CLE,JSON.stringify(S))}catch{}}
+const e=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])),jour=()=>new Date().toISOString().slice(0,10);
+function due(q){const s=S[q.id];return !s||s.pour<=jour()}function prio(q){const s=S[q.id];return !s?1:s.n===0?0:2+s.n}function mel(a){for(let k=a.length-1;k>0;k--){const r=Math.floor(Math.random()*(k+1));[a[k],a[r]]=[a[r],a[k]]}return a}
+function accueil(){const lec=[...new Map(Q.map(q=>[q.lecon,q.titre])).entries()],acq=Q.filter(q=>S[q.id]&&S[q.id].n>=3).length,liste=base();m.innerHTML=`<header><span>Révision liquidité</span><span>${acq} / ${Q.length} acquises</span></header><h1>Quiz liquidité</h1><p class="doux">Réponses vues deux jours différents, puis espacées. Tes résultats restent sur ce téléphone.</p>
+<label class="doux" for="f">Thème</label><select id="f"><option value="">Toutes les leçons</option>${lec.map(([n,t])=>`<option value="${n}" ${filtre===n?"selected":""}>${n} · ${e(t)}</option>`).join("")}${filtre&&!/^\d+$/.test(filtre)?`<option value="${e(filtre)}" selected>Exercice à travailler</option>`:""}</select><div class="pied"><button class="fort" id="go" ${liste.length?"":"disabled"}>${liste.length?`Commencer ${Math.min(10,liste.length)} questions`:"Rien à réviser aujourd'hui"}</button></div>`;
+document.getElementById("f").onchange=x=>{filtre=x.target.value;accueil()};document.getElementById("go").onclick=()=>{file=mel(liste).sort((a,b)=>prio(a)-prio(b)).slice(0,10).map(q=>({...q,ordre:mel(q.choix.map((_,k)=>k))}));i=0;bons=0;question()}}
+function base(){return Q.filter(q=>(!filtre||q.lecon===filtre||q.concept===filtre)&&due(q))}
+function question(){const q=file[i];m.innerHTML=`<header><span>Leçon ${q.lecon}</span><span>${i+1} / ${file.length}</span></header><div class="barre"><i style="width:${(i/file.length)*100}%"></i></div><span class="tag">${e(q.titre)}</span><h1>${e(q.q)}</h1><div class="ch">${q.ordre.map(k=>`<button data-k="${k}">${e(q.choix[k])}</button>`).join("")}</div><div id="r"></div>`;
+m.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>reponse(q,+b.dataset.k))}
+function reponse(q,k){const ok=k===q.bonne;m.querySelectorAll("[data-k]").forEach(b=>{b.disabled=true;const x=+b.dataset.k;if(x===q.bonne)b.classList.add("bon");else if(x===k)b.classList.add("non")});bons+=ok;const s=S[q.id]||{n:0,j:""},a=jour();if(!ok)s.n=0;else if(s.j!==a)s.n++;s.j=a;const d=new Date();d.setDate(d.getDate()+(ok?[1,1,3,7,21][Math.min(s.n,4)]:0));s.pour=d.toISOString().slice(0,10);S[q.id]=s;garde();
+document.getElementById("r").innerHTML=`<div class="ex"><b>${ok?"Exact.":"Pas tout à fait."}</b> ${e(q.r)}</div>`;const p=document.createElement("div");p.className="pied";p.innerHTML=`<button class="fort">${i+1<file.length?"Question suivante":"Voir le résultat"}</button>`;m.append(p);p.firstChild.onclick=()=>{i++;i<file.length?question():fin()}}
+function fin(){m.innerHTML=`<header><span>Révision terminée</span></header><h1>${bons} / ${file.length}</h1><p class="doux">Les questions ratées reviennent en priorité.</p><div class="pied"><button class="fort" id="a">Retour</button></div>`;document.getElementById("a").onclick=accueil}
+fetch("liquidite.json").then(r=>r.json()).then(d=>{Q=d;accueil()}).catch(()=>m.innerHTML='<p>Quiz indisponible. Ouvre cette page une fois avec Internet.</p>');
+if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>

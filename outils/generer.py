@@ -264,11 +264,11 @@ def main():
     (out / "feed.xml").write_text(rss, encoding="utf-8")
     (out / "episodes.json").write_text(json.dumps(catalogue, ensure_ascii=False), encoding="utf-8")
     (out / "index.html").write_text(page(TITRE, f"<h1>{TITRE}</h1><p>{html.escape(RESUME)}</p>"
-        f'<p><a href="laurisverse.html"><b>Laurisverse</b></a> · <a href="quiz.html"><b>Passer le quiz</b></a> · Flux podcast : <code>{base}feed.xml</code></p>'
+        f'<p><a href="laurisverse.html"><b>Laurisverse</b></a> · <a href="quiz.html"><b>Passer le quiz</b></a> · <a href="liquidite.html"><b>Quiz liquidité</b></a> · Flux podcast : <code>{base}feed.xml</code></p>'
         + "".join(blocs) + (f'<p class="doux">🔒 {len(tous) - len(episodes)} épisode(s) à venir : '
         f'ils se débloquent quand tu valides la leçon {prog["lecon_en_cours"]} dans le quiz.</p>' if prog and len(tous) > len(episodes) else "")),
         encoding="utf-8")
-    for f in ["quiz.html", "sw.js", "manifest.webmanifest"]:
+    for f in ["quiz.html", "liquidite.html", "sw.js", "manifest.webmanifest"]:
         shutil.copy(RACINE / "web" / f, out / f)
     ids = {ep["id"] for ep in episodes}
     questions = [q for q in json.loads((RACINE / "quiz" / "questions.json").read_text(encoding="utf-8")) if q["episode"] in ids]
