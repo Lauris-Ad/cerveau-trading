@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-17 15:29",
+ "maj": "2026-11-18 12:11",
  "cycles": [
   {
    "n": 1,
@@ -273,13 +273,42 @@
     }
    ],
    "date": "2026-11-17"
+  },
+  {
+   "n": 32,
+   "axe": "C",
+   "titre": "Backtest H6, alignement des VWAP sur une journée",
+   "dire": "J'ai testé l'alignement des VWAP sur huit cryptos et quatre ans : il améliore à peine l'achat quotidien, de quelques centièmes de pour cent, bien moins que les frais, donc archivé ; prochain test, la divergence des achats agressifs sur le bitcoin.",
+   "agents": [
+    {
+     "id": "markets-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "markets-gardien-backtest",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-18"
   }
  ],
  "strategies": {
-  "testees": 8,
-  "archivees": 8,
+  "testees": 9,
+  "archivees": 9,
   "candidates": 0,
-  "variantes": 11
+  "variantes": 14
  },
- "prochaine": "Backtest H6 alignement multi-VWAP (8 cryptos 1 h, 3 variantes, t 2,4) : horizon 1 jour, priorité"
+ "prochaine": "Backtest H8 divergence du CVD (BTC, 5 min vision regroupé en 1 h, t 2,0)"
 }
