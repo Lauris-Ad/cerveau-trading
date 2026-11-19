@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-19 07:24",
+ "maj": "2026-11-19 19:06",
  "cycles": [
   {
    "n": 1,
@@ -389,13 +389,50 @@
     }
    ],
    "date": "2026-11-19"
+  },
+  {
+   "n": 36,
+   "axe": "C",
+   "titre": "Cassure hebdomadaire sur 8 cryptos",
+   "dire": "La cassure hebdomadaire a gagné sur le papier, mais avec 93 trades au lieu des 100 exigés, et surtout grâce à la hausse générale des cryptos ; les règles sont les règles, elle est archivée.",
+   "agents": [
+    {
+     "id": "markets-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "avocat-du-diable",
+     "issue": ""
+    },
+    {
+     "id": "crypto",
+     "issue": ""
+    },
+    {
+     "id": "markets-gardien-backtest",
+     "issue": "NO-GO pour monter : 93 trades < 100"
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-19"
   }
  ],
  "strategies": {
-  "testees": 10,
-  "archivees": 10,
+  "testees": 11,
+  "archivees": 11,
   "candidates": 0,
-  "variantes": 15
+  "variantes": 16
  },
- "prochaine": "Idée cassure hebdomadaire (la journalière est archivée au cycle 21) (horizon 1 à 4 semaines, où les coûts pèsent < 10 %), règles pré-enregistrées"
+ "prochaine": "Témoin acheter et garder pré-enregistré pour toute idée longue sur crypto (mesurer l'avantage au-delà de la hausse du marché)"
 }
