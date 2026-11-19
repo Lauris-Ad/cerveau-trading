@@ -782,5 +782,89 @@
 "episode": "e20",
 "q": "On te propose un lanceur gratuit qui ouvre des logiciels de trading payants : que fais-tu, et pourquoi ?",
 "r": "Je ne l'installe pas : c'est très probablement du piratage, et un programme inconnu peut voler mots de passe, comptes et wallets."
+},
+{
+"id": "l35-q1",
+"lecon": "35",
+"episode": "e35",
+"q": "Que fait le prix dans une balance, et dans un déséquilibre ?",
+"r": "Dans une balance il tourne en range là où acheteurs et vendeurs sont d'accord ; dans un déséquilibre il avance vite pour chercher une nouvelle zone."
+},
+{
+"id": "l35-q2",
+"lecon": "35",
+"episode": "e35",
+"q": "Qu'est-ce que le POC ?",
+"r": "Le point of control : le prix où le plus d'échanges, ou de temps, s'est fait."
+},
+{
+"id": "l35-q3",
+"lecon": "35",
+"episode": "e35",
+"q": "Que contient la value area, et pourquoi 70 % n'est-il qu'une convention ?",
+"r": "Environ 70 % de l'activité autour du POC, bornée par VAH et VAL ; le chiffre vient d'un écart-type de la loi normale, pas d'une loi du marché."
+},
+{
+"id": "l35-q4",
+"lecon": "35",
+"episode": "e35",
+"q": "Que sont des single prints ?",
+"r": "Des prix traversés une seule fois, vite ; beaucoup de traders s'attendent à ce que le prix y revienne, ce qui reste à mesurer."
+},
+{
+"id": "l35-q5",
+"lecon": "35",
+"episode": "e35",
+"q": "Selon Dualis Flow, quel retour sur une balance réagit le mieux ?",
+"r": "Le premier. Chez nous c'est l'hypothèse H5, pas encore testée."
+},
+{
+"id": "l35-q6",
+"lecon": "35",
+"episode": "e35",
+"q": "Pourquoi trouve-t-on toujours, après coup, un niveau qui « a marché » ?",
+"r": "Parce qu'il y a toujours un POC, un VAH ou une balance près du prix ; seul un test sur tous les retours, écrits avant, tranche."
+},
+{
+"id": "l36-q1",
+"lecon": "36",
+"episode": "e36",
+"q": "Quelle est la différence entre un ordre du DOM et un trade exécuté ?",
+"r": "L'ordre du DOM est une intention qu'on peut annuler ; le trade exécuté est un fait."
+},
+{
+"id": "l36-q2",
+"lecon": "36",
+"episode": "e36",
+"q": "Pour lire une absorption, Dualis Flow préfère-t-il le DOM ou le footprint ?",
+"r": "Le footprint, parce qu'il montre les trades exécutés ; le DOM sert de confirmation en scalping."
+},
+{
+"id": "l36-q3",
+"lecon": "36",
+"episode": "e36",
+"q": "Qu'est-ce que le spoofing ?",
+"r": "Poser un gros ordre qu'on n'a pas l'intention d'exécuter pour tromper les autres, puis l'annuler avant qu'il soit touché."
+},
+{
+"id": "l36-q4",
+"lecon": "36",
+"episode": "e36",
+"q": "Quelle loi a interdit explicitement le spoofing aux États-Unis, et quand ?",
+"r": "La loi Dodd-Frank, en 2010."
+},
+{
+"id": "l36-q5",
+"lecon": "36",
+"episode": "e36",
+"q": "Un mur de 400 BTC disparaît juste avant d'être touché : que regardes-tu ?",
+"r": "Ça peut être du spoofing ; je regarde les trades exécutés, le delta et le footprint, plutôt que l'affichage."
+},
+{
+"id": "l36-q6",
+"lecon": "36",
+"episode": "e36",
+"q": "Pourquoi ne peut-on pas backtester une règle de DOM chez nous, alors qu'on teste le CVD ?",
+"r": "Il n'y a pas d'historique gratuit du carnet ; les trades exécutés de Binance (aggTrades) sont gratuits."
 }
 ]
