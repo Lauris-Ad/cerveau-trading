@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-18 19:20",
+ "maj": "2026-11-19 07:24",
  "cycles": [
   {
    "n": 1,
@@ -360,6 +360,35 @@
     }
    ],
    "date": "2026-11-18"
+  },
+  {
+   "n": 35,
+   "axe": "B",
+   "titre": "Leçons AMT et DOM + point d'étape (cycles 31 à 35)",
+   "dire": "Point d'étape : dix idées testées, aucune candidate, mais deux nouvelles leçons sont prêtes ; pour qu'elles arrivent dans ton podcast, il faut d'abord valider la leçon 07 dans le quiz.",
+   "agents": [
+    {
+     "id": "markets-pedagogue",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "markets-head",
+     "issue": "point d'étape"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-19"
   }
  ],
  "strategies": {
