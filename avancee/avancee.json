@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-19 19:06",
+ "maj": "2026-11-20 11:16",
  "cycles": [
   {
    "n": 1,
@@ -426,6 +426,31 @@
     }
    ],
    "date": "2026-11-19"
+  },
+  {
+   "n": 37,
+   "axe": "A",
+   "titre": "VWAP semaine et mois, opening range US",
+   "dire": "Le graphique des bougies montre maintenant la VWAP de la semaine, celle du mois et l'opening range américain de 15 h 30 à 16 h ; relance le dashboard pour les voir.",
+   "agents": [
+    {
+     "id": "markets-data-dashboard",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-20"
   }
  ],
  "strategies": {
