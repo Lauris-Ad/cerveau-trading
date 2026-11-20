@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-20 11:16",
+ "maj": "2026-11-20 18:19",
  "cycles": [
   {
    "n": 1,
@@ -451,6 +451,39 @@
     }
    ],
    "date": "2026-11-20"
+  },
+  {
+   "n": 38,
+   "axe": "C",
+   "titre": "Contrôle témoin « au hasard »",
+   "dire": "J'ai ajouté un test qui compare chaque idée à des trades placés au hasard ; la cassure hebdomadaire le passe nettement, donc son gain ne venait pas seulement de la hausse des cryptos, mais elle reste archivée faute de 100 trades.",
+   "agents": [
+    {
+     "id": "markets-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "markets-gardien-backtest",
+     "issue": ""
+    },
+    {
+     "id": "aucun",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-20"
   }
  ],
  "strategies": {
@@ -459,5 +492,5 @@
   "candidates": 0,
   "variantes": 16
  },
- "prochaine": "Témoin acheter et garder pré-enregistré pour toute idée longue sur crypto (mesurer l'avantage au-delà de la hausse du marché)"
+ "prochaine": "Backtest H10 FVG + LVN (BTC 1 h, 2 nouvelles variantes de la famille FVG, t 2,4)"
 }
