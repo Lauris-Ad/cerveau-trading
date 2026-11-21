@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-20 18:19",
+ "maj": "2026-11-21 12:25",
  "cycles": [
   {
    "n": 1,
@@ -484,6 +484,35 @@
     }
    ],
    "date": "2026-11-20"
+  },
+  {
+   "n": 39,
+   "axe": "A",
+   "titre": "Design : tuiles et légende du graphique des bougies",
+   "dire": "Le dashboard est plus clair sur téléphone : l'état du marché en haut, le prix à côté du mouvement de l'heure, et une légende en couleurs au lieu du long texte.",
+   "agents": [
+    {
+     "id": "designer",
+     "issue": ""
+    },
+    {
+     "id": "markets-data-dashboard",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-21"
   }
  ],
  "strategies": {
