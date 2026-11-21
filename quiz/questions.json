@@ -866,5 +866,89 @@
 "episode": "e36",
 "q": "Pourquoi ne peut-on pas backtester une règle de DOM chez nous, alors qu'on teste le CVD ?",
 "r": "Il n'y a pas d'historique gratuit du carnet ; les trades exécutés de Binance (aggTrades) sont gratuits."
+},
+{
+"id": "l37-q1",
+"lecon": "37",
+"episode": "e37",
+"q": "Qu'est-ce que l'opening range américain ?",
+"r": "Le plus haut et le plus bas des premières minutes de la séance de New York, souvent 9 h 30 → 10 h."
+},
+{
+"id": "l37-q2",
+"lecon": "37",
+"episode": "e37",
+"q": "À quelle heure de Paris commence-t-il en temps normal, et pourquoi pas toute l'année ?",
+"r": "15 h 30 ; pendant les semaines où les États-Unis et l'Europe n'ont pas encore changé d'heure ensemble, c'est 14 h 30."
+},
+{
+"id": "l37-q3",
+"lecon": "37",
+"episode": "e37",
+"q": "Le BTC a-t-il une ouverture ? Pourquoi l'opening range peut-il quand même compter ?",
+"r": "Non, il s'échange en continu ; mais 15 h 30 est l'arrivée des actions, des ETF et des traders américains."
+},
+{
+"id": "l37-q4",
+"lecon": "37",
+"episode": "e37",
+"q": "Que dit l'idée H7, et a-t-elle été testée ?",
+"r": "Une fausse sortie de l'opening range sur BTC 5 min ; elle est pré-enregistrée, pas encore testée."
+},
+{
+"id": "l37-q5",
+"lecon": "37",
+"episode": "e37",
+"q": "Pourquoi une idée sur 5 minutes part-elle avec un handicap chez nous ?",
+"r": "Les mouvements sont petits et nos coûts de 0,30 % aller-retour en mangent la plus grande part."
+},
+{
+"id": "l37-q6",
+"lecon": "37",
+"episode": "e37",
+"q": "Les traits orange du dashboard sont-ils un signal d'achat ?",
+"r": "Non, c'est un repère pour lire la journée, tant que rien n'a été mesuré."
+},
+{
+"id": "l38-q1",
+"lecon": "38",
+"episode": "e38",
+"q": "Pourquoi une stratégie acheteuse peut-elle gagner sans avoir d'avantage ?",
+"r": "Parce que le marché montait : presque n'importe quel achat tenu quelques semaines gagnait."
+},
+{
+"id": "l38-q2",
+"lecon": "38",
+"episode": "e38",
+"q": "Que change le contrôle témoin, et que garde-t-il identique ?",
+"r": "Il tire la date d'entrée au hasard ; il garde le marché, le sens et la durée de chaque trade."
+},
+{
+"id": "l38-q3",
+"lecon": "38",
+"episode": "e38",
+"q": "Quand dit-on qu'une idée passe le contrôle témoin ?",
+"r": "Quand elle fait mieux que 95 % des 2 000 tirages au hasard."
+},
+{
+"id": "l38-q4",
+"lecon": "38",
+"episode": "e38",
+"q": "La cassure hebdomadaire passe le contrôle : pourquoi reste-t-elle archivée ?",
+"r": "Elle n'avait que 93 trades au lieu de 100 ; un contrôle réussi ne rattrape pas un critère raté."
+},
+{
+"id": "l38-q5",
+"lecon": "38",
+"episode": "e38",
+"q": "Qu'est-ce que le data snooping ?",
+"r": "Trouver un beau résultat par chance à force d'essayer beaucoup d'idées sur les mêmes données."
+},
+{
+"id": "l38-q6",
+"lecon": "38",
+"episode": "e38",
+"q": "Pourquoi le t exigé monte-t-il avec le nombre de variantes ?",
+"r": "Plus on essaie, plus un beau chiffre peut venir du hasard ; on relève donc la barre de 2,0 jusqu'à 3,3."
 }
 ]
