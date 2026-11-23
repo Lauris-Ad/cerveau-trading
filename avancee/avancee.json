@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-21 12:25",
+ "maj": "2026-11-23 08:36",
  "cycles": [
   {
    "n": 1,
@@ -513,13 +513,75 @@
     }
    ],
    "date": "2026-11-21"
+  },
+  {
+   "n": 40,
+   "axe": "B",
+   "titre": "Leçons opening range et « battre le hasard » + point d'étape (cycles 36 à 40)",
+   "dire": "Point d'étape : onze idées testées, toujours aucune candidate, mais la cassure hebdomadaire a été la première à battre nettement le hasard ; deux nouvelles leçons sont prêtes derrière la leçon 07.",
+   "agents": [
+    {
+     "id": "markets-pedagogue",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "markets-head",
+     "issue": "point d'étape"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-23"
+  },
+  {
+   "n": 41,
+   "axe": "C",
+   "titre": "H10 FVG sur zone de faible volume testée et archivée",
+   "dire": "J'ai testé l'idée du Discord sur les trous de prix posés sur une zone de faible volume : avant frais elle ne gagne presque rien, après frais elle perd, donc archivée.",
+   "agents": [
+    {
+     "id": "markets-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "markets-gardien-backtest",
+     "issue": ""
+    },
+    {
+     "id": "famille",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-23"
   }
  ],
  "strategies": {
-  "testees": 11,
-  "archivees": 11,
+  "testees": 12,
+  "archivees": 12,
   "candidates": 0,
-  "variantes": 16
+  "variantes": 18
  },
- "prochaine": "Backtest H10 FVG + LVN (BTC 1 h, 2 nouvelles variantes de la famille FVG, t 2,4)"
+ "prochaine": "Observation H5 premier retour sur une balance (BTC, ETH, SOL 1 h)"
 }
