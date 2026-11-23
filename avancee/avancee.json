@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-23 08:36",
+ "maj": "2026-11-23 13:09",
  "cycles": [
   {
    "n": 1,
@@ -563,6 +563,39 @@
     },
     {
      "id": "famille",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-23"
+  },
+  {
+   "n": 42,
+   "axe": "A",
+   "titre": "Dashboard : nouveau design, erreurs Options et Paper trading, tâches calées sur l'état du PC",
+   "dire": "Le dashboard a un nouveau look, l'onglet Options montre la dernière photo quand Cboe bloque, et les tâches attendent maintenant le réseau au réveil du PC au lieu de noter des erreurs.",
+   "agents": [
+    {
+     "id": "markets-data-dashboard",
+     "issue": ""
+    },
+    {
+     "id": "designer",
+     "issue": ""
+    },
+    {
+     "id": "cto-infra",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
      "issue": ""
     },
     {
