@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-23 13:09",
+ "maj": "2026-11-26 09:06",
  "cycles": [
   {
    "n": 1,
@@ -608,6 +608,31 @@
     }
    ],
    "date": "2026-11-23"
+  },
+  {
+   "n": 43,
+   "axe": "B",
+   "titre": "Épisode 7 réécrit en complément de la leçon 08",
+   "dire": "L'épisode de la leçon 8 est réécrit : il ne répète plus le cours, il explique pourquoi le funding revient toujours au calme, ce qu'il coûte sur un mois et comment naissent les cascades de liquidations.",
+   "agents": [
+    {
+     "id": "markets-pedagogue",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-24"
   }
  ],
  "strategies": {
