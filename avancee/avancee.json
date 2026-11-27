@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-26 09:06",
+ "maj": "2026-11-27 08:16",
  "cycles": [
   {
    "n": 1,
@@ -633,13 +633,67 @@
     }
    ],
    "date": "2026-11-24"
+  },
+  {
+   "n": 44,
+   "axe": "C",
+   "titre": "Ouverture US : ORB 5 min + zone de bruit (vidéo), testée, archivée, observée",
+   "dire": "J'ai testé la méthode de la vidéo : elle a un vrai petit avantage avant frais, mais nos frais sur le BTC le mangent, donc elle est archivée ; tu peux quand même la regarder vivre dans l'onglet Ouverture US, sans jamais trader dessus.",
+   "agents": [
+    {
+     "id": "markets-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-gardien-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-data-dashboard",
+     "issue": ""
+    },
+    {
+     "id": "markets-pedagogue",
+     "issue": ""
+    },
+    {
+     "id": "cto-infra",
+     "issue": "rôles tenus par la session PC"
+    }
+   ],
+   "date": "2026-11-26"
+  },
+  {
+   "n": 45,
+   "axe": "B",
+   "titre": "Épisode 8 réécrit en complément de la leçon 09",
+   "dire": "L'épisode de la leçon 9 est réécrit : il montre avec notre test de l'ouverture américaine comment un vrai signal meurt sous les frais, et t'apprend à compter le coût en R avant d'entrer.",
+   "agents": [
+    {
+     "id": "markets-pedagogue",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-27"
   }
  ],
  "strategies": {
-  "testees": 12,
-  "archivees": 12,
+  "testees": 13,
+  "archivees": 13,
   "candidates": 0,
-  "variantes": 18
+  "variantes": 20
  },
  "prochaine": "Observation H5 premier retour sur une balance (BTC, ETH, SOL 1 h)"
 }
