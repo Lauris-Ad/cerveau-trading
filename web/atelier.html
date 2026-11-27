@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0E1322">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Atelier top-down</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Mise en page : un poste de lecture d'une colonne, graphique en haut, consigne en dessous, la suite du graphique se dévoile à la fin. */
+:root{
+  --fond:#0E1322; --plan:#161D31; --trait:#26304A; --texte:#E8ECF4; --doux:#9AA6BF;
+  --accent:#E0479E; --hausse:#2FC19B; --baisse:#F2624F; --zone:#7FA8FF; --jaune:#F1C75B;
+  --f-titre:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-texte:"IBM Plex Sans",-apple-system,"Segoe UI",system-ui,sans-serif;
+  --f-chiffre:"IBM Plex Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --fond:#F3F4F8; --plan:#FFFFFF; --trait:#D9DDE8; --texte:#151A2B; --doux:#5A6480;
+  --accent:#B8287A; --hausse:#13906F; --baisse:#C93C2B; --zone:#3A66C9; --jaune:#A97C0A; color-scheme:light}}
+:root[data-theme="light"]{
+  --fond:#F3F4F8; --plan:#FFFFFF; --trait:#D9DDE8; --texte:#151A2B; --doux:#5A6480;
+  --accent:#B8287A; --hausse:#13906F; --baisse:#C93C2B; --zone:#3A66C9; --jaune:#A97C0A; color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--fond);color:var(--texte);font:16px/1.5 var(--f-texte)}
+main{max-width:640px;margin:auto;padding-block:max(16px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-bottom));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h1{font:700 26px/1.1 var(--f-titre);margin:0;letter-spacing:-.01em;text-wrap:balance}
+h1 small{display:block;font:500 13px/1.4 var(--f-texte);color:var(--doux);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
+.compteur{font:500 13px var(--f-chiffre);color:var(--doux)}
+.etapes{display:flex;gap:6px}.etapes i{flex:1;height:4px;border-radius:2px;background:var(--trait);transition:background .3s}
+.etapes i.fait{background:var(--accent)}.etapes i.ici{background:var(--texte)}
+.graphe{position:relative;background:var(--plan);border:1px solid var(--trait);border-radius:10px;overflow:hidden}
+.graphe canvas{display:block;width:100%;height:clamp(240px,62vw,380px);touch-action:manipulation}
+.graphe .legende{padding:8px 10px 0;min-height:27px;font:500 12px var(--f-chiffre);color:var(--doux);display:flex;gap:4px 12px;flex-wrap:wrap}
+.legende b{font-weight:500}.l-sma{color:var(--accent)}.l-zone{color:var(--zone)}.l-stop{color:var(--baisse)}.l-obj{color:var(--hausse)}
+.consigne{display:flex;flex-direction:column;gap:12px}
+.consigne h2{font:700 20px/1.25 var(--f-titre);margin:0;text-wrap:balance}
+.consigne p{margin:0;max-width:62ch}
+.doux{color:var(--doux)}
+.choix{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+button{font:500 15px var(--f-texte);color:var(--texte);background:var(--plan);border:1px solid var(--trait);border-radius:8px;min-height:50px;padding:10px 14px;cursor:pointer;touch-action:manipulation;transition:border-color .15s,transform .1s}
+button:active{transform:scale(.98)}button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.fort{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+button.bon{border-color:var(--hausse);color:var(--hausse)}button.non{border-color:var(--baisse);color:var(--baisse)}
+button:disabled{cursor:default;opacity:.85}
+.verdict{border-left:3px solid var(--trait);padding:4px 0 4px 12px;display:flex;flex-direction:column;gap:6px}
+.verdict.ok{border-color:var(--hausse)}.verdict.ko{border-color:var(--baisse)}.verdict.mi{border-color:var(--jaune)}
+.verdict strong{font-family:var(--f-titre);font-size:17px}
+.mesures{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.mesure{background:var(--plan);border:1px solid var(--trait);border-radius:8px;padding:8px 10px;min-width:0}
+.mesure span{display:block;font-size:12px;color:var(--doux);letter-spacing:.03em}
+.mesure b{font:500 17px var(--f-chiffre);font-variant-numeric:tabular-nums}
+.calcul{font:400 14px/1.7 var(--f-chiffre);background:var(--plan);border:1px solid var(--trait);border-radius:8px;padding:10px 12px;overflow-x:auto}
+label{font-size:14px;color:var(--doux)}
+input{font:500 18px var(--f-chiffre);color:var(--texte);background:var(--plan);border:1px solid var(--trait);border-radius:8px;min-height:50px;padding:0 12px;width:100%}
+.ligne{display:flex;gap:8px;align-items:stretch}.ligne>*{min-width:0}.ligne input{flex:1}
+.r{font:700 44px/1 var(--f-titre);font-variant-numeric:tabular-nums}
+.r.plus{color:var(--hausse)}.r.moins{color:var(--baisse)}
+.historique{display:flex;gap:6px;flex-wrap:wrap}
+.historique span{font:500 12px var(--f-chiffre);padding:4px 8px;border-radius:6px;border:1px solid var(--trait);color:var(--doux)}
+footer{font-size:13px;color:var(--doux);display:flex;flex-direction:column;gap:6px;border-top:1px solid var(--trait);padding-top:12px}
+a{color:var(--accent)}
+.apparait{animation:monte .35s ease-out both}
+@keyframes monte{from{opacity:.001;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.apparait{animation:none}*{transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1><small>Exercice guidé · BTC</small>Atelier top-down</h1>
+    <span class="compteur" id="compteur">…</span>
+  </header>
+  <div class="etapes" id="etapes" aria-hidden="true"></div>
+  <div class="graphe">
+    <div class="legende" id="legende"></div>
+    <canvas id="c" aria-label="Graphique en bougies du bitcoin"></canvas>
+  </div>
+  <section class="consigne" id="consigne" aria-live="polite"><p class="doux">Chargement des graphiques…</p></section>
+  <footer>
+    <span>Entraînement seulement : rien ici n'est un signal. Les graphiques sont de vrais jours de BTC/USDT (Binance), tirés au hasard entre 2023 et 2025 ; la suite reste cachée jusqu'à la fin.</span>
+    <span>Méthode inspirée de la vidéo « MASTER AI Trading in 70 Minutes » (Mind Math Money) : tendance en journalier, zones, descente en 1 h, taille à 2 % de risque. Sa règle « clôture au-dessus de la moyenne 50 jours » a été testée chez nous sur 8 cryptos : archivée (t 2,79 &lt; 3,0, baisse maximale 89 %).</span>
+    <span><a href="index.html">Retour au cerveau trading</a></span>
+  </footer>
+</main>
+<script>
+"use strict";
+const CLE = "atelier-topdown-v1", CAPITAL = 1000, RISQUE = 0.02, COUT = 0.30, OBJ_R = 3;
+const ETAPES = ["Tendance", "Zones", "1 heure", "Plan", "Taille", "Suite"];
+const $ = id => document.getElementById(id);
+const doux = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = (x, d = 0) => x.toLocaleString("fr-FR", {minimumFractionDigits: d, maximumFractionDigits: d});
+const pct = (x, d = 2) => (x >= 0 ? "+" : "−") + fmt(Math.abs(x), d) + " %";
+const dateFr = t => new Date(t * 1000).toLocaleDateString("fr-FR", {day: "numeric", month: "long", year: "numeric", timeZone: "UTC"});
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+function lit() { try { return JSON.parse(localStorage.getItem(CLE)) || {} } catch { return {} } }
+function garde() { try { localStorage.setItem(CLE, JSON.stringify(H)) } catch {} }
+let H = lit(); H.faits = H.faits || {};
+
+/* ---------- Données ---------- */
+function bougie(b) {
+  if (Array.isArray(b)) return {t: +b[0], o: +b[1], h: +b[2], l: +b[3], c: +b[4], v: +(b[5] || 0)};
+  return {t: +(b.t ?? b.time ?? b.ts), o: +(b.o ?? b.open), h: +(b.h ?? b.high), l: +(b.l ?? b.low), c: +(b.c ?? b.close), v: +(b.v ?? b.volume ?? 0)};
+}
+const pris = (s, noms) => { for (const n of noms) if (s[n]) return s[n]; return [] };
+function scenario(s, i) {
+  const t = v => (v > 1e11 ? v / 1000 : v);
+  const fix = a => a.map(bougie).map(b => (b.t = t(b.t), b));
+  return {
+    id: "s" + (s.id ?? i + 1),
+    jour: fix(pris(s, ["jour_avant", "journalier", "jour", "d1", "daily", "bougies_1d", "avant_1d"])),
+    h1: fix(pris(s, ["h1_avant", "h1", "horaire", "avant_1h", "bougies_1h", "hourly"])),
+    futur: fix(pris(s, ["h1_apres", "futur", "apres", "apres_1h", "after", "future"])),
+  };
+}
+
+/* ---------- Mesures ---------- */
+function sma(c, n) { const r = []; let s = 0; c.forEach((b, i) => { s += b.c; if (i >= n) s -= c[i - n].c; r.push(i >= n - 1 ? s / n : null) }); return r }
+function sommets(c, k) {
+  const hauts = [], bas = [];
+  for (let i = k; i < c.length - k; i++) {
+    let H1 = true, B1 = true;
+    for (let j = i - k; j <= i + k; j++) { if (j === i) continue; if (c[j].h >= c[i].h) H1 = false; if (c[j].l <= c[i].l) B1 = false }
+    if (H1) hauts.push({i, p: c[i].h}); if (B1) bas.push({i, p: c[i].l});
+  }
+  return {hauts, bas};
+}
+function lectureTendance(c) {
+  const m = sma(c, 50), n = c.length - 1, dernier = c[n].c, moy = m[n], moyAvant = m[n - 10];
+  const {hauts, bas} = sommets(c, 5);
+  const h = hauts.slice(-2), b = bas.slice(-2);
+  const structure = h.length === 2 && b.length === 2 ? (h[1].p > h[0].p && b[1].p > b[0].p ? 1 : h[1].p < h[0].p && b[1].p < b[0].p ? -1 : 0) : 0;
+  const signes = [dernier > moy ? 1 : -1, moy > moyAvant ? 1 : -1, structure];
+  const somme = signes.reduce((a, x) => a + x, 0);
+  const reponse = somme === 3 ? "haussiere" : somme === -3 ? "baissiere" : "pas_claire";
+  return {m, moy, moyAvant, dernier, hauts, bas, h, b, structure, signes, reponse};
+}
+function lectureZones(c) {
+  const {hauts, bas} = sommets(c, 5), pts = [...hauts, ...bas].sort((a, b) => a.p - b.p), grappes = [];
+  for (const p of pts) {
+    const g = grappes[grappes.length - 1];
+    if (g && (p.p - g.moy) / g.moy <= 0.015) { g.pts.push(p); g.moy = g.pts.reduce((a, x) => a + x.p, 0) / g.pts.length }
+    else grappes.push({pts: [p], moy: p.p});
+  }
+  const dernier = c[c.length - 1].c;
+  const zones = grappes.map(g => {
+    const ps = g.pts.map(x => x.p), lo = Math.min(...ps), hi = Math.max(...ps), demi = Math.max((hi - lo) / 2, g.moy * 0.003);
+    return {centre: g.moy, bas: g.moy - demi, haut: g.moy + demi, touches: g.pts.length};
+  });
+  const choisir = l => l.sort((a, b) => b.touches - a.touches || Math.abs(a.centre - dernier) - Math.abs(b.centre - dernier))[0] || null;
+  return {zones, support: choisir(zones.filter(z => z.haut < dernier)), resistance: choisir(zones.filter(z => z.bas > dernier)), dernier};
+}
+function lecture1h(c) {
+  const hi = Math.max(...c.map(b => b.h)), lo = Math.min(...c.map(b => b.l));
+  const r = (c[c.length - 1].c - c[0].c) / (hi - lo);
+  return {hi, lo, r, reponse: Math.abs(r) < 0.35 ? "range" : r > 0 ? "hausse" : "baisse"};
+}
+
+/* ---------- Dessin ---------- */
+const cv = $("c"), ctx = cv.getContext("2d");
+let vue = null;   // ce qui est dessiné : {bougies, nCache, couches, ymin, ymax}
+function taille() {
+  const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1;
+  cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); ctx.setTransform(d, 0, 0, d, 0, 0);
+  return {w: r.width, h: r.height};
+}
+function dessine(v = vue) {
+  if (!v) return; vue = v;
+  const {w, h} = taille(), marge = {g: 8, d: 62, h: 22, b: 22}, b = v.bougies, n = b.length + (v.place || 0);
+  const vis = b.slice(0, b.length - (v.nCache || 0));
+  let ymin = Math.min(...b.map(x => x.l)), ymax = Math.max(...b.map(x => x.h));
+  (v.couches || []).forEach(c => { if (c.prix != null && c.cadrer) { ymin = Math.min(ymin, c.prix); ymax = Math.max(ymax, c.prix) } });
+  const pad = (ymax - ymin) * 0.06; ymin -= pad; ymax += pad;
+  const X = i => marge.g + (i + 0.5) * (w - marge.g - marge.d) / n, Y = p => marge.h + (ymax - p) / (ymax - ymin) * (h - marge.h - marge.b);
+  v.Y = Y; v.P = y => ymax - (y - marge.h) / (h - marge.h - marge.b) * (ymax - ymin); v.marge = marge; v.w = w; v.h = h;
+  ctx.clearRect(0, 0, w, h);
+  // grille et prix
+  const pas = joli((ymax - ymin) / 5); ctx.font = "11px " + css("--f-chiffre"); ctx.textBaseline = "middle";
+  for (let p = Math.ceil(ymin / pas) * pas; p < ymax; p += pas) {
+    ctx.strokeStyle = css("--trait"); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(marge.g, Y(p)); ctx.lineTo(w - marge.d, Y(p)); ctx.stroke();
+    ctx.fillStyle = css("--doux"); ctx.fillText(fmt(p), w - marge.d + 6, Y(p));
+  }
+  // zones (bandes)
+  (v.couches || []).filter(c => c.type === "zone").forEach(z => {
+    ctx.fillStyle = teinte(css(z.couleur || "--zone"), z.alpha ?? 0.16); ctx.fillRect(marge.g, Y(z.haut), w - marge.g - marge.d, Y(z.bas) - Y(z.haut));
+    if (z.texte) { ctx.fillStyle = css(z.couleur || "--zone"); ctx.textAlign = "left"; ctx.fillText(z.texte, marge.g + 4, z.dessous ? Y(z.bas) + 9 : Y(z.haut) - 7) }
+  });
+  // bougies
+  const lb = Math.max(1, (w - marge.g - marge.d) / n * 0.68);
+  vis.forEach((x, i) => {
+    if (v.apparition != null && i >= v.debutAnim && i > v.apparition) return;
+    const c = x.c >= x.o ? css("--hausse") : css("--baisse"); ctx.strokeStyle = c; ctx.fillStyle = c; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(X(i), Y(x.h)); ctx.lineTo(X(i), Y(x.l)); ctx.stroke();
+    const y1 = Y(Math.max(x.o, x.c)), y2 = Y(Math.min(x.o, x.c)); ctx.fillRect(X(i) - lb / 2, y1, lb, Math.max(1, y2 - y1));
+  });
+  if (v.nCache) {   // rideau sur le futur
+    const x0 = X(b.length - v.nCache) - lb; ctx.fillStyle = teinte(css("--plan"), 1); ctx.fillRect(x0, 0, w - marge.d - x0, h);
+    ctx.strokeStyle = css("--doux"); ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(x0, marge.h); ctx.lineTo(x0, h - marge.b); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = css("--doux"); ctx.textAlign = "center"; ctx.fillText("la suite est cachée", (x0 + w - marge.d) / 2, h / 2);
+  }
+  // séparation passé / futur pendant la révélation
+  if (v.debutAnim != null) { const x0 = X(v.debutAnim) - lb; ctx.strokeStyle = css("--doux"); ctx.setLineDash([3, 4]); ctx.beginPath(); ctx.moveTo(x0, marge.h); ctx.lineTo(x0, h - marge.b); ctx.stroke(); ctx.setLineDash([]) }
+  // courbes, lignes, points
+  (v.couches || []).forEach(c => {
+    if (c.type === "courbe") {
+      ctx.strokeStyle = css(c.couleur); ctx.lineWidth = 2; ctx.beginPath(); let premier = true;
+      const fin = Math.floor(c.valeurs.length * (c.progres ?? 1));
+      c.valeurs.slice(0, fin).forEach((y, i) => { if (y == null) return; premier ? ctx.moveTo(X(i), Y(y)) : ctx.lineTo(X(i), Y(y)); premier = false }); ctx.stroke();
+    }
+    if (c.type === "ligne") {
+      ctx.strokeStyle = css(c.couleur); ctx.lineWidth = c.epais || 1.5; ctx.setLineDash(c.pointille ? [6, 4] : []);
+      ctx.beginPath(); ctx.moveTo(marge.g, Y(c.prix)); ctx.lineTo(w - marge.d, Y(c.prix)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = css(c.couleur); ctx.fillRect(w - marge.d + 1, Y(c.prix) - 9, marge.d - 2, 18);
+      ctx.fillStyle = css("--fond"); ctx.textAlign = "left"; ctx.fillText(fmt(c.prix), w - marge.d + 5, Y(c.prix));
+      if (c.texte) { ctx.fillStyle = css(c.couleur); ctx.fillText(c.texte, marge.g + 4, Y(c.prix) - 9) }
+    }
+    if (c.type === "points") c.liste.forEach((p, k) => {
+      const e = Math.min(1, Math.max(0, (c.progres ?? 1) * c.liste.length - k));
+      if (!e) return; ctx.fillStyle = css(c.couleur); ctx.beginPath(); ctx.arc(X(p.i), Y(p.p) + (c.haut ? -8 : 8), 3.5 * e, 0, 7); ctx.fill();
+    });
+  });
+  // dates
+  ctx.fillStyle = css("--doux"); ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+  const nb = Math.max(2, Math.floor((w - marge.d) / 110));
+  for (let k = 0; k < nb; k++) { const i = Math.round(k * (vis.length - 1) / (nb - 1)); if (!vis[i]) continue; ctx.fillText(v.date(vis[i].t), Math.min(Math.max(X(i), 30), w - marge.d - 30), h - 6) }
+  $("legende").innerHTML = v.legende || "";
+}
+function joli(x) { const e = Math.pow(10, Math.floor(Math.log10(x))), f = x / e; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * e }
+function teinte(c, a) {
+  if (c.startsWith("#")) { const n = parseInt(c.slice(1), 16); return `rgba(${n >> 16 & 255},${n >> 8 & 255},${n & 255},${a})` } return c;
+}
+function anime(duree, pas, fin) {
+  if (!doux) { pas(1); fin && fin(); return }
+  const t0 = performance.now(); (function f(t) { const k = Math.min(1, (t - t0) / duree); pas(k); k < 1 ? requestAnimationFrame(f) : fin && fin() })(t0);
+}
+const dJ = t => new Date(t * 1000).toLocaleDateString("fr-FR", {day: "numeric", month: "short", timeZone: "UTC"});
+const dH = t => { const d = new Date(t * 1000); return d.toLocaleDateString("fr-FR", {day: "numeric", month: "short", timeZone: "UTC"}) + " " + String(d.getUTCHours()).padStart(2, "0") + "h" };
+addEventListener("resize", () => dessine());
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => dessine());
+
+/* ---------- Parcours ---------- */
+let S = [], ix = 0, E = {};   // E : réponses du scénario en cours
+const consigne = $("consigne");
+function barre(k) { $("etapes").innerHTML = ETAPES.map((_, i) => `<i class="${i < k ? "fait" : i === k ? "ici" : ""}"></i>`).join("") }
+function panneau(html) { consigne.innerHTML = html; consigne.classList.remove("apparait"); void consigne.offsetWidth; consigne.classList.add("apparait") }
+function entete() {
+  const faits = Object.keys(H.faits).length;
+  $("compteur").textContent = `graphique ${ix + 1}/${S.length} · ${faits} fait${faits > 1 ? "s" : ""}`;
+}
+function verdict(cls, titre, texte) { return `<div class="verdict ${cls}"><strong>${titre}</strong><p>${texte}</p></div>` }
+function choix(liste, rappel) {
+  setTimeout(() => consigne.querySelectorAll("[data-choix]").forEach(b => b.onclick = () => rappel(b.dataset.choix, b)));
+  return `<div class="choix">${liste.map(([k, t]) => `<button data-choix="${k}">${t}</button>`).join("")}</div>`;
+}
+function suite(texte, f) { setTimeout(() => { const b = $("suivant"); if (b) b.onclick = f }); return `<button class="fort" id="suivant">${texte}</button>` }
+
+function demarre(i) {
+  ix = (i + S.length) % S.length; E = {}; const s = S[ix]; entete();
+  E.t = lectureTendance(s.jour); E.z = lectureZones(s.jour); E.u = lecture1h(s.h1);
+  etapeTendance();
+}
+function vueJour(couches = [], legende = "") { return {bougies: S[ix].jour, couches, legende, date: dJ} }
+
+function etapeTendance() {
+  barre(0); const s = S[ix], dern = s.h1[s.h1.length - 1] || s.jour[s.jour.length - 1];
+  dessine(vueJour([], `<b>BTC · journalier</b> <span>${s.jour.length} jours</span>`));
+  panneau(`<p class="doux">Nous sommes le ${dateFr(dern.t)}. Le bitcoin vaut ${fmt(dern.c)} $. Tu vois les ${s.jour.length} derniers jours ; personne ne connaît la suite.</p>
+    <h2>Étape 1. Quelle est la tendance de fond en journalier ?</h2>
+    <p class="doux">Regarde les grands sommets et les grands creux : est-ce qu'ils montent, descendent, ou se mélangent ?</p>
+    ${choix([["haussiere", "Haussière"], ["baissiere", "Baissière"], ["pas_claire", "Pas claire"]], repondTendance)}`);
+}
+function repondTendance(k, bouton) {
+  const t = E.t, juste = k === t.reponse; E.tendance = k; E.okTendance = juste;
+  consigne.querySelectorAll("[data-choix]").forEach(b => { b.disabled = true; if (b.dataset.choix === t.reponse) b.classList.add("bon") });
+  if (!juste) bouton.classList.add("non");
+  const couches = [{type: "courbe", valeurs: t.m, couleur: "--accent", progres: 0},
+    {type: "points", liste: t.hauts, couleur: "--hausse", haut: true, progres: 0}, {type: "points", liste: t.bas, couleur: "--baisse", progres: 0}];
+  const v = vueJour(couches, `<b>BTC · journalier</b><b class="l-sma">— moyenne 50 jours</b>`);
+  anime(1100, k2 => { couches[0].progres = k2; couches[1].progres = couches[2].progres = Math.max(0, k2 * 1.3 - .3); dessine(v) });
+  const mot = {haussiere: "haussière", baissiere: "baissière", pas_claire: "pas claire"}[t.reponse];
+  const s1 = t.signes[0] > 0 ? "au-dessus" : "en dessous", s2 = t.signes[1] > 0 ? "monte" : "descend";
+  const s3 = t.structure > 0 ? "les deux derniers sommets et creux montent" : t.structure < 0 ? "les deux derniers sommets et creux descendent" : "les sommets et les creux ne vont pas dans le même sens";
+  consigne.insertAdjacentHTML("beforeend", `<div class="apparait">${verdict(juste ? "ok" : "ko", juste ? "Bien lu." : `La lecture de la règle : ${mot}.`,
+    `Trois indices, et il les faut tous les trois d'accord : la clôture est ${s1} de la moyenne 50 jours (${fmt(t.dernier)} $ contre ${fmt(t.moy)} $), la moyenne ${s2} sur 10 jours, et ${s3}. Points verts : sommets ; points rouges : creux (un point = plus haut ou plus bas que les 5 jours de chaque côté, la définition fixée à l’avance).`)}
+    ${suite("Étape suivante : les zones", etapeZones)}</div>`);
+}
+
+function etapeZones() {
+  barre(1); E.clics = [];
+  const v = vueJour([{type: "courbe", valeurs: E.t.m, couleur: "--accent"}], `<b>BTC · journalier</b><b class="l-sma">— moyenne 50 jours</b>`);
+  dessine(v);
+  panneau(`<h2>Étape 2. Où sont les zones où le prix a déjà réagi ?</h2>
+    <p>Touche le graphique deux fois : d'abord la zone <b>en dessous</b> du prix où il a le plus souvent rebondi (support), puis la zone <b>au-dessus</b> où il a le plus souvent calé (résistance).</p>
+    <p class="doux" id="aide-zone">Premier toucher : le support.</p>`);
+  cv.onclick = ev => {
+    const r = cv.getBoundingClientRect(), p = vue.P(ev.clientY - r.top); E.clics.push(p);
+    vue.couches.push({type: "ligne", prix: p, couleur: "--jaune", pointille: true, texte: E.clics.length === 1 ? "ton support" : "ta résistance"}); dessine();
+    if (E.clics.length === 1) $("aide-zone").textContent = "Deuxième toucher : la résistance.";
+    if (E.clics.length === 2) { cv.onclick = null; corrigeZones() }
+  };
+}
+function corrigeZones() {
+  const z = E.z, [ps, pr] = E.clics, note = (p, zone) => zone ? (p >= zone.bas * 0.98 && p <= zone.haut * 1.02) : null;
+  E.okSupport = note(ps, z.support); E.okResist = note(pr, z.resistance);
+  const couches = vue.couches;
+  if (z.support) couches.unshift({type: "zone", ...z.support, texte: `support · ${z.support.touches} contacts`, alpha: 0, dessous: true});
+  if (z.resistance) couches.unshift({type: "zone", ...z.resistance, texte: `résistance · ${z.resistance.touches} contacts`, alpha: 0});
+  anime(600, k => { couches.filter(c => c.type === "zone").forEach(c => c.alpha = .2 * k); dessine() });
+  vue.legende = `<b>BTC · journalier</b><b class="l-sma">— moyenne 50 j</b><b class="l-zone">▮ zones mesurées</b>`;
+  const dit = (ok, zone, quoi, p) => !zone ? `Aucune zone ${quoi === "support" ? "en dessous" : "au-dessus"} sur ces 200 jours${quoi === "résistance" ? " : le prix est au plus haut de la période, et l'auteur regarde alors les chiffres ronds, comme " + fmt(Math.ceil(z.dernier / 5000) * 5000) + " $" : ""}.`
+    : `${ok ? "✓" : "✗"} ${quoi} : tu as mis ${fmt(p)} $, la zone mesurée va de ${fmt(zone.bas)} à ${fmt(zone.haut)} $ (${zone.touches} sommets ou creux à moins de 1,5 % les uns des autres).`;
+  const bons = [E.okSupport, E.okResist].filter(x => x === true).length, total = [z.support, z.resistance].filter(Boolean).length;
+  panneau(`${verdict(bons === total ? "ok" : bons ? "mi" : "ko", `${bons} zone${bons > 1 ? "s" : ""} sur ${total} bien placée${bons > 1 ? "s" : ""}.`,
+    `${dit(E.okSupport, z.support, "support", ps)}<br>${dit(E.okResist, z.resistance, "résistance", pr)}`)}
+    <p class="doux">Une zone plutôt qu'une ligne : le prix réagit rarement au dollar près. Plus une zone a de contacts, plus elle compte. On accepte 2 % d'écart.</p>
+    ${suite("Étape suivante : descendre en 1 heure", etape1h)}`);
+}
+
+function vue1h(couches = [], legende = "") {
+  const z = [E.z.support, E.z.resistance].filter(Boolean).map(x => ({type: "zone", ...x, alpha: .14}));
+  return {bougies: S[ix].h1, couches: [...z, ...couches], legende: `<b>BTC · 1 heure</b><b class="l-zone">▮ zones du journalier</b>${legende}`, date: dH};
+}
+function etape1h() {
+  barre(2); dessine(vue1h());
+  panneau(`<h2>Étape 3. Sur les 10 derniers jours en 1 heure, que fait le prix ?</h2>
+    <p class="doux">Les bandes bleues sont les zones du journalier. Le journalier donne le sens, le 1 heure montre le terrain.</p>
+    ${choix([["range", "Il tourne dans un range"], ["hausse", "Il monte"], ["baisse", "Il baisse"]], repond1h)}`);
+}
+function repond1h(k, bouton) {
+  const u = E.u, juste = k === u.reponse; E.ok1h = juste;
+  consigne.querySelectorAll("[data-choix]").forEach(b => { b.disabled = true; if (b.dataset.choix === u.reponse) b.classList.add("bon") });
+  if (!juste) bouton.classList.add("non");
+  dessine(vue1h([{type: "ligne", prix: u.hi, couleur: "--doux", pointille: true, texte: "plus haut 10 j"}, {type: "ligne", prix: u.lo, couleur: "--doux", pointille: true, texte: "plus bas 10 j"}]));
+  const mot = {range: "un range", hausse: "une hausse", baisse: "une baisse"}[u.reponse];
+  consigne.insertAdjacentHTML("beforeend", `<div class="apparait">${verdict(juste ? "ok" : "ko", juste ? "Bien vu." : `La mesure dit : ${mot}.`,
+    `Sur 240 heures, le prix va de ${fmt(u.lo)} à ${fmt(u.hi)} $. Entre la première et la dernière bougie, il a parcouru ${fmt(Math.abs(u.r) * 100)} % de cette hauteur ${u.r >= 0 ? "vers le haut" : "vers le bas"}. Sous 35 %, on parle de range.`)}
+    ${suite("Étape suivante : ton plan", etapePlan)}</div>`);
+}
+
+function etapePlan() {
+  barre(3); const h1 = S[ix].h1; E.entree = h1[h1.length - 1].c;
+  dessine(vue1h([{type: "ligne", prix: E.entree, couleur: "--texte", texte: "prix actuel"}]));
+  panneau(`<h2>Étape 4. Que fais-tu maintenant ?</h2>
+    <p class="doux">Tu entres au prix actuel, ${fmt(E.entree)} $. Ne rien faire est une vraie réponse.</p>
+    ${choix([["long", "Acheter (long)"], ["short", "Vendre (short)"], ["rien", "Ne rien faire"]], k => { E.sens = k; k === "rien" ? etapeRevele() : etapeStop() })}`);
+}
+function etapeStop() {
+  const long = E.sens === "long";
+  panneau(`<h2>Où places-tu ton stop ?</h2>
+    <p>Touche le graphique ${long ? "<b>sous</b>" : "<b>au-dessus</b>"} du prix : là où ton idée serait fausse, de l'autre côté d'une zone ou d'un sommet. L'objectif se place tout seul à ${OBJ_R} fois le risque.</p>
+    <p class="doux" id="aide-stop"></p>`);
+  cv.onclick = ev => {
+    const r = cv.getBoundingClientRect(), p = vue.P(ev.clientY - r.top);
+    if (long ? p >= E.entree : p <= E.entree) { $("aide-stop").textContent = `Pour un ${long ? "achat" : "short"}, le stop va ${long ? "sous" : "au-dessus de"} ${fmt(E.entree)} $.`; return }
+    cv.onclick = null; E.stop = p; E.obj = E.entree + OBJ_R * (E.entree - p); E.dist = Math.abs(E.entree - p) / E.entree * 100;
+    dessine(vue1h(lignesPlan(), `<b class="l-stop">— stop</b><b class="l-obj">— objectif ${OBJ_R} R</b>`));
+    etapeTaille();
+  };
+}
+function lignesPlan() { return [{type: "ligne", prix: E.entree, couleur: "--texte", texte: "entrée"}, {type: "ligne", prix: E.stop, couleur: "--baisse", texte: "stop"}, {type: "ligne", prix: E.obj, couleur: "--hausse", texte: `objectif ${OBJ_R} R`, cadrer: true}] }
+
+function etapeTaille() {
+  barre(4); const ecart = Math.abs(E.entree - E.stop);
+  panneau(`<h2>Étape 5. Quelle taille de position ?</h2>
+    <p>Ton capital d'entraînement : ${fmt(CAPITAL)} $. Tu acceptes de perdre ${fmt(RISQUE * 100)} % si le stop est touché, soit ${fmt(CAPITAL * RISQUE)} $. L'écart entre ton entrée et ton stop : ${fmt(ecart)} $ par bitcoin.</p>
+    <label for="taille">Combien de BTC achètes-tu ? (tu peux arrondir)</label>
+    <div class="ligne"><input id="taille" inputmode="decimal" autocomplete="off" placeholder="0,0000"><button class="fort" id="verifie">Vérifier</button></div>
+    <p class="doux" id="aide-taille"></p>`);
+  setTimeout(() => {
+    $("taille").focus({preventScroll: true});
+    $("verifie").onclick = () => {
+      const x = parseFloat($("taille").value.replace(",", ".")), bon = CAPITAL * RISQUE / ecart;
+      if (!(x > 0)) { $("aide-taille").textContent = "Écris un nombre, par exemple 0,0123."; return }
+      E.taille = x; E.okTaille = Math.abs(x - bon) / bon <= 0.05; E.bonneTaille = bon;
+      const valeur = bon * E.entree, cR = COUT / E.dist;
+      panneau(`${verdict(E.okTaille ? "ok" : "ko", E.okTaille ? "Juste." : `La bonne taille : ${fmt(bon, 4)} BTC.`,
+        E.okTaille ? "Tu risques bien 2 % de ton capital, pas plus." : `Avec ${fmt(x, 4)} BTC, un stop touché te coûterait ${fmt(x * ecart, 2)} $, soit ${fmt(x * ecart / CAPITAL * 100, 1)} % du capital.`)}
+        <div class="calcul">taille = risque ÷ écart<br>= ${fmt(CAPITAL * RISQUE)} $ ÷ ${fmt(ecart)} $<br>= ${fmt(bon, 4)} BTC (≈ ${fmt(valeur)} $ de position)</div>
+        <div class="mesures">
+          <div class="mesure"><span>Stop à</span><b>${fmt(E.dist, 2)} %</b></div>
+          <div class="mesure"><span>Nos frais en R</span><b>${fmt(cR, 2)} R</b></div>
+          <div class="mesure"><span>Objectif</span><b>${fmt(E.obj)} $</b></div>
+        </div>
+        <p class="doux">${cR > 0.25 ? `Attention : nos 0,30 % de frais pèsent ${fmt(cR, 2)} R. Plus le stop est serré, plus ils mangent le gain (épisode 8).` : "Les frais pèsent peu face à ce stop : c'est l'avantage d'un stop large, avec une position plus petite."}</p>
+        ${valeur > CAPITAL ? `<p class="doux">La position vaut plus que ton capital : il faudrait du levier. Un stop plus large réduit la taille.</p>` : ""}
+        ${suite("Dévoiler la suite", etapeRevele)}`);
+    };
+    $("taille").onkeydown = e => { if (e.key === "Enter") $("verifie").click() };
+  });
+}
+
+function etapeRevele() {
+  barre(5); const s = S[ix], tout = [...s.h1, ...s.futur], d = s.h1.length;
+  const trade = E.sens !== "rien";
+  let fin = null, R = 0, k = 0;
+  if (trade) {
+    const long = E.sens === "long", risque = Math.abs(E.entree - E.stop);
+    for (; k < s.futur.length; k++) {
+      const b = s.futur[k];
+      if (long ? b.l <= E.stop : b.h >= E.stop) { fin = "stop"; R = -1; break }
+      if (long ? b.h >= E.obj : b.l <= E.obj) { fin = "objectif"; R = OBJ_R; break }
+    }
+    if (!fin) { k = s.futur.length - 1; R = (long ? 1 : -1) * (s.futur[k].c - E.entree) / risque; fin = "fin" }
+    E.R = R; E.Rnet = R - COUT / E.dist;
+  }
+  const v = {bougies: tout, debutAnim: d, apparition: d - 1, couches: trade ? lignesPlan() : [{type: "ligne", prix: s.h1[d - 1].c, couleur: "--texte", texte: "prix au moment du choix"}],
+    legende: `<b>BTC · 1 heure</b><b>· 72 heures dévoilées</b>`, date: dH};
+  panneau(`<h2>La suite, heure par heure.</h2><div class="r" id="rval">${trade ? "0,0 R" : "0 R"}</div><p class="doux" id="rtxt">…</p>`);
+  const n = s.futur.length, dernier = trade ? k : n - 1;
+  anime(Math.min(4200, 60 * n), t => {
+    const j = Math.floor(t * n); v.apparition = d + j; dessine(v);
+    if (trade) {
+      const jj = Math.min(j, dernier), b = s.futur[jj], long = E.sens === "long", risque = Math.abs(E.entree - E.stop);
+      const r = j >= dernier ? E.R : (long ? 1 : -1) * (b.c - E.entree) / risque;
+      $("rval").textContent = (r >= 0 ? "+" : "−") + fmt(Math.abs(r), 1) + " R"; $("rval").className = "r " + (r >= 0 ? "plus" : "moins");
+    }
+  }, () => { v.apparition = tout.length; dessine(v); bilan() });
+}
+
+function bilan() {
+  const s = S[ix], d = s.h1[s.h1.length - 1].c, f = s.futur[s.futur.length - 1].c, var72 = (f - d) / d * 100, trade = E.sens !== "rien";
+  const aligne = E.sens === "rien" ? E.t.reponse === "pas_claire" : (E.sens === "long" ? E.t.reponse === "haussiere" : E.t.reponse === "baissiere");
+  const coches = [["Tendance bien lue", E.okTendance], ["Support bien placé", E.okSupport], ["Résistance bien placée", E.okResist], ["Le 1 heure bien lu", E.ok1h],
+    ["Plan dans le sens du journalier", aligne], ...(trade ? [["Taille juste", E.okTaille]] : [])].filter(c => c[1] !== null && c[1] !== undefined);
+  const score = coches.filter(c => c[1]).length;
+  H.faits[s.id] = {score, sur: coches.length, R: trade ? +E.Rnet.toFixed(2) : 0, sens: E.sens, le: new Date().toISOString().slice(0, 10)}; garde(); entete();
+  const tous = Object.values(H.faits), sommeR = tous.reduce((a, x) => a + x.R, 0), moyScore = tous.reduce((a, x) => a + x.score / x.sur, 0) / tous.length * 100;
+  const texteFin = !trade ? `Pas de trade. En 72 heures, le prix a fait ${pct(var72)}.`
+    : E.R === -1 ? "Le stop a été touché en premier." : E.R === OBJ_R ? `L'objectif à ${OBJ_R} R a été touché en premier.` : "Ni stop ni objectif en 72 heures : le trade est compté à la dernière clôture.";
+  $("rtxt").textContent = texteFin;
+  consigne.insertAdjacentHTML("beforeend", `<div class="apparait" style="display:flex;flex-direction:column;gap:12px">
+    ${trade ? `<p class="doux">Après nos frais (${fmt(COUT / E.dist, 2)} R) : <b>${(E.Rnet >= 0 ? "+" : "−") + fmt(Math.abs(E.Rnet), 2)} R</b>, soit ${pct(E.Rnet * RISQUE * 100)} du capital.</p>` : ""}
+    <h2>Ta grille : ${score} sur ${coches.length}</h2>
+    <div class="mesures">${coches.map(([t, ok]) => `<div class="mesure"><span>${t}</span><b style="color:var(${ok ? "--hausse" : "--baisse"})">${ok ? "oui" : "non"}</b></div>`).join("")}</div>
+    <p class="doux">Le résultat d'un seul trade ne dit presque rien : un bon plan peut perdre, un mauvais peut gagner. C'est la grille qui s'entraîne. Note ce graphique dans ton journal, avec la date du ${dateFr(s.h1[s.h1.length - 1].t)}.</p>
+    <p class="doux">Sur ${tous.length} graphique${tous.length > 1 ? "s faits" : " fait"} : grille juste à ${fmt(moyScore)} %, résultat cumulé ${(sommeR >= 0 ? "+" : "−") + fmt(Math.abs(sommeR), 2)} R après frais. ${tous.length < 10 ? "Beaucoup trop peu pour conclure quoi que ce soit." : "Dix graphiques, c'est encore trop peu pour juger une méthode : seul un backtest le peut."}</p>
+    <div class="historique">${S.map((x, i) => `<span style="${H.faits[x.id] ? "color:var(--texte);border-color:var(--accent)" : ""}">${i + 1}${H.faits[x.id] ? " · " + H.faits[x.id].score + "/" + H.faits[x.id].sur : ""}</span>`).join("")}</div>
+    <div class="choix"><button class="fort" id="autre">Graphique suivant</button><button id="refaire">Refaire celui-ci</button></div></div>`);
+  $("autre").onclick = () => { const libre = S.findIndex((x, i) => i > ix && !H.faits[x.id]); demarre(libre >= 0 ? libre : ix + 1); scrollTo({top: 0, behavior: doux ? "smooth" : "auto"}) };
+  $("refaire").onclick = () => { demarre(ix); scrollTo({top: 0, behavior: doux ? "smooth" : "auto"}) };
+}
+
+fetch("atelier.json").then(r => { if (!r.ok) throw new Error(r.status); return r.json() }).then(j => {
+  const liste = Array.isArray(j) ? j : j.scenarios || Object.values(j);
+  S = liste.map(scenario).filter(s => s.jour.length >= 60 && s.h1.length >= 24 && s.futur.length);
+  if (!S.length) throw new Error("aucun scénario lisible");
+  const premier = S.findIndex(s => !H.faits[s.id]); demarre(premier >= 0 ? premier : 0);
+}).catch(e => panneau(`<p>Les graphiques n'ont pas pu se charger (${esc(e.message)}). Ouvre la page une fois avec du réseau : elle restera ensuite disponible hors ligne.</p>`));
+</script>
+</body>
+</html>

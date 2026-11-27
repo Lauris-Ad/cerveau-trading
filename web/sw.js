@@ -1,6 +1,6 @@
 // Garde le quiz et les pages disponibles hors-ligne (réseau d'abord, cache en secours).
-const CACHE = "cerveau-trading-v4";
-const BASE = ["./", "index.html", "quiz.html", "liquidite.html", "liquidite.json", "questions.json", "episodes.json", "couverture.png", "manifest.webmanifest", "laurisverse.html", "progression.json"];
+const CACHE = "cerveau-trading-v5";
+const BASE = ["./", "index.html", "quiz.html", "liquidite.html", "liquidite.json", "atelier.html", "atelier.json", "questions.json", "episodes.json", "couverture.png", "manifest.webmanifest", "laurisverse.html", "progression.json"];
 self.addEventListener("install", e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(BASE)).then(() => self.skipWaiting())));
 self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch", e => {
