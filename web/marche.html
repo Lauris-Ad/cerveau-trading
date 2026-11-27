@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c0a14">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Marché du PC</title>
+<style>
+  :root {
+    --fond: #0c0a14; --panneau: rgba(255,255,255,.045); --panneau2: rgba(255,255,255,.07);
+    --texte: #ece8f4; --doux: #a59fb8; --bord: rgba(255,255,255,.1);
+    --ambre: #ffb547; --corail: #ff6f61; --vert: #5fd39a; --rouge: #ff6f7d; --bleu: #7fb4ff; --gris: #6d6880;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--fond); color: var(--texte);
+    font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body { padding: calc(14px + env(safe-area-inset-top)) 16px calc(90px + env(safe-area-inset-bottom)); max-width: 760px; margin: 0 auto;
+    background: radial-gradient(120% 60% at 50% -10%, rgba(255,181,71,.10), transparent 60%), var(--fond); min-height: 100vh; }
+  header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  h1 { margin: 0; font-size: 20px; letter-spacing: .3em; text-transform: uppercase; font-weight: 600; }
+  .age { margin-top: 4px; font-size: 12.5px; color: var(--doux); display: flex; align-items: center; gap: 7px; }
+  .point { width: 9px; height: 9px; border-radius: 50%; background: var(--gris); flex: none; }
+  .point.frais { background: var(--vert); box-shadow: 0 0 0 0 rgba(95,211,154,.6); animation: pouls 2.4s infinite; }
+  .point.tiede { background: var(--ambre); }
+  @keyframes pouls { 0% { box-shadow: 0 0 0 0 rgba(95,211,154,.55); } 70% { box-shadow: 0 0 0 9px rgba(95,211,154,0); } 100% { box-shadow: 0 0 0 0 rgba(95,211,154,0); } }
+  button.rafr { font: inherit; font-size: 13px; color: var(--texte); background: var(--panneau2); border: 1px solid var(--bord);
+    border-radius: 12px; padding: 9px 12px; min-height: 42px; }
+  button.rafr.tourne span { display: inline-block; animation: tour .8s linear infinite; }
+  @keyframes tour { to { transform: rotate(360deg); } }
+  .alerte { border: 1px solid rgba(255,181,71,.45); background: rgba(255,181,71,.09); border-radius: 14px; padding: 10px 12px;
+    font-size: 13.5px; margin-bottom: 12px; }
+  .carte { background: var(--panneau); border: 1px solid var(--bord); border-radius: 16px; padding: 14px; margin-bottom: 12px;
+    opacity: 0; transform: translateY(14px); }
+  .carte.vue { opacity: 1; transform: none; transition: opacity .5s ease, transform .5s cubic-bezier(.2,.8,.2,1); }
+  .carte h2 { margin: 0 0 10px; font-size: 11.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--doux); font-weight: 600;
+    display: flex; justify-content: space-between; gap: 8px; }
+  .carte h2 small { letter-spacing: normal; text-transform: none; font-weight: 400; }
+  .grand { font-size: 34px; font-weight: 650; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .ligne { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .hausse { color: var(--vert); } .baisse { color: var(--rouge); }
+  .puce { display: inline-block; font-size: 12.5px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--bord); background: var(--panneau2); }
+  .puce.calme { color: var(--bleu); border-color: rgba(127,180,255,.4); }
+  .puce.normal { color: var(--texte); }
+  .puce.agite, .puce.tres { color: var(--corail); border-color: rgba(255,111,97,.5); }
+  .puce.positif { color: var(--vert); border-color: rgba(95,211,154,.45); }
+  .puce.negatif { color: var(--rouge); border-color: rgba(255,111,125,.45); }
+  .puce.tendance { color: var(--ambre); border-color: rgba(255,181,71,.45); }
+  .puce.panique { color: var(--rouge); border-color: rgba(255,111,125,.45); }
+  .doux { color: var(--doux); font-size: 13px; }
+  .grille { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+  .case { background: var(--panneau2); border-radius: 12px; padding: 9px 10px; min-width: 0; }
+  .case b { display: block; font-size: 16px; font-variant-numeric: tabular-nums; }
+  .case span { font-size: 11.5px; color: var(--doux); }
+  .bande { display: flex; gap: 2px; margin-top: 6px; }
+  .bande i { flex: 1; height: 10px; border-radius: 2px; background: var(--gris); }
+  .bande i.calme { background: rgba(127,180,255,.55); } .bande i.tendance { background: rgba(255,181,71,.75); } .bande i.panique { background: rgba(255,111,125,.85); }
+  .regime { padding: 8px 0; border-top: 1px solid var(--bord); }
+  .regime:first-of-type { border-top: 0; padding-top: 0; }
+  ul.ev { list-style: none; margin: 10px 0 0; padding: 0; }
+  ul.ev li { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-top: 1px solid var(--bord); font-size: 14px; }
+  ul.ev li span:last-child { color: var(--doux); white-space: nowrap; }
+  .echelle { position: relative; height: 64px; margin: 14px 4px 4px; }
+  .echelle .axe { position: absolute; left: 0; right: 0; top: 30px; height: 4px; border-radius: 2px;
+    background: linear-gradient(90deg, rgba(255,111,125,.55), rgba(255,255,255,.12) 50%, rgba(95,211,154,.55)); }
+  .repere { position: absolute; top: 0; transform: translateX(-50%); text-align: center; font-size: 10.5px; color: var(--doux);
+    white-space: nowrap; transition: left .9s cubic-bezier(.2,.8,.2,1); }
+  .repere::after { content: ""; display: block; width: 2px; height: 14px; margin: 3px auto 0; background: currentColor; }
+  .repere.bas { top: 34px; } .repere.bas::after { display: none; } .repere.bas::before { content: ""; display: block; width: 2px; height: 10px; margin: 0 auto 2px; background: currentColor; }
+  .repere.spot { color: var(--texte); font-weight: 600; }
+  .repere.spot::after { width: 10px; height: 10px; border-radius: 50%; background: var(--ambre); box-shadow: 0 0 10px var(--ambre); margin-top: 6px; }
+  .repere.cw { color: var(--vert); } .repere.pw { color: var(--rouge); } .repere.zg { color: var(--ambre); }
+  .onglets { display: flex; gap: 6px; margin-bottom: 10px; }
+  .onglets button { flex: 1; font: inherit; font-size: 13.5px; color: var(--texte); background: var(--panneau2); border: 1px solid var(--bord);
+    border-radius: 10px; padding: 8px; min-height: 40px; }
+  .onglets button.actif { background: rgba(255,181,71,.18); border-color: rgba(255,181,71,.6); }
+  ul.portes { list-style: none; padding: 0; margin: 10px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 6px; }
+  ul.portes li { font-size: 13px; background: var(--panneau2); border-radius: 9px; padding: 6px 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; margin-top: 8px; }
+  th, td { text-align: right; padding: 6px 4px; border-top: 1px solid var(--bord); white-space: nowrap; }
+  td:first-child { white-space: normal; }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--doux); font-weight: 500; font-size: 11.5px; }
+  .vide { color: var(--doux); font-size: 13.5px; }
+  footer { text-align: center; color: var(--doux); font-size: 12px; margin-top: 18px; }
+  .barre { position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 6px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+    background: rgba(10,8,18,.92); border-top: 1px solid var(--bord); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+  .barre a { flex: 1; text-align: center; text-decoration: none; color: var(--texte); font-size: 13px; background: rgba(255,255,255,.06);
+    border: 1px solid var(--bord); border-radius: 12px; padding: 12px 4px; }
+  .barre a.actif { background: rgba(255,181,71,.2); border-color: rgba(255,181,71,.6); }
+  @media (prefers-reduced-motion: reduce) {
+    .carte { opacity: 1; transform: none; } .carte.vue { transition: none; }
+    .point.frais { animation: none; } .repere { transition: none; } button.rafr.tourne span { animation: none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Marché</h1>
+    <div class="age"><i class="point" id="point"></i><span id="age">Chargement…</span></div>
+  </div>
+  <button class="rafr" id="rafr"><span>↻</span> Actualiser</button>
+</header>
+<div id="contenu"></div>
+<footer id="pied">Photo envoyée par ton PC, environ toutes les 30 minutes quand il est allumé.<br>Observation, pas un signal.</footer>
+<nav class="barre">
+  <a href="laurisverse.html">✦ Laurisverse</a>
+  <a href="marche.html" class="actif">📈 Marché</a>
+  <a href="atelier.html">✎ Atelier</a>
+  <a href="quiz.html">✓ Quiz</a>
+</nav>
+<script>
+(() => {
+  const SOURCE = "https://raw.githubusercontent.com/Lauris-Ad/cerveau-trading/marche/marche.json";
+  const CLE = "marche-derniere-photo-v1";
+  const calme = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const nb = (v, d = 0) => v == null || !isFinite(v) ? "–" : Number(v).toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const pct = (v, d = 2, signe = true) => v == null || !isFinite(v) ? "–" : (signe && v > 0 ? "+" : "") + nb(v, d) + " %";
+  const souple = v => v == null || !isFinite(v) ? "–" : Number(v).toLocaleString("fr-FR", { maximumFractionDigits: 2 });
+  const dateFr = d => /^\d{4}-\d{2}-\d{2}/.test(String(d)) ? String(d).slice(8, 10) + "/" + String(d).slice(5, 7) : String(d ?? "");
+  const classe = t => String(t || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().split(" ")[0];
+  const lire = () => { try { return JSON.parse(localStorage.getItem(CLE) || "null"); } catch (e) { return null; } };
+  const garder = p => { try { localStorage.setItem(CLE, JSON.stringify(p)); } catch (e) {} };
+
+  function age(p, horsLigne) {
+    if (!p || !p.maj_utc) { $("age").textContent = "Aucune photo reçue du PC pour l'instant."; $("point").className = "point"; return; }
+    const t = new Date(p.maj_utc.replace(" ", "T") + ":00Z");
+    const min = Math.max(0, Math.round((Date.now() - t) / 60000));
+    const heure = t.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Paris" });
+    const jour = t.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", timeZone: "Europe/Paris" });
+    const dur = min < 60 ? min + " min" : min < 1440 ? Math.round(min / 60) + " h" : Math.round(min / 1440) + " j";
+    $("age").textContent = `Photo du ${jour} à ${heure}, il y a ${dur}` + (horsLigne ? " · hors ligne" : "") + (min > 90 ? " · PC sans doute éteint" : "");
+    $("point").className = "point " + (min <= 45 ? "frais" : min <= 180 ? "tiede" : "");
+  }
+
+  function erreur(s) { return `<div class="vide">Indisponible : ${esc(s.erreur)}</div>`; }
+  function compteur(v, d, suffixe = "") { return `<span class="compte" data-v="${v ?? ""}" data-d="${d}" data-s="${esc(suffixe)}">${nb(v, d)}${esc(suffixe)}</span>`; }
+
+  function carteBTC(b) {
+    if (!b || b.erreur && b.prix == null) return `<section class="carte"><h2>Bitcoin</h2>${erreur(b || { erreur: "pas de données" })}</section>`;
+    const h = b.heure || {}, or = b.opening_range;
+    return `<section class="carte"><h2>Bitcoin <small>Binance, BTC/USDT</small></h2>
+      <div class="ligne"><div class="grand">${compteur(b.prix, 0, " $")}</div>
+      <div class="${b.var24_pct >= 0 ? "hausse" : "baisse"}">${b.var24_pct >= 0 ? "▲" : "▼"} ${pct(b.var24_pct)} sur 24 h</div></div>
+      <div style="margin-top:8px"><span class="puce ${classe(h.etat)}">Heure en cours : ${esc(h.etat || "–")}</span>
+      <span class="doux"> ${nb(h.multiple, 1)} × la normale de cette heure</span></div>
+      ${or ? `<div class="grille"><div class="case"><span>Range US 9h30-10h (${esc(or.jour)})</span><b>${nb(or.bas, 0)} → ${nb(or.haut, 0)}</b></div>
+      <div class="case"><span>Largeur du range</span><b>${or.bas ? pct((or.haut - or.bas) / or.bas * 100, 2, false) : "–"}</b></div></div>` : ""}
+    </section>`;
+  }
+
+  function carteContexte(c) {
+    if (!c || c.erreur) return `<section class="carte"><h2>Contexte</h2>${erreur(c || { erreur: "pas de données" })}</section>`;
+    const reg = (c.marches || []).map(m => `<div class="regime"><div class="ligne"><b>${esc(m.marche)}</b>
+      <span class="puce ${classe(m.regime)}">${esc(m.regime)}</span></div>
+      <div class="doux">Volatilité 20 j ${nb(m.vol20_pct, 1)} % (seuil ${nb(m.seuil_pct, 1)} %) · rendement 20 j ${pct(m.ret20_pct, 1)}</div>
+      <div class="bande" title="30 derniers jours">${(m.derniers || []).map(r => `<i class="${classe(r)}"></i>`).join("")}</div></div>`).join("");
+    const enCours = (c.en_cours || []).length ? `<div class="alerte" style="margin:10px 0 0">En ce moment : ${c.en_cours.map(e => esc(e.nom)).join(", ")}</div>` : "";
+    const ev = (c.prochains || []).map(e => `<li><span>${esc(e.nom)}</span><span>${esc(e.quand_paris)} · ${e.dans_h < 48 ? "dans " + nb(e.dans_h, 0) + " h" : "dans " + nb(e.dans_h / 24, 0) + " j"}</span></li>`).join("");
+    return `<section class="carte"><h2>Régime du marché <small>30 derniers jours</small></h2>${reg}${enCours}
+      ${ev ? `<h2 style="margin-top:14px">Prochains événements macro</h2><ul class="ev">${ev}</ul>` : ""}</section>`;
+  }
+
+  function echelle(g) {
+    const pts = [["pw", "put wall", g.put_wall], ["zg", "zéro gamma", g.zero_gamma], ["cw", "call wall", g.call_wall]].filter(x => x[2] != null);
+    const tous = pts.map(x => x[2]).concat(g.spot != null ? [g.spot] : []);
+    if (tous.length < 2) return "";
+    let mn = Math.min(...tous), mx = Math.max(...tous); const marge = (mx - mn) * .12 || mx * .01; mn -= marge; mx += marge;
+    const pos = v => ((v - mn) / (mx - mn) * 100).toFixed(1);
+    const memes = {}; pts.forEach(x => { memes[x[2]] = (memes[x[2]] || []).concat(x[1]); });
+    const fait = new Set();
+    const rep = pts.filter(x => !fait.has(x[2]) && fait.add(x[2])).map(x => `<div class="repere bas ${x[0]}" data-l="${pos(x[2])}" style="left:${calme ? pos(x[2]) : 50}%">${esc(memes[x[2]].join(" = "))}<br>${nb(x[2], 0)}</div>`).join("");
+    const s = g.spot != null ? `<div class="repere spot" data-l="${pos(g.spot)}" style="left:${calme ? pos(g.spot) : 50}%">prix ${nb(g.spot, 0)}</div>` : "";
+    return `<div class="echelle"><div class="axe"></div>${s}${rep}</div>`;
+  }
+
+  function carteGamma(p) {
+    const blocs = ["SPX", "NDX"].map(sym => {
+      const g = (p.gamma || {})[sym];
+      if (!g || g.erreur) return `<div class="regime"><b>${sym}</b> ${erreur(g || { erreur: "pas de données" })}</div>`;
+      const forts = (g.niveaux_valides || []).slice(0, 5).map(n => `<tr><td>${nb(n.strike, 0)}</td><td>${esc(n.genre)}</td><td>${pct(n.distance_pct, 1)}</td><td>${nb(n.part_pct, 0)} %</td></tr>`).join("");
+      return `<div class="regime"><div class="ligne"><b>${sym}</b><span class="puce ${classe(g.regime)}">gamma ${esc(g.regime)}</span></div>
+        <div class="doux">Photo du collecteur : ${esc(g.photo_paris || g.calcule_le || "–")}${g.penchant_primes ? " · primes : " + esc(g.penchant_primes) : ""}</div>
+        ${echelle(g)}
+        ${forts ? `<table><tr><th>Niveau fort</th><th>Effet</th><th>Distance</th><th>Poids</th></tr>${forts}</table>` : ""}</div>`;
+    }).join("");
+    const pause = p.cboe_pause && p.cboe_pause.depuis_utc ? `<div class="alerte">Cboe bloque l'accès gratuit depuis le ${esc(p.cboe_pause.depuis_utc.slice(8, 10) + "/" + p.cboe_pause.depuis_utc.slice(5, 7))} : ces niveaux viennent de la dernière photo réussie, ils peuvent être anciens.</div>` : "";
+    return `<section class="carte"><h2>Gamma des options <small>SPX et NDX</small></h2>${pause}${blocs}</section>`;
+  }
+
+  function carteNQ(n) {
+    if (!n || n.erreur) return `<section class="carte"><h2>Niveaux en points NQ</h2>${erreur(n || { erreur: "pas de données" })}</section>`;
+    const v = n.niveaux || {};
+    return `<section class="carte"><h2>Niveaux en points NQ <small>ratio NQ / NDX du ${esc(dateFr(n.jour))}</small></h2>
+      <div class="ligne"><div class="grand" style="font-size:26px">${compteur(n.nq_actuel, 2)}</div><span class="doux">${esc(n.nq_heure || "")}</span></div>
+      <div class="grille"><div class="case"><span>Zéro gamma</span><b>${nb(v.zero_gamma, 0)}</b></div>
+      <div class="case"><span>Environnement (non testé)</span><b>${esc(n.environnement || "–")}</b></div>
+      <div class="case"><span>Call wall</span><b>${nb(v.call_wall, 0)}</b></div><div class="case"><span>Put wall</span><b>${nb(v.put_wall, 0)}</b></div></div></section>`;
+  }
+
+  function gapsTable(g) {
+    if (!g) return "";
+    if (g.erreur) return `<div class="vide">Gaps indisponibles : ${esc(g.erreur)}</div>`;
+    const ligne = (nom, x) => `<tr><td>${esc(nom)}</td><td>${souple(x.bas)}</td><td>${souple(x.ce)}</td><td>${souple(x.haut)}</td><td>${pct(x.gap_pct, 3, false)}</td></tr>`;
+    const lignes = (g.ndog ? [ligne("NDOG " + String(g.ndog.date).slice(5, 10).split("-").reverse().join("/"), g.ndog)] : [])
+      .concat((g.nwog || []).slice().reverse().map(x => ligne("NWOG " + String(x.date).slice(5, 10).split("-").reverse().join("/"), x)));
+    return lignes.length ? `<table><tr><th>Gap</th><th>Bas</th><th>CE</th><th>Haut</th><th>Taille</th></tr>${lignes.join("")}</table>` : `<div class="vide">Aucun gap récent.</div>`;
+  }
+
+  let choixOuv = "NQ";
+  try { choixOuv = localStorage.getItem("marche-ouv") || "NQ"; } catch (e) {}
+  function carteOuverture(o) {
+    if (!o || o.erreur) return `<section class="carte"><h2>Ouverture US</h2>${erreur(o || { erreur: "pas de données" })}</section>`;
+    const x = o[choixOuv] || {};
+    const boutons = ["NQ", "ES", "BTC"].map(s => `<button data-s="${s}" class="${s === choixOuv ? "actif" : ""}">${s}</button>`).join("");
+    let corps;
+    if (x.erreur) corps = erreur(x);
+    else if (!x.ok) corps = `<div class="vide">${esc(x.raison || "Pas de séance à montrer.")}</div>`;
+    else {
+      const portes = (x.portes || []).map(pt => `<li>${pt.ok == null ? "–" : pt.ok ? "✓" : "✗"} ${esc(pt.nom)}</li>`).join("");
+      const pr = x.premiere || {};
+      corps = `<div class="doux">${esc(x.contexte || "")}</div>
+        <div class="grille"><div class="case"><span>Séance du ${esc(dateFr(x.jour))}</span><b>${esc(x.statut || "–")}</b></div>
+        <div class="case"><span>Prix / VWAP</span><b>${souple(x.prix)} / ${souple(x.vwap)}</b></div>
+        <div class="case"><span>1re bougie 5 min</span><b>${souple(pr.bas)} → ${souple(pr.haut)}</b></div>
+        <div class="case"><span>Zone de bruit</span><b>${souple(x.bas)} → ${souple(x.haut)}</b></div></div>
+        ${portes ? `<div class="doux" style="margin-top:10px">Portes de la vidéo : ${x.portes_ok ?? 0} sur ${x.portes.length}</div><ul class="portes">${portes}</ul>` : ""}
+        ${x.gaps ? `<h2 style="margin-top:14px">Gaps d'ouverture <small>observation</small></h2>${gapsTable(x.gaps)}` : ""}`;
+    }
+    return `<section class="carte" id="cOuv"><h2>Ouverture US <small>archivée, en observation</small></h2><div class="onglets">${boutons}</div>${corps}</section>`;
+  }
+
+  function carteDerives(d) {
+    if (!d || d.erreur) return `<section class="carte"><h2>Dérivés BTC</h2>${erreur(d || { erreur: "pas de données" })}</section>`;
+    return `<section class="carte"><h2>Dérivés BTC <small>perpétuel Binance</small></h2><div class="grille">
+      <div class="case"><span>Funding actuel</span><b>${pct(d.dernier_pct, 4)}</b></div>
+      <div class="case"><span>Moyenne 30 j (annualisée)</span><b>${pct(d.moyenne30_pct, 4)} (${pct(d.annualise30_pct, 1)})</b></div>
+      <div class="case"><span>Open interest</span><b>${nb(d.oi_btc, 0)} BTC</b></div>
+      <div class="case"><span>OI sur 24 h</span><b class="${d.oi_var24_pct >= 0 ? "hausse" : "baisse"}">${pct(d.oi_var24_pct)}</b></div></div></section>`;
+  }
+
+  let dejaAnime = false;
+  function animer() {
+    const cartes = [...document.querySelectorAll(".carte")];
+    if (calme || dejaAnime) { cartes.forEach(c => c.classList.add("vue")); poserReperes(); return; }
+    dejaAnime = true;
+    cartes.forEach((c, i) => setTimeout(() => c.classList.add("vue"), 70 * i));
+    setTimeout(poserReperes, 250);
+    document.querySelectorAll(".compte").forEach(el => {
+      const v = parseFloat(el.dataset.v), d = +el.dataset.d, s = el.dataset.s; if (!isFinite(v)) return;
+      const t0 = performance.now(), dur = 900;
+      const pas = t => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = nb(v * (0.97 + 0.03 * e), d) + s; if (k < 1) requestAnimationFrame(pas); };
+      requestAnimationFrame(pas);
+    });
+  }
+  function poserReperes() { document.querySelectorAll(".repere[data-l]").forEach(r => r.style.left = r.dataset.l + "%"); }
+
+  function afficher(p, horsLigne) {
+    age(p, horsLigne);
+    if (!p || p.attente) { $("contenu").innerHTML = `<section class="carte vue"><h2>En attente</h2><div class="vide">Le PC n'a encore rien envoyé. La première photo arrive quand la publication est activée sur le PC.</div></section>`; return; }
+    const s = p.strategies || {};
+    $("contenu").innerHTML = carteBTC(p.btc) + carteContexte(p.contexte) + carteGamma(p) + carteNQ(p.nq) + carteOuverture(p.ouverture) + carteDerives(p.derives);
+    $("pied").innerHTML = `${esc(p.mention || "Observation, pas un signal.")}<br>Idées testées : ${nb(s.idees)} · candidates : ${nb(s.candidates)}.<br>Photo envoyée par ton PC, environ toutes les 30 minutes quand il est allumé.`;
+    brancherOnglets(p);
+    animer();
+  }
+  function brancherOnglets(p) {
+    document.querySelectorAll("#cOuv .onglets button").forEach(b => b.onclick = () => {
+      choixOuv = b.dataset.s; try { localStorage.setItem("marche-ouv", choixOuv); } catch (e) {}
+      $("cOuv").outerHTML = carteOuverture(p.ouverture); $("cOuv").classList.add("vue"); brancherOnglets(p);
+    });
+  }
+
+  async function charger() {
+    $("rafr").classList.add("tourne");
+    try {
+      const r = await fetch(SOURCE + "?t=" + Date.now(), { cache: "no-store" });
+      if (!r.ok) throw new Error(r.status);
+      const p = await r.json(); garder(p); afficher(p, false);
+    } catch (e) {
+      const p = lire(); afficher(p, true);
+      if (!p) $("age").textContent = "Pas de réseau et aucune photo gardée sur ce téléphone.";
+    } finally { $("rafr").classList.remove("tourne"); }
+  }
+  $("rafr").onclick = charger;
+  const avant = lire(); if (avant) afficher(avant, false);
+  charger();
+  setInterval(() => { const p = lire(); if (p) age(p, false); }, 60000);
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+})();
+</script>
+</body>
+</html>
