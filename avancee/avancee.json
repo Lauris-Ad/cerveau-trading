@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-27 08:16",
+ "maj": "2026-11-27 13:47",
  "cycles": [
   {
    "n": 1,
@@ -687,13 +687,54 @@
     }
    ],
    "date": "2026-11-27"
+  },
+  {
+   "n": 46,
+   "axe": "C",
+   "titre": "Vidéo « MASTER AI Trading » : règle SMA 50 testée et archivée, atelier top-down à faire à la main",
+   "dire": "J'ai testé la règle de la vidéo (acheter au-dessus de la moyenne 50 jours) sur 8 cryptos : elle gagne, mais moins que garder simplement, avec des baisses de près de 90 %, donc archivée ; en échange tu as un atelier pour t'entraîner à la main sur 10 vrais graphiques, dont la suite se dévoile à la fin.",
+   "agents": [
+    {
+     "id": "markets-veille",
+     "issue": "session PC"
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "avocat-du-diable",
+     "issue": ""
+    },
+    {
+     "id": "markets-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-gardien-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-pedagogue",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": ""
+    }
+   ],
+   "date": "2026-11-27"
   }
  ],
  "strategies": {
-  "testees": 13,
-  "archivees": 13,
+  "testees": 14,
+  "archivees": 14,
   "candidates": 0,
-  "variantes": 20
+  "variantes": 21
  },
  "prochaine": "Observation H5 premier retour sur une balance (BTC, ETH, SOL 1 h)"
 }
