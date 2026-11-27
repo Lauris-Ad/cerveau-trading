@@ -37,9 +37,24 @@ Règles écrites le 27/11 **avant** de voir les données (`09 - Idées de strat�
 - On mesure : combien de NDOG et de NWOG sont comblés, combien de fois le CE est touché, et ce qui se passe au premier contact, contre le témoin.
 - Une seule stratégie testée : à 18h00, partir vers le comblement, objectif la clôture de 17h00, stop d'une taille de gap.
 - Les frais : 0,30 % pour le verdict (nos critères), 0,02 % à titre d'information, car un future coûte bien moins cher que le bitcoin au comptant. Les gaps de l'ES et du NQ font souvent moins de 0,3 % : la question des frais du cycle 44 revient.
+- Les mesures M1 à M3 sont des observations, pas des variantes : seule la stratégie compte dans le registre.
 
 ## 5. Ce que nos mesures ont montré
-*En cours (NQ et ES, environ deux ans en 1 h). Cette partie sera remplie avec les chiffres réels.*
+Données : NQ=F et ES=F (Yahoo, 1 h, du 07/07/2024 au 25/11/2026), 70 % d'apprentissage. Rapport : `Outil/rapports_backtest/gaps_ouverture_rapport.md`.
+
+| Mesure | Gaps | Témoin (même distance, de l'autre côté) |
+|---|---|---|
+| NDOG ≥ 0,05 % comblés avant 16h59 le lendemain | **88,6 %** (148 sur 167) | 91,6 % |
+| NWOG ≥ 0,05 % comblés avant le vendredi suivant | **91,8 %** (101 sur 110) | 90,9 % |
+| CE des NWOG touché dans la semaine | 96,4 % | 94,5 % |
+| Rebond d'au moins un demi-gap au premier contact du CE | 23,6 % | 15,4 % (NQ 26 % contre 10 %, ES 21 % contre 21 %) |
+
+Lecture :
+- Oui, presque tous les gaps se comblent. Mais un niveau **témoin** à la même distance est touché **aussi souvent**. Les gaps sont tout petits (médiane 0,019 % pour les NDOG) : le prix les retraverse simplement parce qu'il bouge. On ne voit **pas d'aimant**.
+- Le seul écart est la réaction au CE sur le NQ, sur 53 cas : trop peu pour conclure. À observer, pas à trader.
+- La stratégie « partir vers le comblement à 18h » : 167 trades, **−0,327 % par trade** avec nos frais, et déjà −0,027 % **avant** frais (−0,047 % à 0,02 %). 99 stops pour 67 objectifs. **Archivée** (cycle 47).
+
+Ce qui reste utile : savoir où sont ces niveaux, pour ne pas être surpris quand le prix y réagit. Ils sont tracés dans l'onglet Ouverture US du dashboard, avec la mention « observation, pas un signal ».
 
 ## 6. Le tester à la main sur TradingView
 1. Ouvre **NQ1!** ou **ES1!** en 5 min ou 15 min, **avec les heures étendues** activées (sinon les gaps n'apparaissent pas comme tels).
