@@ -1,8 +1,23 @@
 {
  "regle": "Un épisode est publié quand toutes ses leçons sont validées ou en cours. Une leçon est validée quand toutes ses questions du quiz sont acquises (bonne réponse deux jours différents) et que Lauris le confirme (au chef d'orchestre, ou en remplissant « maitrise » dans la leçon Obsidian). La leçon suivante devient alors « en cours ».",
- "lecons_validees": ["01", "02", "03", "04", "05", "06"],
- "lecon_en_cours": "07",
+ "lecons_validees": [
+  "01",
+  "02",
+  "03",
+  "04",
+  "05",
+  "06",
+  "07"
+ ],
+ "lecon_en_cours": "08",
  "historique": [
-  {"date": "2026-11-16", "evenement": "Mise en place du déblocage progressif : leçons 01 à 06 vues avec le mentor (28/09 au 29/10), leçon 07 en cours."}
+  {
+   "date": "2026-11-16",
+   "evenement": "Mise en place du déblocage progressif : leçons 01 à 06 vues avec le mentor (28/09 au 29/10), leçon 07 en cours."
+  },
+  {
+   "date": "2026-11-27",
+   "evenement": "Leçon 07 validée sur la parole de Lauris (« j'ai compris »), sans reprendre le quiz ; leçon 08 en cours."
+  }
  ]
 }
