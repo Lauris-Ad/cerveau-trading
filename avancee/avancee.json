@@ -1,5 +1,5 @@
 {
- "maj": "2026-11-27 13:47",
+ "maj": "2026-11-27 14:39",
  "cycles": [
   {
    "n": 1,
@@ -728,13 +728,58 @@
     }
    ],
    "date": "2026-11-27"
+  },
+  {
+   "n": 47,
+   "axe": "C",
+   "titre": "10 ans de volatilité et de GEX gratuits : 5 stratégies archivées, NWOG/NDOG mesurés, catalogue à tester à la main",
+   "dire": "Sur 10 ans de volatilité et de GEX, aucune des 5 stratégies ne passe, la meilleure rate de peu ; les gaps NWOG et NDOG ne se comblent pas plus qu'un niveau au hasard ; tout est rangé dans un catalogue avec un guide TradingView pour t'entraîner à la main.",
+   "agents": [
+    {
+     "id": "markets-data-dashboard",
+     "issue": ""
+    },
+    {
+     "id": "markets-prompt-smith",
+     "issue": ""
+    },
+    {
+     "id": "avocat-du-diable",
+     "issue": ""
+    },
+    {
+     "id": "markets-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-gardien-backtest",
+     "issue": ""
+    },
+    {
+     "id": "markets-geopolitique",
+     "issue": ""
+    },
+    {
+     "id": "markets-pedagogue",
+     "issue": ""
+    },
+    {
+     "id": "hocs",
+     "issue": "GO"
+    },
+    {
+     "id": "knowledge-keeper",
+     "issue": "rôles tenus en partie par la session PC"
+    }
+   ],
+   "date": "2026-11-27"
   }
  ],
  "strategies": {
-  "testees": 14,
-  "archivees": 14,
+  "testees": 20,
+  "archivees": 20,
   "candidates": 0,
-  "variantes": 21
+  "variantes": 27
  },
  "prochaine": "Observation H5 premier retour sur une balance (BTC, ETH, SOL 1 h)"
 }
